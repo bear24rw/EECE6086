@@ -1,0 +1,18 @@
+Cells: 50
+Nets: 40
+
+Placement:
+Number of Dummy cells inserted:	0
+Wirelength estimate after placement: 448
+Wirelength estimate after optimization: 280
+
+Routing:
+Number of vias used: 88
+Number of feedthrough cells used: 5
+Number of tracks used: 13
+Total wirelength including ftc: 339
+Total area including ftc: 4560
+
+Resources:
+Runtime: 3
+Total Physical Memory: 3208K 

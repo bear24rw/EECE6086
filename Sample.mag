@@ -1,0 +1,905 @@
+magic
+tech scmos
+timestamp
+<< pdiffusion >>
+rect -59 -53 -58 -52 
+rect -57 -53 -56 -52 
+rect -56 -53 -55 -52 
+rect -55 -53 -54 -52 
+rect -54 -53 -53 -52 
+rect -39 -53 -38 -52 
+rect -38 -53 -37 -52 
+rect -37 -53 -36 -52 
+rect -36 -53 -35 -52 
+rect -35 -53 -34 -52 
+rect -34 -53 -33 -52 
+rect -19 -53 -18 -52 
+rect -18 -53 -17 -52 
+rect -17 -53 -16 -52 
+rect -16 -53 -15 -52 
+rect -15 -53 -14 -52 
+rect -14 -53 -13 -52 
+rect -59 -52 -58 -51 
+rect -58 -52 -57 -51 
+rect -57 -52 -56 -51 
+rect -56 -52 -55 -51 
+rect -55 -52 -54 -51 
+rect -54 -52 -53 -51 
+rect -39 -52 -38 -51 
+rect -38 -52 -37 -51 
+rect -37 -52 -36 -51 
+rect -36 -52 -35 -51 
+rect -35 -52 -34 -51 
+rect -34 -52 -33 -51 
+rect -19 -52 -18 -51 
+rect -18 -52 -17 -51 
+rect -17 -52 -16 -51 
+rect -16 -52 -15 -51 
+rect -15 -52 -14 -51 
+rect -14 -52 -13 -51 
+rect -59 -51 -58 -50 
+rect -58 -51 -57 -50 
+rect -57 -51 -56 -50 
+rect -56 -51 -55 -50 
+rect -55 -51 -54 -50 
+rect -54 -51 -53 -50 
+rect -39 -51 -38 -50 
+rect -38 -51 -37 -50 
+rect -37 -51 -36 -50 
+rect -36 -51 -35 -50 
+rect -35 -51 -34 -50 
+rect -34 -51 -33 -50 
+rect -19 -51 -18 -50 
+rect -18 -51 -17 -50 
+rect -17 -51 -16 -50 
+rect -16 -51 -15 -50 
+rect -15 -51 -14 -50 
+rect -14 -51 -13 -50 
+rect -59 -50 -58 -49 
+rect -58 -50 -57 -49 
+rect -57 -50 -56 -49 
+rect -56 -50 -55 -49 
+rect -55 -50 -54 -49 
+rect -54 -50 -53 -49 
+rect -39 -50 -38 -49 
+rect -38 -50 -37 -49 
+rect -37 -50 -36 -49 
+rect -36 -50 -35 -49 
+rect -35 -50 -34 -49 
+rect -34 -50 -33 -49 
+rect -19 -50 -18 -49 
+rect -18 -50 -17 -49 
+rect -17 -50 -16 -49 
+rect -16 -50 -15 -49 
+rect -15 -50 -14 -49 
+rect -14 -50 -13 -49 
+rect -59 -49 -58 -48 
+rect -58 -49 -57 -48 
+rect -57 -49 -56 -48 
+rect -56 -49 -55 -48 
+rect -55 -49 -54 -48 
+rect -54 -49 -53 -48 
+rect -39 -49 -38 -48 
+rect -38 -49 -37 -48 
+rect -37 -49 -36 -48 
+rect -36 -49 -35 -48 
+rect -35 -49 -34 -48 
+rect -34 -49 -33 -48 
+rect -19 -49 -18 -48 
+rect -18 -49 -17 -48 
+rect -17 -49 -16 -48 
+rect -16 -49 -15 -48 
+rect -15 -49 -14 -48 
+rect -14 -49 -13 -48 
+rect -59 -48 -58 -47 
+rect -57 -48 -56 -47 
+rect -56 -48 -55 -47 
+rect -54 -48 -53 -47 
+rect -39 -48 -38 -47 
+rect -38 -48 -37 -47 
+rect -37 -48 -36 -47 
+rect -36 -48 -35 -47 
+rect -35 -48 -34 -47 
+rect -34 -48 -33 -47 
+rect -19 -48 -18 -47 
+rect -18 -48 -17 -47 
+rect -17 -48 -16 -47 
+rect -16 -48 -15 -47 
+rect -15 -48 -14 -47 
+rect -14 -48 -13 -47 
+rect -59 -33 -58 -32 
+rect -58 -33 -57 -32 
+rect -57 -33 -56 -32 
+rect -56 -33 -55 -32 
+rect -55 -33 -54 -32 
+rect -54 -33 -53 -32 
+rect -39 -33 -38 -32 
+rect -38 -33 -37 -32 
+rect -37 -33 -36 -32 
+rect -36 -33 -35 -32 
+rect -34 -33 -33 -32 
+rect -19 -33 -18 -32 
+rect -17 -33 -16 -32 
+rect -16 -33 -15 -32 
+rect -15 -33 -14 -32 
+rect -14 -33 -13 -32 
+rect -59 -32 -58 -31 
+rect -58 -32 -57 -31 
+rect -57 -32 -56 -31 
+rect -56 -32 -55 -31 
+rect -55 -32 -54 -31 
+rect -54 -32 -53 -31 
+rect -39 -32 -38 -31 
+rect -38 -32 -37 -31 
+rect -37 -32 -36 -31 
+rect -36 -32 -35 -31 
+rect -35 -32 -34 -31 
+rect -34 -32 -33 -31 
+rect -19 -32 -18 -31 
+rect -18 -32 -17 -31 
+rect -17 -32 -16 -31 
+rect -16 -32 -15 -31 
+rect -15 -32 -14 -31 
+rect -14 -32 -13 -31 
+rect -59 -31 -58 -30 
+rect -58 -31 -57 -30 
+rect -57 -31 -56 -30 
+rect -56 -31 -55 -30 
+rect -55 -31 -54 -30 
+rect -54 -31 -53 -30 
+rect -39 -31 -38 -30 
+rect -38 -31 -37 -30 
+rect -37 -31 -36 -30 
+rect -36 -31 -35 -30 
+rect -35 -31 -34 -30 
+rect -34 -31 -33 -30 
+rect -19 -31 -18 -30 
+rect -18 -31 -17 -30 
+rect -17 -31 -16 -30 
+rect -16 -31 -15 -30 
+rect -15 -31 -14 -30 
+rect -14 -31 -13 -30 
+rect -59 -30 -58 -29 
+rect -58 -30 -57 -29 
+rect -57 -30 -56 -29 
+rect -56 -30 -55 -29 
+rect -55 -30 -54 -29 
+rect -54 -30 -53 -29 
+rect -39 -30 -38 -29 
+rect -38 -30 -37 -29 
+rect -37 -30 -36 -29 
+rect -36 -30 -35 -29 
+rect -35 -30 -34 -29 
+rect -34 -30 -33 -29 
+rect -19 -30 -18 -29 
+rect -18 -30 -17 -29 
+rect -17 -30 -16 -29 
+rect -16 -30 -15 -29 
+rect -15 -30 -14 -29 
+rect -14 -30 -13 -29 
+rect -59 -29 -58 -28 
+rect -58 -29 -57 -28 
+rect -57 -29 -56 -28 
+rect -56 -29 -55 -28 
+rect -55 -29 -54 -28 
+rect -54 -29 -53 -28 
+rect -39 -29 -38 -28 
+rect -38 -29 -37 -28 
+rect -37 -29 -36 -28 
+rect -36 -29 -35 -28 
+rect -35 -29 -34 -28 
+rect -34 -29 -33 -28 
+rect -19 -29 -18 -28 
+rect -18 -29 -17 -28 
+rect -17 -29 -16 -28 
+rect -16 -29 -15 -28 
+rect -15 -29 -14 -28 
+rect -14 -29 -13 -28 
+rect -59 -28 -58 -27 
+rect -57 -28 -56 -27 
+rect -56 -28 -55 -27 
+rect -54 -28 -53 -27 
+rect -39 -28 -38 -27 
+rect -37 -28 -36 -27 
+rect -36 -28 -35 -27 
+rect -35 -28 -34 -27 
+rect -34 -28 -33 -27 
+rect -19 -28 -18 -27 
+rect -17 -28 -16 -27 
+rect -16 -28 -15 -27 
+rect -15 -28 -14 -27 
+rect -14 -28 -13 -27 
+rect -59 -13 -58 -12 
+rect -57 -13 -56 -12 
+rect -56 -13 -55 -12 
+rect -54 -13 -53 -12 
+rect -39 -13 -38 -12 
+rect -38 -13 -37 -12 
+rect -37 -13 -36 -12 
+rect -36 -13 -35 -12 
+rect -34 -13 -33 -12 
+rect -19 -13 -18 -12 
+rect -17 -13 -16 -12 
+rect -16 -13 -15 -12 
+rect -15 -13 -14 -12 
+rect -14 -13 -13 -12 
+rect -59 -12 -58 -11 
+rect -58 -12 -57 -11 
+rect -57 -12 -56 -11 
+rect -56 -12 -55 -11 
+rect -55 -12 -54 -11 
+rect -54 -12 -53 -11 
+rect -39 -12 -38 -11 
+rect -38 -12 -37 -11 
+rect -37 -12 -36 -11 
+rect -36 -12 -35 -11 
+rect -35 -12 -34 -11 
+rect -34 -12 -33 -11 
+rect -19 -12 -18 -11 
+rect -18 -12 -17 -11 
+rect -17 -12 -16 -11 
+rect -16 -12 -15 -11 
+rect -15 -12 -14 -11 
+rect -14 -12 -13 -11 
+rect -59 -11 -58 -10 
+rect -58 -11 -57 -10 
+rect -57 -11 -56 -10 
+rect -56 -11 -55 -10 
+rect -55 -11 -54 -10 
+rect -54 -11 -53 -10 
+rect -39 -11 -38 -10 
+rect -38 -11 -37 -10 
+rect -37 -11 -36 -10 
+rect -36 -11 -35 -10 
+rect -35 -11 -34 -10 
+rect -34 -11 -33 -10 
+rect -19 -11 -18 -10 
+rect -18 -11 -17 -10 
+rect -17 -11 -16 -10 
+rect -16 -11 -15 -10 
+rect -15 -11 -14 -10 
+rect -14 -11 -13 -10 
+rect -59 -10 -58 -9 
+rect -58 -10 -57 -9 
+rect -57 -10 -56 -9 
+rect -56 -10 -55 -9 
+rect -55 -10 -54 -9 
+rect -54 -10 -53 -9 
+rect -39 -10 -38 -9 
+rect -38 -10 -37 -9 
+rect -37 -10 -36 -9 
+rect -36 -10 -35 -9 
+rect -35 -10 -34 -9 
+rect -34 -10 -33 -9 
+rect -19 -10 -18 -9 
+rect -18 -10 -17 -9 
+rect -17 -10 -16 -9 
+rect -16 -10 -15 -9 
+rect -15 -10 -14 -9 
+rect -14 -10 -13 -9 
+rect -59 -9 -58 -8 
+rect -58 -9 -57 -8 
+rect -57 -9 -56 -8 
+rect -56 -9 -55 -8 
+rect -55 -9 -54 -8 
+rect -54 -9 -53 -8 
+rect -39 -9 -38 -8 
+rect -38 -9 -37 -8 
+rect -37 -9 -36 -8 
+rect -36 -9 -35 -8 
+rect -35 -9 -34 -8 
+rect -34 -9 -33 -8 
+rect -19 -9 -18 -8 
+rect -18 -9 -17 -8 
+rect -17 -9 -16 -8 
+rect -16 -9 -15 -8 
+rect -15 -9 -14 -8 
+rect -14 -9 -13 -8 
+rect -59 -8 -58 -7 
+rect -57 -8 -56 -7 
+rect -56 -8 -55 -7 
+rect -54 -8 -53 -7 
+rect -39 -8 -38 -7 
+rect -37 -8 -36 -7 
+rect -36 -8 -35 -7 
+rect -35 -8 -34 -7 
+rect -34 -8 -33 -7 
+rect -19 -8 -18 -7 
+rect -17 -8 -16 -7 
+rect -16 -8 -15 -7 
+rect -14 -8 -13 -7 
+<< polysilicon >>
+rect -58 -54 -57 -53 
+rect -58 -53 -57 -52 
+rect -58 -48 -57 -47 
+rect -55 -48 -54 -47 
+rect -58 -47 -57 -46 
+rect -55 -47 -54 -46 
+rect -35 -34 -34 -33 
+rect -18 -34 -17 -33 
+rect -35 -33 -34 -32 
+rect -18 -33 -17 -32 
+rect -58 -28 -57 -27 
+rect -55 -28 -54 -27 
+rect -38 -28 -37 -27 
+rect -18 -28 -17 -27 
+rect -58 -27 -57 -26 
+rect -55 -27 -54 -26 
+rect -38 -27 -37 -26 
+rect -18 -27 -17 -26 
+rect -58 -14 -57 -13 
+rect -55 -14 -54 -13 
+rect -35 -14 -34 -13 
+rect -18 -14 -17 -13 
+rect -58 -13 -57 -12 
+rect -55 -13 -54 -12 
+rect -35 -13 -34 -12 
+rect -18 -13 -17 -12 
+rect -58 -8 -57 -7 
+rect -55 -8 -54 -7 
+rect -38 -8 -37 -7 
+rect -18 -8 -17 -7 
+rect -15 -8 -14 -7 
+rect -58 -7 -57 -6 
+rect -55 -7 -54 -6 
+rect -38 -7 -37 -6 
+rect -18 -7 -17 -6 
+rect -15 -7 -14 -6 
+<< labels >>
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -55 -9 -55 -9 0 cellno=1
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -35 -9 -35 -9 0 cellno=2
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -15 -9 -15 -9 0 cellno=3
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -55 -29 -55 -29 0 cellno=4
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -35 -29 -35 -29 0 cellno=5
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -15 -29 -15 -29 0 cellno=6
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -55 -49 -55 -49 0 cellno=7
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -35 -49 -35 -49 0 cellno=8
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+rlabel pdiffusion -15 -49 -15 -49 0 cellno=9
+<< metal1 >>
+rect -61 -55 -60 -54 
+rect -60 -55 -59 -54 
+rect -59 -55 -58 -54 
+rect -58 -55 -57 -54 
+rect -61 -54 -60 -53 
+rect -61 -53 -60 -52 
+rect -61 -52 -60 -51 
+rect -61 -51 -60 -50 
+rect -61 -50 -60 -49 
+rect -61 -49 -60 -48 
+rect -61 -48 -60 -47 
+rect -61 -47 -60 -46 
+rect -61 -46 -60 -45 
+rect -60 -46 -59 -45 
+rect -59 -46 -58 -45 
+rect -58 -46 -57 -45 
+rect -55 -46 -54 -45 
+rect -55 -45 -54 -44 
+rect -55 -44 -54 -43 
+rect -55 -43 -54 -42 
+rect -55 -42 -54 -41 
+rect -55 -41 -54 -40 
+rect -55 -40 -54 -39 
+rect -55 -39 -54 -38 
+rect -55 -38 -54 -37 
+rect -55 -37 -54 -36 
+rect -55 -36 -54 -35 
+rect -61 -35 -60 -34 
+rect -60 -35 -59 -34 
+rect -59 -35 -58 -34 
+rect -58 -35 -57 -34 
+rect -57 -35 -56 -34 
+rect -56 -35 -55 -34 
+rect -55 -35 -54 -34 
+rect -41 -35 -40 -34 
+rect -40 -35 -39 -34 
+rect -39 -35 -38 -34 
+rect -38 -35 -37 -34 
+rect -37 -35 -36 -34 
+rect -36 -35 -35 -34 
+rect -35 -35 -34 -34 
+rect -21 -35 -20 -34 
+rect -20 -35 -19 -34 
+rect -19 -35 -18 -34 
+rect -18 -35 -17 -34 
+rect -61 -34 -60 -33 
+rect -41 -34 -40 -33 
+rect -21 -34 -20 -33 
+rect -61 -33 -60 -32 
+rect -41 -33 -40 -32 
+rect -21 -33 -20 -32 
+rect -61 -32 -60 -31 
+rect -41 -32 -40 -31 
+rect -21 -32 -20 -31 
+rect -61 -31 -60 -30 
+rect -41 -31 -40 -30 
+rect -21 -31 -20 -30 
+rect -61 -30 -60 -29 
+rect -41 -30 -40 -29 
+rect -21 -30 -20 -29 
+rect -61 -29 -60 -28 
+rect -41 -29 -40 -28 
+rect -21 -29 -20 -28 
+rect -61 -28 -60 -27 
+rect -41 -28 -40 -27 
+rect -21 -28 -20 -27 
+rect -61 -27 -60 -26 
+rect -41 -27 -40 -26 
+rect -21 -27 -20 -26 
+rect -61 -26 -60 -25 
+rect -60 -26 -59 -25 
+rect -59 -26 -58 -25 
+rect -58 -26 -57 -25 
+rect -55 -26 -54 -25 
+rect -54 -26 -53 -25 
+rect -53 -26 -52 -25 
+rect -52 -26 -51 -25 
+rect -51 -26 -50 -25 
+rect -50 -26 -49 -25 
+rect -49 -26 -48 -25 
+rect -48 -26 -47 -25 
+rect -47 -26 -46 -25 
+rect -46 -26 -45 -25 
+rect -45 -26 -44 -25 
+rect -44 -26 -43 -25 
+rect -43 -26 -42 -25 
+rect -42 -26 -41 -25 
+rect -41 -26 -40 -25 
+rect -38 -26 -37 -25 
+rect -37 -26 -36 -25 
+rect -36 -26 -35 -25 
+rect -35 -26 -34 -25 
+rect -34 -26 -33 -25 
+rect -33 -26 -32 -25 
+rect -32 -26 -31 -25 
+rect -31 -26 -30 -25 
+rect -30 -26 -29 -25 
+rect -29 -26 -28 -25 
+rect -28 -26 -27 -25 
+rect -27 -26 -26 -25 
+rect -26 -26 -25 -25 
+rect -25 -26 -24 -25 
+rect -24 -26 -23 -25 
+rect -23 -26 -22 -25 
+rect -22 -26 -21 -25 
+rect -21 -26 -20 -25 
+rect -18 -26 -17 -25 
+rect -18 -25 -17 -24 
+rect -18 -24 -17 -23 
+rect -18 -23 -17 -22 
+rect -18 -22 -17 -21 
+rect -18 -21 -17 -20 
+rect -18 -20 -17 -19 
+rect -18 -19 -17 -18 
+rect -18 -18 -17 -17 
+rect -18 -17 -17 -16 
+rect -18 -16 -17 -15 
+rect -61 -15 -60 -14 
+rect -60 -15 -59 -14 
+rect -59 -15 -58 -14 
+rect -58 -15 -57 -14 
+rect -55 -15 -54 -14 
+rect -54 -15 -53 -14 
+rect -53 -15 -52 -14 
+rect -52 -15 -51 -14 
+rect -35 -15 -34 -14 
+rect -34 -15 -33 -14 
+rect -33 -15 -32 -14 
+rect -32 -15 -31 -14 
+rect -18 -15 -17 -14 
+rect -61 -14 -60 -13 
+rect -52 -14 -51 -13 
+rect -32 -14 -31 -13 
+rect -61 -13 -60 -12 
+rect -52 -13 -51 -12 
+rect -32 -13 -31 -12 
+rect -61 -12 -60 -11 
+rect -52 -12 -51 -11 
+rect -32 -12 -31 -11 
+rect -61 -11 -60 -10 
+rect -52 -11 -51 -10 
+rect -32 -11 -31 -10 
+rect -61 -10 -60 -9 
+rect -52 -10 -51 -9 
+rect -32 -10 -31 -9 
+rect -61 -9 -60 -8 
+rect -52 -9 -51 -8 
+rect -32 -9 -31 -8 
+rect -61 -8 -60 -7 
+rect -52 -8 -51 -7 
+rect -32 -8 -31 -7 
+rect -61 -7 -60 -6 
+rect -52 -7 -51 -6 
+rect -61 -6 -60 -5 
+rect -60 -6 -59 -5 
+rect -59 -6 -58 -5 
+rect -58 -6 -57 -5 
+rect -55 -6 -54 -5 
+rect -54 -6 -53 -5 
+rect -52 -6 -51 -5 
+rect -51 -6 -50 -5 
+rect -50 -6 -49 -5 
+rect -49 -6 -48 -5 
+rect -48 -6 -47 -5 
+rect -47 -6 -46 -5 
+rect -46 -6 -45 -5 
+rect -45 -6 -44 -5 
+rect -44 -6 -43 -5 
+rect -43 -6 -42 -5 
+rect -42 -6 -41 -5 
+rect -41 -6 -40 -5 
+rect -40 -6 -39 -5 
+rect -39 -6 -38 -5 
+rect -38 -6 -37 -5 
+rect -37 -6 -36 -5 
+rect -36 -6 -35 -5 
+rect -35 -6 -34 -5 
+rect -34 -6 -33 -5 
+rect -33 -6 -32 -5 
+rect -32 -6 -31 -5 
+rect -31 -6 -30 -5 
+rect -30 -6 -29 -5 
+rect -29 -6 -28 -5 
+rect -28 -6 -27 -5 
+rect -27 -6 -26 -5 
+rect -26 -6 -25 -5 
+rect -25 -6 -24 -5 
+rect -24 -6 -23 -5 
+rect -23 -6 -22 -5 
+rect -22 -6 -21 -5 
+rect -21 -6 -20 -5 
+rect -20 -6 -19 -5 
+rect -19 -6 -18 -5 
+rect -18 -6 -17 -5 
+rect -16 -6 -15 -5 
+rect -15 -6 -14 -5 
+<< metal2 >>
+rect -32 -7 -31 -6 
+rect -53 -6 -52 -5 
+rect -52 -6 -51 -5 
+rect -51 -6 -50 -5 
+rect -50 -6 -49 -5 
+rect -49 -6 -48 -5 
+rect -48 -6 -47 -5 
+rect -47 -6 -46 -5 
+rect -46 -6 -45 -5 
+rect -45 -6 -44 -5 
+rect -44 -6 -43 -5 
+rect -43 -6 -42 -5 
+rect -42 -6 -41 -5 
+rect -41 -6 -40 -5 
+rect -40 -6 -39 -5 
+rect -39 -6 -38 -5 
+rect -38 -6 -37 -5 
+rect -32 -6 -31 -5 
+rect -31 -6 -30 -5 
+rect -30 -6 -29 -5 
+rect -29 -6 -28 -5 
+rect -28 -6 -27 -5 
+rect -27 -6 -26 -5 
+rect -26 -6 -25 -5 
+rect -25 -6 -24 -5 
+rect -24 -6 -23 -5 
+rect -23 -6 -22 -5 
+rect -22 -6 -21 -5 
+rect -21 -6 -20 -5 
+rect -20 -6 -19 -5 
+rect -19 -6 -18 -5 
+rect -18 -6 -17 -5 
+rect -17 -6 -16 -5 
+<< end >>
+3.99seconds.
