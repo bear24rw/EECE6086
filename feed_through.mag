@@ -1,0 +1,12 @@
+magic
+tech scmos
+<< metal1 >>
+rect 1 5 2 6
+rect 1 0 2 1
+<< metal2 >>
+rect 1 5 2 6
+rect 1 0 2 1
+<< labels >>
+rlabel metal1 1 5 2 6 0 1
+rlabel metal1 1 0 2 1 0 2
+
