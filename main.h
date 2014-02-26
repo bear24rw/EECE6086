@@ -2,13 +2,6 @@
 #define __MAIN_H__
 
 typedef enum {
-    FLIP_NONE,
-    FLIP_X,
-    FLIP_Y,
-    FLIP_XY,
-} flip_t;
-
-typedef enum {
     ROT_0   = 0,
     ROT_90  = 90,
     ROT_180 = 180,
@@ -23,7 +16,7 @@ typedef struct {
 typedef struct {
     int x, y;
     rot_t rot;
-    flip_t flip;
+    int flipped;
 } cell_t;
 
 typedef struct {

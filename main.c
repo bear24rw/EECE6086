@@ -128,6 +128,6 @@ int main(int argc, char *argv[])
         cells[i].x = 0;
         cells[i].y = 0;
         cells[i].rot = ROT_0;
-        cells[i].flip = FLIP_NONE;
+        cells[i].flipped = 0;
     }
 }
