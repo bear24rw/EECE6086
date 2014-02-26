@@ -27,20 +27,6 @@ point_t get_term_position(cell_t cell, int term)
     // then translate it back. The cell is 6 units wide and we
     // are using a 0 based index so the cell is from 0-5 inclusive.
 
-    // check if flipping over the x axis
-    if (cell.flip == FLIP_X || cell.flip == FLIP_XY) {
-        offsets[0].y = (offsets[0].y - 2.5) * -1 + 2.5;
-        offsets[1].y = (offsets[1].y - 2.5) * -1 + 2.5;
-        offsets[2].y = (offsets[2].y - 2.5) * -1 + 2.5;
-        offsets[3].y = (offsets[3].y - 2.5) * -1 + 2.5;
-    }
-    // check if flipping over the y axis
-    if (cell.flip == FLIP_Y || cell.flip == FLIP_XY) {
-        offsets[0].x = (offsets[0].x - 2.5) * -1 + 2.5;
-        offsets[1].x = (offsets[1].x - 2.5) * -1 + 2.5;
-        offsets[2].x = (offsets[2].x - 2.5) * -1 + 2.5;
-        offsets[3].x = (offsets[3].x - 2.5) * -1 + 2.5;
-    }
 
     // assume ROT_0 (default) is pointing right
     // ROT_90 would turn it left by 90 degrees to face up
@@ -52,6 +38,14 @@ point_t get_term_position(cell_t cell, int term)
         double _y = (double)offsets[i].y - 2.5;
         offsets[i].x = round((_x * cos(radians) - _y * sin(radians)) + 2.5);
         offsets[i].y = round((_x * sin(radians) + _y * cos(radians)) + 2.5);
+    }
+
+    // check if flipped over the y axis
+    if (cell.flipped) {
+        offsets[0].x = (offsets[0].x - 2.5) * -1 + 2.5;
+        offsets[1].x = (offsets[1].x - 2.5) * -1 + 2.5;
+        offsets[2].x = (offsets[2].x - 2.5) * -1 + 2.5;
+        offsets[3].x = (offsets[3].x - 2.5) * -1 + 2.5;
     }
 
     point_t position;
