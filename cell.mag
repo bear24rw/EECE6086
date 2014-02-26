@@ -1,5 +1,6 @@
 magic
 tech scmos
+timestamp 1393363014
 << metal1 >>
 rect 1 5 2 6
 rect 4 5 5 6
@@ -10,6 +11,8 @@ rect 1 5 2 6
 rect 4 5 5 6
 rect 1 0 2 1
 rect 4 0 5 1
+<< comment >>
+rect 0 0 6 6
 << labels >>
 rlabel metal1 1 5 2 6 0 1
 rlabel metal1 4 5 5 6 0 2
