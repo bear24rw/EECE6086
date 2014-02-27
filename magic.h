@@ -4,6 +4,6 @@
 #include <vector>
 #include "main.h"
 
-void write_magic(std::vector<std::vector<cell_t>>& rows);
+void write_magic(rows_t& rows);
 
 #endif

@@ -5,6 +5,7 @@
 #include <string.h>
 #include <fstream>
 #include "main.h"
+#include "place.h"
 #include "magic.h"
 #include "test.h"
 
@@ -121,10 +122,7 @@ int main(int argc, char *argv[])
     // Generate all cells
     //
 
-    cells = new cell_t[num_cells];
-
-    int grid_w = ceil(sqrt(num_cells));
-    int grid_h = ceil(sqrt(num_cells));
+    std::vector<cell_t> cells(num_cells);
 
     for (int i=0; i<num_cells; i++) {
         cells[i].number = i;
@@ -133,16 +131,9 @@ int main(int argc, char *argv[])
         cells[i].feed_through = false;
     }
 
-    std::vector<std::vector<cell_t>> rows(grid_h);
-
-    for (int i=0; i<num_cells; i++) {
-        rows[i/grid_w].push_back(cells[i]);
-    }
+    rows_t rows = place(cells);
 
     write_magic(rows);
-
-    delete [] cells;
-    delete [] nets;
 
     printf("Done.\n");
 }

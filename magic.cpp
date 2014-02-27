@@ -3,7 +3,7 @@
 #include "magic.h"
 #include "main.h"
 
-void write_magic(std::vector<std::vector<cell_t>>& rows)
+void write_magic(rows_t& rows)
 {
 
     // transform matrices
@@ -19,16 +19,16 @@ void write_magic(std::vector<std::vector<cell_t>>& rows)
     for (auto &row : rows) {
         for (auto &cell : row) {
 
-            printf("use cell cell_%d\n", cell.number);
+            printf("use cell cell_%d\n", cell->number);
 
-            if (cell.flip_x && cell.flip_y) {
-                printf("transform -1  0 %d 0 -1 %d\n", cell.x + 6, cell.y + 6);
-            } else if (cell.flip_x) {
-                printf("transform  1  0 %d 0 -1 %d\n", cell.x + 0, cell.y + 6);
-            } else if (cell.flip_y) {
-                printf("transform -1  0 %d 0  1 %d\n", cell.x + 6, cell.y + 0);
+            if (cell->flip_x && cell->flip_y) {
+                printf("transform -1  0 %d 0 -1 %d\n", cell->x + 6, cell->y + 6);
+            } else if (cell->flip_x) {
+                printf("transform  1  0 %d 0 -1 %d\n", cell->x + 0, cell->y + 6);
+            } else if (cell->flip_y) {
+                printf("transform -1  0 %d 0  1 %d\n", cell->x + 6, cell->y + 0);
             } else {
-                printf("transform  1  0 %d 0  1 %d\n", cell.x + 0, cell.y + 0);
+                printf("transform  1  0 %d 0  1 %d\n", cell->x + 0, cell->y + 0);
             }
 
             printf("box 0 0 6 6\n");
