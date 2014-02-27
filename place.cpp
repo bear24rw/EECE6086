@@ -21,5 +21,11 @@ rows_t place(std::vector<cell_t>& cells)
 
 void add_pass_throughs(rows_t& rows)
 {
-
+    for (auto &row : rows) {
+        for (auto &cell : row) {
+            // for each terminal in this cell
+            //      get cell and terminal of destination
+            //      if cell 
+        }
+    }
 }

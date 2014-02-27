@@ -3,18 +3,19 @@
 
 #include <vector>
 
-typedef struct {
-    int cell_a, cell_b;
-    int term_a, term_b;
-} net_t;
+typedef struct cell_t cell_t;
 
-typedef struct {
+struct cell_t {
     int number;
     int x, y;
     bool flip_x;
     bool flip_y;
     bool feed_through;
-} cell_t;
+    struct term_t {
+        cell_t *dest_cell;
+        int dest_term;
+    } term[4];
+};
 
 typedef struct {
     int x, y;

@@ -33,9 +33,6 @@ void write_magic(rows_t& rows)
 
             printf("box 0 0 6 6\n");
         }
-        printf("finished row\n");
     }
-
-    printf("finished cells\n");
 
 }

@@ -12,9 +12,6 @@
 int num_nets;
 int num_cells;
 
-net_t *nets;
-cell_t *cells;
-
 point_t get_term_position(cell_t cell, int term)
 {
     //
@@ -86,7 +83,7 @@ int main(int argc, char *argv[])
     #endif
 
     //
-    // Build connection list from file
+    // Get number of cells and nets
     //
 
     if (argc < 2) {
@@ -106,18 +103,6 @@ int main(int argc, char *argv[])
 
     printf("Found %d cells and %d nets\n", num_cells, num_nets);
 
-    nets = new net_t[num_nets];
-
-    memset(nets, 0, num_nets * sizeof(net_t));
-
-    for (int net, cell_a, term_a, cell_b, term_b;
-            fp >> net >> cell_a >> term_a >> cell_b >> term_b;) {
-        nets[net].cell_a = cell_a;
-        nets[net].cell_b = cell_b;
-        nets[net].term_a = term_a;
-        nets[net].term_b = term_b;
-    }
-
     //
     // Generate all cells
     //
@@ -129,6 +114,19 @@ int main(int argc, char *argv[])
         cells[i].flip_x = false;
         cells[i].flip_y = false;
         cells[i].feed_through = false;
+    }
+
+    //
+    // Read all the nets
+    //
+
+    for (int net, cell_a, term_a, cell_b, term_b;
+            fp >> net >> cell_a >> term_a >> cell_b >> term_b;) {
+        // subtract 1 from the cell numbers to 0 index them
+        cell_a--; cell_b--;
+        cells[cell_a].term[term_a].dest_cell = &(cells[cell_b]);
+        cells[cell_a].term[term_a].dest_term = term_b;
+        printf("Cell A: %d Cell B: %d Set dest_cell %p to %p\n", cell_a, cell_b, cells[cell_a].term[term_a].dest_cell, &cells[cell_b]);
     }
 
     rows_t rows = place(cells);
