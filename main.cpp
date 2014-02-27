@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 
     std::ifstream fp(argv[1]);
 
-    if(fp == NULL) {
+    if(fp.fail()) {
         printf("Cannot open file.\n");
         return ENOENT;
     }
