@@ -7,9 +7,11 @@ typedef struct {
 } net_t;
 
 typedef struct {
+    int number;
     int x, y;
-    int flip_x;
-    int flip_y;
+    bool flip_x;
+    bool flip_y;
+    bool feed_through;
 } cell_t;
 
 typedef struct {

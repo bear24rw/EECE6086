@@ -1,5 +1,5 @@
-CXX = clang++
-CXXFLAGS = -Ofast -std=c++0x -Wall -flto -funroll-loops -lm
+CXX = g++
+CXXFLAGS = -std=c++0x -Wall -lm -g -pg
 
 all:
 	$(CXX) $(CXXFLAGS) -o main main.cpp magic.cpp

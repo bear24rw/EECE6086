@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <math.h>
 #include <string.h>
+#include <fstream>
 #include "main.h"
 #include "magic.h"
 #include "test.h"
@@ -92,15 +93,15 @@ int main(int argc, char *argv[])
         return EINVAL;
     }
 
-    FILE *fp = fopen(argv[1], "r");
+    std::ifstream fp(argv[1]);
 
     if(fp == NULL) {
         printf("Cannot open file.\n");
         return ENOENT;
     }
 
-    fscanf(fp, "%d", &num_cells);
-    fscanf(fp, "%d", &num_nets);
+    fp >> num_cells;
+    fp >> num_nets;
 
     printf("Found %d cells and %d nets\n", num_cells, num_nets);
 
@@ -108,9 +109,8 @@ int main(int argc, char *argv[])
 
     memset(nets, 0, num_nets * sizeof(net_t));
 
-    while (1) {
-        int net, cell_a, term_a, cell_b, term_b;
-        if (fscanf(fp, "%d%d%d%d%d", &net, &cell_a, &term_a, &cell_b, &term_b) == EOF) break;
+    for (int net, cell_a, term_a, cell_b, term_b;
+            fp >> net >> cell_a >> term_a >> cell_b >> term_b;) {
         nets[net].cell_a = cell_a;
         nets[net].cell_b = cell_b;
         nets[net].term_a = term_a;
@@ -127,11 +127,22 @@ int main(int argc, char *argv[])
     int grid_h = ceil(sqrt(num_cells));
 
     for (int i=0; i<num_cells; i++) {
-        cells[i].x = 7 * (i % grid_w);
-        cells[i].y = 7 * ((i / grid_w) % grid_w);
-        cells[i].flip_x = 0;
-        cells[i].flip_y = 0;
+        cells[i].number = i;
+        cells[i].flip_x = false;
+        cells[i].flip_y = false;
+        cells[i].feed_through = false;
     }
 
-    write_magic(cells, num_cells);
+    std::vector<std::vector<cell_t>> rows(grid_h);
+
+    for (int i=0; i<num_cells; i++) {
+        rows[i/grid_w].push_back(cells[i]);
+    }
+
+    write_magic(rows);
+
+    delete [] cells;
+    delete [] nets;
+
+    printf("Done.\n");
 }
