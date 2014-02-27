@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include "main.h"
+#include "magic.h"
 #include "test.h"
 
 int num_nets;
@@ -110,10 +111,15 @@ int main(int argc, char *argv[])
 
     cells = malloc(num_cells * sizeof(cell_t));
 
+    int grid_w = ceil(sqrt(num_cells));
+    int grid_h = ceil(sqrt(num_cells));
+
     for (int i=0; i<num_cells; i++) {
-        cells[i].x = 0;
-        cells[i].y = 0;
+        cells[i].x = 7 * (i % grid_w);
+        cells[i].y = 7 * ((i / grid_w) % grid_w);
         cells[i].flip_x = 0;
         cells[i].flip_y = 0;
     }
+
+    write_magic(cells, num_cells);
 }
