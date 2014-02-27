@@ -10,7 +10,7 @@ rows_t place(std::vector<cell_t>& cells)
 
     rows_t rows(grid_h);
 
-    for (int i=0; i<cells.size(); i++) {
+    for (unsigned int i=0; i<cells.size(); i++) {
         rows[i/grid_w].push_back(&cells[i]);
     }
 
