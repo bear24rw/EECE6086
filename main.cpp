@@ -114,19 +114,22 @@ int main(int argc, char *argv[])
         cells[i].flip_x = false;
         cells[i].flip_y = false;
         cells[i].feed_through = false;
+        cells[i].term[0].dest_cell = nullptr;
+        cells[i].term[1].dest_cell = nullptr;
+        cells[i].term[2].dest_cell = nullptr;
+        cells[i].term[3].dest_cell = nullptr;
     }
 
     //
     // Read all the nets
     //
 
-    for (int net, cell_a, term_a, cell_b, term_b;
-            fp >> net >> cell_a >> term_a >> cell_b >> term_b;) {
-        // subtract 1 from the cell numbers to 0 index them
+    for (int net, cell_a, term_a, cell_b, term_b; fp >> net >> cell_a >> term_a >> cell_b >> term_b;) {
+        // subtract 1 from all the numbers to 0 index them
         cell_a--; cell_b--;
+        term_a--; term_b--;
         cells[cell_a].term[term_a].dest_cell = &(cells[cell_b]);
         cells[cell_a].term[term_a].dest_term = term_b;
-        printf("Cell A: %d Cell B: %d Set dest_cell %p to %p\n", cell_a, cell_b, cells[cell_a].term[term_a].dest_cell, &cells[cell_b]);
     }
 
     rows_t rows = place(cells);
