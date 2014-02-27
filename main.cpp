@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 
     printf("Found %d cells and %d nets\n", num_cells, num_nets);
 
-    nets = malloc(num_nets * sizeof(net_t));
+    nets = new net_t[num_nets];
 
     memset(nets, 0, num_nets * sizeof(net_t));
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
     // Generate all cells
     //
 
-    cells = malloc(num_cells * sizeof(cell_t));
+    cells = new cell_t[num_cells];
 
     int grid_w = ceil(sqrt(num_cells));
     int grid_h = ceil(sqrt(num_cells));

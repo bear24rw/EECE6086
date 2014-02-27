@@ -1,8 +1,11 @@
+CXX = clang++
+CXXFLAGS = -Ofast -std=c++0x -Wall -flto -funroll-loops -lm
+
 all:
-	clang -O3 -Wall -std=c99 -lm main.c -o main
+	$(CXX) $(CXXFLAGS) -o main main.cpp magic.cpp
 
 test:
-	clang -O3 -Wall -std=c99 -lm main.c magic.c test.c -o main -DTEST && ./main
+	$(CXX) $(CXXFLAGS) -o main main.cpp magic.cpp test.cpp -DTEST && ./main
 
 clean:
 	rm -fr main
