@@ -20,37 +20,29 @@ point_t get_term_position(cell_t cell, int term)
 
     // coordinates of terminals are -1 from what is given in
     // the pdf since we want to work with 0 based indexing
-    point_t offsets[] = {{1,5}, {4,5}, {1,0}, {4,0}};
-
-    // for all transformations we have to first translate the
-    // center of the cell to the origin, do the transformation,
-    // then translate it back. The cell is 6 units wide and we
-    // are using a 0 based index so the cell is from 0-5 inclusive.
-
-
-    // assume ROT_0 (default) is pointing right
-    // ROT_90 would turn it left by 90 degrees to face up
-    double radians = (double)cell.rot * 3.14159265358979323846f / 180.0f;
-
-    // rotate all terminals counter clockwise
-    for (int i=0; i<4; i++) {
-        double _x = (double)offsets[i].x - 2.5;
-        double _y = (double)offsets[i].y - 2.5;
-        offsets[i].x = round((_x * cos(radians) - _y * sin(radians)) + 2.5);
-        offsets[i].y = round((_x * sin(radians) + _y * cos(radians)) + 2.5);
-    }
-
-    // check if flipped over the y axis
-    if (cell.flipped) {
-        offsets[0].x = (offsets[0].x - 2.5) * -1 + 2.5;
-        offsets[1].x = (offsets[1].x - 2.5) * -1 + 2.5;
-        offsets[2].x = (offsets[2].x - 2.5) * -1 + 2.5;
-        offsets[3].x = (offsets[3].x - 2.5) * -1 + 2.5;
-    }
+    point_t offsets[]    = {{1,5}, {4,5}, {1,0}, {4,0}};
+    point_t offsets_x[]  = {{1,0}, {4,0}, {1,5}, {4,5}};
+    point_t offsets_y[]  = {{4,5}, {1,5}, {4,0}, {1,0}};
+    point_t offsets_xy[] = {{4,0}, {1,0}, {4,5}, {1,5}};
 
     point_t position;
     position.x = cell.x + offsets[term].x;
     position.y = cell.y + offsets[term].y;
+
+    if (cell.flip_x) {
+        position.x = cell.x + offsets_x[term].x;
+        position.y = cell.y + offsets_x[term].y;
+    }
+
+    if (cell.flip_y) {
+        position.x = cell.x + offsets_y[term].x;
+        position.y = cell.y + offsets_y[term].y;
+    }
+
+    if (cell.flip_x && cell.flip_y) {
+        position.x = cell.x + offsets_xy[term].x;
+        position.y = cell.y + offsets_xy[term].y;
+    }
 
     return position;
 }
@@ -121,7 +113,7 @@ int main(int argc, char *argv[])
     for (int i=0; i<num_cells; i++) {
         cells[i].x = 0;
         cells[i].y = 0;
-        cells[i].rot = ROT_0;
-        cells[i].flipped = 0;
+        cells[i].flip_x = 0;
+        cells[i].flip_y = 0;
     }
 }
