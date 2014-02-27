@@ -48,6 +48,18 @@ point_t get_term_position(cell_t cell, int term)
     return position;
 }
 
+int term_on_top(cell_t cell, int term)
+{
+    //
+    // Returns true if the specified terminal is currently on the top edge of the cell
+    //
+
+    if (term == 0 || term == 1)
+        return !cell.flip_y;
+    else
+        return cell.flip_y;
+}
+
 int wirelength(cell_t cell_a, int term_a, cell_t cell_b, int term_b)
 {
     //
