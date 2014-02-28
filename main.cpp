@@ -55,7 +55,7 @@ bool term_on_top(cell_t *cell, int term)
     // Returns true if the specified terminal is currently on the top edge of the cell
     //
 
-    if (cell->feedthrough) {
+    if (cell->feed_through) {
         if (term == 0)
             return !cell->flip_x;
         else
@@ -74,8 +74,8 @@ bool term_on_left(cell_t *cell, int term)
     // Returns true if the specified terminal is currently on the left side of the cell
     //
 
-    if (cell->feedthrough) {
-        return true
+    if (cell->feed_through) {
+        return true;
     }
 
     if (term == 0 || term == 2)
