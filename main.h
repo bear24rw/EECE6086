@@ -25,6 +25,8 @@ typedef struct {
 typedef std::vector<std::vector<cell_t*>> rows_t;
 
 point_t get_term_position(cell_t cell, int term);
+bool term_on_top(cell_t *cell, int term);
+bool term_on_left(cell_t *cell, int term);
 int wirelength(cell_t cell_a, int term_a, cell_t cell_b, int term_b);
 void calculate_x_values(rows_t& rows);
 void calculate_y_values(rows_t& rows);
