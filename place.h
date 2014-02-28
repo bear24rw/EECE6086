@@ -5,6 +5,7 @@
 #include "main.h"
 
 rows_t place(std::vector<cell_t>& cells);
-void add_pass_throughs(rows_t& rows);
+void update_cell_rows(rows_t& rows);
+void add_feed_throughs(rows_t& rows);
 
 #endif

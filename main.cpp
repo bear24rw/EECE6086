@@ -141,10 +141,10 @@ int main(int argc, char *argv[])
         cells[i].flip_x = false;
         cells[i].flip_y = false;
         cells[i].feed_through = false;
-        cells[i].term[0].dest_cell = nullptr;
-        cells[i].term[1].dest_cell = nullptr;
-        cells[i].term[2].dest_cell = nullptr;
-        cells[i].term[3].dest_cell = nullptr;
+        for (int t=0; t<4; t++) {
+            cells[i].term[t].dest_cell = nullptr;
+            cells[i].term[t].connected = false;
+        }
     }
 
     //
