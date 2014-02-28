@@ -38,4 +38,5 @@ void write_magic(std::string filename, rows_t& rows)
         }
     }
 
+    fclose(fp);
 }
