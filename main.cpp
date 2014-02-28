@@ -132,8 +132,10 @@ int main(int argc, char *argv[])
         // subtract 1 from all the numbers to 0 index them
         cell_a--; cell_b--;
         term_a--; term_b--;
-        cells[cell_a].term[term_a].dest_cell = &(cells[cell_b]);
+        cells[cell_a].term[term_a].dest_cell = &cells[cell_b];
         cells[cell_a].term[term_a].dest_term = term_b;
+        cells[cell_b].term[term_b].dest_cell = &cells[cell_a];
+        cells[cell_b].term[term_b].dest_term = term_a;
     }
 
     rows_t rows = place(cells);
