@@ -22,7 +22,11 @@ void write_magic(std::string filename, rows_t& rows)
     for (auto &row : rows) {
         for (auto &cell : row) {
 
-            fprintf(fp, "use cell cell_%d\n", cell->number);
+            if (cell->feed_through) {
+                fprintf(fp, "use feed_through cell_%d\n", cell->number);
+            } else {
+                fprintf(fp, "use cell cell_%d\n", cell->number);
+            }
 
             if (cell->flip_x && cell->flip_y) {
                 fprintf(fp, "transform -1  0 %d 0 -1 %d\n", cell->x + 6, cell->y + 6);
@@ -34,7 +38,11 @@ void write_magic(std::string filename, rows_t& rows)
                 fprintf(fp, "transform  1  0 %d 0  1 %d\n", cell->x + 0, cell->y + 0);
             }
 
-            fprintf(fp, "box 0 0 6 6\n");
+            if (cell->feed_through) {
+                fprintf(fp, "box 0 0 3 6\n");
+            } else {
+                fprintf(fp, "box 0 0 6 6\n");
+            }
         }
     }
 
