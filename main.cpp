@@ -5,6 +5,7 @@
 #include <string.h>
 #include <fstream>
 #include <algorithm>
+#include <string>
 #include "main.h"
 #include "place.h"
 #include "magic.h"
@@ -92,7 +93,9 @@ int main(int argc, char *argv[])
         return EINVAL;
     }
 
-    std::ifstream fp(argv[1]);
+    std::string filename = argv[1];
+
+    std::ifstream fp(filename);
 
     if(fp.fail()) {
         printf("Cannot open file.\n");
@@ -138,7 +141,7 @@ int main(int argc, char *argv[])
     calculate_x_values(rows);
     calculate_y_values(rows);
 
-    write_magic(rows);
+    write_magic(filename, rows);
 
     printf("Done.\n");
 }

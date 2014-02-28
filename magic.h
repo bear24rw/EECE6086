@@ -2,8 +2,9 @@
 #define __MAGIC_H__
 
 #include <vector>
+#include <string>
 #include "main.h"
 
-void write_magic(rows_t& rows);
+void write_magic(std::string filename, rows_t& rows);
 
 #endif
