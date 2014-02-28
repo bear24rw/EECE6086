@@ -23,7 +23,7 @@ void write_magic(std::string filename, rows_t& rows)
         for (auto &cell : row) {
 
             if (cell->feed_through) {
-                fprintf(fp, "use feed_through cell_%d\n", cell->number);
+                fprintf(fp, "use feed_through feed_though_%d\n", cell->number);
             } else {
                 fprintf(fp, "use cell cell_%d\n", cell->number);
             }
