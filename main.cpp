@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <fstream>
+#include <algorithm>
 #include "main.h"
 #include "place.h"
 #include "magic.h"
@@ -134,7 +135,51 @@ int main(int argc, char *argv[])
 
     rows_t rows = place(cells);
 
+    calculate_x_values(rows);
+    calculate_y_values(rows);
+
     write_magic(rows);
 
     printf("Done.\n");
+}
+
+void calculate_x_values(rows_t& rows)
+{
+    for (auto &row : rows) {
+
+        int current_x = 0;
+
+        for (auto &cell : row) {
+
+            // if this cell is a feed through we want to put it right up
+            // against the previous cell
+            if (cell->feed_through)
+                current_x = std::max(current_x-1, 0);
+
+            cell->x = current_x;
+
+            // feed through cells are 3 wide with no border
+            // normal cells are 6 wide with border of 1
+            if (cell->feed_through)
+                current_x += 3;
+            else
+                current_x += 7;
+        }
+    }
+}
+
+void calculate_y_values(rows_t& rows /*, channels*/)
+{
+    int current_y = 0;
+
+    for (auto &row : rows) {
+
+        int channel_width = 1; // TODO: use real channel width
+
+        for (auto &cell : row) {
+            cell->y = current_y;
+        }
+
+        current_y += 7 + channel_width;
+    }
 }
