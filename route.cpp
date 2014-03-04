@@ -86,9 +86,16 @@ channels_t route(rows_t& rows)
                     2A---------------------------2B
             */
 
-            int track_num = 0;
+            // if both terms are on the bottom of the cell we actually want to find the
+            // highest track in order to pull the net up closer to the bottom of the cell
+            bool find_highest = !term->on_top() && !term->dest_term->on_top();
+            int highest_track = -1;
+
+            int track_num = -1;
             bool fits = false;
             for (auto &track : channel.tracks) {
+
+                track_num++;
 
                 // assume we are able to fit this net on this track unless we determine otherwise
                 fits = true;
@@ -104,6 +111,12 @@ channels_t route(rows_t& rows)
                     if (x2_a < x1_a && x2_b > x1_b) { fits = false; }
                 }
 
+                // if we are looking for the highest track and this track fits then it is the new highest, but continue looking
+                if (find_highest && fits) {
+                    highest_track = track_num;
+                    continue;
+                }
+
                 // if fits is still true it means we didn't hit an existing net, we can add it to this existing track and stop searching
                 if (fits) {
                     term->track = track_num;
@@ -113,7 +126,16 @@ channels_t route(rows_t& rows)
                     break;
                 }
 
-                track_num++;
+            }
+
+            // if we're looking for the highest track and we found a valid one add the term to it
+            if (find_highest && highest_track != -1) {
+                printf("found highest: %d\n", highest_track);
+                term->track = highest_track;
+                term->dest_term->track = highest_track;
+                channel.tracks[highest_track].push_back(term);
+                channel.tracks[highest_track].push_back(term->dest_term);
+                continue;
             }
 
             // if we weren't able to fit this term onto an existing track then create a new one for it
