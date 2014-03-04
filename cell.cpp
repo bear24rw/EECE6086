@@ -1,9 +1,7 @@
 #include "cell.h"
 #include "term.h"
 
-cell_t::cell_t() {
-    cell_t(false);
-}
+cell_t::cell_t() : cell_t(false) { }
 
 cell_t::cell_t(bool ft) {
     number = 0;
