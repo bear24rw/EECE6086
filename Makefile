@@ -11,7 +11,7 @@ all: $(BINARY)
 $(BINARY): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-%.o: %.c $(HEADERS)
+%.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clang:
