@@ -35,7 +35,7 @@ typedef struct {
 // a vector of rows where each row is a vector of pointers to cells
 typedef std::vector<std::vector<cell_t*>> rows_t;
 
-point_t get_term_position(cell_t cell, int term);
+point_t get_term_position(cell_t *cell, int term);
 bool term_on_top(cell_t *cell, int term);
 bool term_on_left(cell_t *cell, int term);
 int wirelength(cell_t cell_a, int term_a, cell_t cell_b, int term_b);

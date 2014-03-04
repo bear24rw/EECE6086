@@ -14,7 +14,7 @@
 int num_nets;
 int num_cells;
 
-point_t get_term_position(cell_t cell, int term)
+point_t get_term_position(cell_t *cell, int term)
 {
     //
     // Returns the absolute position of a specified terminal for a given cell
@@ -28,22 +28,22 @@ point_t get_term_position(cell_t cell, int term)
     point_t offsets_xy[] = {{4,0}, {1,0}, {4,5}, {1,5}};
 
     point_t position;
-    position.x = cell.x + offsets[term].x;
-    position.y = cell.y + offsets[term].y;
+    position.x = cell->x + offsets[term].x;
+    position.y = cell->y + offsets[term].y;
 
-    if (cell.flip_x) {
-        position.x = cell.x + offsets_x[term].x;
-        position.y = cell.y + offsets_x[term].y;
+    if (cell->flip_x) {
+        position.x = cell->x + offsets_x[term].x;
+        position.y = cell->y + offsets_x[term].y;
     }
 
-    if (cell.flip_y) {
-        position.x = cell.x + offsets_y[term].x;
-        position.y = cell.y + offsets_y[term].y;
+    if (cell->flip_y) {
+        position.x = cell->x + offsets_y[term].x;
+        position.y = cell->y + offsets_y[term].y;
     }
 
-    if (cell.flip_x && cell.flip_y) {
-        position.x = cell.x + offsets_xy[term].x;
-        position.y = cell.y + offsets_xy[term].y;
+    if (cell->flip_x && cell->flip_y) {
+        position.x = cell->x + offsets_xy[term].x;
+        position.y = cell->y + offsets_xy[term].y;
     }
 
     return position;
@@ -84,7 +84,7 @@ bool term_on_left(cell_t *cell, int term)
         return cell->flip_y;
 }
 
-int wirelength(cell_t cell_a, int term_a, cell_t cell_b, int term_b)
+int wirelength(cell_t *cell_a, int term_a, cell_t *cell_b, int term_b)
 {
     //
     // Returns the manhatten distance between two terminals of two given cells
