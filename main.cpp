@@ -146,6 +146,7 @@ int main(int argc, char *argv[])
             cells[i].term[t].dest_cell = nullptr;
             cells[i].term[t].connected = false;
             cells[i].term[t].track = -1;
+            cells[i].term[t].cell = &cells[i];
         }
     }
 
@@ -170,13 +171,13 @@ int main(int argc, char *argv[])
     calculate_x_values(rows);
 
     printf("Routing cells\n");
-    route(rows);
+    channels_t channels = route(rows);
 
     printf("Calculating cell Y positions\n");
-    calculate_y_values(rows);
+    calculate_y_values(rows, channels);
 
     printf("Writing magic file\n");
-    write_magic(filename, rows);
+    write_magic(filename, rows, channels);
 
     printf("Done.\n");
 }
@@ -212,18 +213,15 @@ void calculate_x_values(rows_t& rows)
     }
 }
 
-void calculate_y_values(rows_t& rows /*, channels*/)
+void calculate_y_values(rows_t& rows, channels_t& channels)
 {
     int current_y = 0;
 
-    for (auto &row : rows) {
-
-        int channel_width = 1; // TODO: use real channel width
-
-        for (auto &cell : row) {
+    for (unsigned int i=0; i<channels.size()-1; i++) {
+        current_y += channels[i].tracks.size() * (TRACK_WIDTH + TRACK_SPACING);
+        for (auto &cell : rows[i]) {
             cell->y = current_y;
         }
-
-        current_y += 7 + channel_width;
+        current_y += CELL_HEIGHT + CELL_SPACING;
     }
 }
