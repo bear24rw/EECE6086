@@ -9,6 +9,10 @@
 #define CELL_HEIGHT   6
 #define CELL_WIDTH    6
 
+typedef struct {
+    int x, y;
+} point_t;
+
 typedef struct cell_t cell_t;
 typedef struct term_t term_t;
 
@@ -90,13 +94,44 @@ struct term_t {
             return cell->flip_y;
     }
 
+    point_t position(void)
+    {
+        //
+        // Returns the absolute world position of this terminal
+        //
+
+        // coordinates of terminals are -1 from what is given in
+        // the pdf since we want to work with 0 based indexing
+        point_t offsets[]    = {{1,5}, {4,5}, {1,0}, {4,0}};
+        point_t offsets_x[]  = {{1,0}, {4,0}, {1,5}, {4,5}};
+        point_t offsets_y[]  = {{4,5}, {1,5}, {4,0}, {1,0}};
+        point_t offsets_xy[] = {{4,0}, {1,0}, {4,5}, {1,5}};
+
+        point_t position;
+        position.x = cell->x + offsets[number].x;
+        position.y = cell->y + offsets[number].y;
+
+        if (cell->flip_x) {
+            position.x = cell->x + offsets_x[number].x;
+            position.y = cell->y + offsets_x[number].y;
+        }
+
+        if (cell->flip_y) {
+            position.x = cell->x + offsets_y[number].x;
+            position.y = cell->y + offsets_y[number].y;
+        }
+
+        if (cell->flip_x && cell->flip_y) {
+            position.x = cell->x + offsets_xy[number].x;
+            position.y = cell->y + offsets_xy[number].y;
+        }
+
+        return position;
+    }
+
 };
 
 
-
-typedef struct {
-    int x, y;
-} point_t;
 
 // a vector of rows where each row is a vector of pointers to cells
 typedef std::vector<std::vector<cell_t*>> rows_t;
@@ -109,7 +144,6 @@ typedef struct {
 
 typedef std::vector<channel_t> channels_t;
 
-point_t get_term_position(cell_t *cell, int term);
 int wirelength(cell_t cell_a, int term_a, cell_t cell_b, int term_b);
 void calculate_x_values(rows_t& rows);
 void calculate_y_values(rows_t& rows, channels_t& channels);

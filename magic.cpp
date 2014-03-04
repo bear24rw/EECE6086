@@ -62,8 +62,8 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             for (int term=0; term<num_terms; term++) {
                 if (cell->term[term].dest_cell == nullptr) continue;
                 if (cell->term[term].track == -1) continue;
-                point_t p1 = get_term_position(cell, term);
-                point_t p2 = get_term_position(cell->term[term].dest_cell, cell->term[term].dest_term);
+                point_t p1 = cell->term[term].position();
+                point_t p2 = cell->term[term].dest_cell->term[cell->term[term].dest_term].position();
                 if (cell->term[term].on_top()) {
                     p1.y += 1 + CELL_SPACING + cell->term[term].track * (TRACK_WIDTH + TRACK_SPACING);
                 } else {
@@ -96,7 +96,7 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
                 int x1, y1, x2, y2;
 
                 // source terminal
-                p1 = get_term_position(cell, term);
+                p1 = cell->term[term].position();
                 p2 = p1;
                 if (cell->term[term].on_top()) {
                     p2.y += cell->term[term].track * (TRACK_WIDTH + TRACK_SPACING);
@@ -110,7 +110,7 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
                 fprintf(fp, "rect %d %d %d %d\n", x1, y1, x2+TRACK_WIDTH, y2+TRACK_WIDTH);
 
                 // destination terminal
-                p1 = get_term_position(cell->term[term].dest_cell, cell->term[term].dest_term);
+                p1 = cell->term[term].dest_cell->term[cell->term[term].dest_term].position();
                 p2 = p1;
                 if (cell->term[term].dest_cell->term[cell->term[term].dest_term].on_top()) {
                     p2.y += 1 + CELL_SPACING + cell->term[term].dest_cell->term[cell->term[term].dest_term].track * (TRACK_WIDTH + TRACK_SPACING);
@@ -138,8 +138,8 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             for (int term=0; term<num_terms; term++) {
                 if (cell->term[term].dest_cell == nullptr) continue;
                 if (cell->term[term].track == -1) continue;
-                point_t p1 = get_term_position(cell, term);
-                point_t p2 = get_term_position(cell->term[term].dest_cell, cell->term[term].dest_term);
+                point_t p1 = cell->term[term].position();
+                point_t p2 = cell->term[term].dest_cell->term[cell->term[term].dest_term].position();
                 if (cell->term[term].on_top()) {
                     p1.y += 1 + CELL_SPACING + cell->term[term].track * (TRACK_WIDTH + TRACK_SPACING);
                 } else {
