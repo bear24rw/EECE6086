@@ -107,9 +107,9 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
                 p1 = src_term->position();
                 p2 = p1;
                 if (src_term->on_top()) {
-                    p2.y += src_term->track * (TRACK_WIDTH + TRACK_SPACING);
+                    p2.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
                 } else {
-                    p2.y -= src_term->track * (TRACK_WIDTH + TRACK_SPACING);
+                    p2.y -= 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
                 }
                 x1 = std::min(p1.x, p2.x);
                 x2 = std::max(p1.x, p2.x);
@@ -121,9 +121,9 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
                 p1 = dst_term->position();
                 p2 = p1;
                 if (dst_term->on_top()) {
-                    p2.y += dst_term->track * (TRACK_WIDTH + TRACK_SPACING);
+                    p2.y += 1 + CELL_SPACING + dst_term->track * (TRACK_WIDTH + TRACK_SPACING);
                 } else {
-                    p2.y -= dst_term->track * (TRACK_WIDTH + TRACK_SPACING);
+                    p2.y -= 1 + CELL_SPACING + dst_term->track * (TRACK_WIDTH + TRACK_SPACING);
                 }
                 x1 = std::min(p1.x, p2.x);
                 x2 = std::max(p1.x, p2.x);
