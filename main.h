@@ -9,16 +9,33 @@
 #define CELL_HEIGHT   6
 #define CELL_WIDTH    6
 
-typedef struct {
+typedef struct point_t point_t;
+
+struct point_t{
     int x, y;
-} point_t;
+
+    point_t() {}
+
+    point_t(int _x, int _y) {
+        x = _x;
+        y = _y;
+    }
+
+    point_t operator+(const point_t p) {
+        return point_t(x+p.x, y+p.y);
+    }
+
+    point_t operator-(const point_t p) {
+        return point_t(x-p.x, y-p.y);
+    }
+};
 
 typedef struct cell_t cell_t;
 typedef struct term_t term_t;
 
 struct cell_t {
     int number;
-    int x, y;
+    point_t position;
     bool flip_x;
     bool flip_y;
     bool feed_through;
@@ -40,9 +57,6 @@ struct term_t {
 
     cell_t *dest_cell;
     int dest_term;
-
-    // absolute world position of terminal
-    int x, y;
 
     // this gets set to true in add_feed_throughs to indicate the term is
     // in the proper channel (area between two rows) probably needs a
@@ -107,24 +121,11 @@ struct term_t {
         point_t offsets_y[]  = {{4,5}, {1,5}, {4,0}, {1,0}};
         point_t offsets_xy[] = {{4,0}, {1,0}, {4,5}, {1,5}};
 
-        point_t position;
-        position.x = cell->x + offsets[number].x;
-        position.y = cell->y + offsets[number].y;
+        point_t position = cell->position + offsets[number];
 
-        if (cell->flip_x) {
-            position.x = cell->x + offsets_x[number].x;
-            position.y = cell->y + offsets_x[number].y;
-        }
-
-        if (cell->flip_y) {
-            position.x = cell->x + offsets_y[number].x;
-            position.y = cell->y + offsets_y[number].y;
-        }
-
-        if (cell->flip_x && cell->flip_y) {
-            position.x = cell->x + offsets_xy[number].x;
-            position.y = cell->y + offsets_xy[number].y;
-        }
+        if (cell->flip_x)                 { position = cell->position + offsets_x[number];  }
+        if (cell->flip_y)                 { position = cell->position + offsets_y[number];  }
+        if (cell->flip_x && cell->flip_y) { position = cell->position + offsets_xy[number]; }
 
         return position;
     }

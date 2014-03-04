@@ -34,13 +34,13 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             }
 
             if (cell->flip_x && cell->flip_y) {
-                fprintf(fp, "transform -1  0 %d 0 -1 %d\n", cell->x + 6, cell->y + 6);
+                fprintf(fp, "transform -1  0 %d 0 -1 %d\n", cell->position.x + 6, cell->position.y + 6);
             } else if (cell->flip_x) {
-                fprintf(fp, "transform  1  0 %d 0 -1 %d\n", cell->x + 0, cell->y + 6);
+                fprintf(fp, "transform  1  0 %d 0 -1 %d\n", cell->position.x + 0, cell->position.y + 6);
             } else if (cell->flip_y) {
-                fprintf(fp, "transform -1  0 %d 0  1 %d\n", cell->x + 6, cell->y + 0);
+                fprintf(fp, "transform -1  0 %d 0  1 %d\n", cell->position.x + 6, cell->position.y + 0);
             } else {
-                fprintf(fp, "transform  1  0 %d 0  1 %d\n", cell->x + 0, cell->y + 0);
+                fprintf(fp, "transform  1  0 %d 0  1 %d\n", cell->position.x + 0, cell->position.y + 0);
             }
 
             if (cell->feed_through) {

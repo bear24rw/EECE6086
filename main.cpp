@@ -126,7 +126,7 @@ void calculate_x_values(rows_t& rows)
             if (cell->feed_through && !last_was_feed_through)
                 current_x = std::max(current_x-1, 0);
 
-            cell->x = current_x;
+            cell->position.x = current_x;
 
             // feed through cells are 3 wide with no border
             // normal cells are 6 wide with border of 1
@@ -147,7 +147,7 @@ void calculate_y_values(rows_t& rows, channels_t& channels)
     for (unsigned int i=0; i<channels.size()-1; i++) {
         current_y += channels[i].tracks.size() * (TRACK_WIDTH + TRACK_SPACING);
         for (auto &cell : rows[i]) {
-            cell->y = current_y;
+            cell->position.y = current_y;
         }
         current_y += CELL_HEIGHT + CELL_SPACING;
     }
