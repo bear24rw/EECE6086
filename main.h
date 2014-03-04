@@ -5,6 +5,19 @@
 
 typedef struct cell_t cell_t;
 
+typedef struct {
+    cell_t *dest_cell;
+    int dest_term;
+
+    // this gets set to true in add_feed_throughs to indicate the term is
+    // in the proper channel (area between two rows) probably needs a
+    // better name
+    bool connected;
+
+    // track within the channel
+    int track;
+} term_t;
+
 struct cell_t {
     int number;
     int x, y;
@@ -12,15 +25,7 @@ struct cell_t {
     bool flip_y;
     bool feed_through;
     int row, col; // the row and col of the cell in the placement grid, before feed throughs are added
-    struct term_t {
-        cell_t *dest_cell;
-        int dest_term;
-
-        // this gets set to true in add_feed_throughs to indicate the term is
-        // in the proper channel (area between two rows) probably needs a
-        // better name
-        bool connected;
-    } term[4];
+    term_t term[4];
 };
 
 typedef struct {
