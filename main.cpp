@@ -50,40 +50,6 @@ point_t get_term_position(cell_t *cell, int term)
     return position;
 }
 
-bool term_on_top(cell_t *cell, int term)
-{
-    //
-    // Returns true if the specified terminal is currently on the top edge of the cell
-    //
-
-    if (cell->feed_through) {
-        if (term == 0)
-            return !cell->flip_x;
-        else
-            return cell->flip_x;
-    }
-
-    if (term == 0 || term == 1)
-        return !cell->flip_x;
-    else
-        return cell->flip_x;
-}
-
-bool term_on_left(cell_t *cell, int term)
-{
-    //
-    // Returns true if the specified terminal is currently on the left side of the cell
-    //
-
-    if (cell->feed_through) {
-        return true;
-    }
-
-    if (term == 0 || term == 2)
-        return !cell->flip_y;
-    else
-        return cell->flip_y;
-}
 
 int wirelength(cell_t *cell_a, int term_a, cell_t *cell_b, int term_b)
 {
@@ -139,14 +105,10 @@ int main(int argc, char *argv[])
 
     for (int i=0; i<num_cells; i++) {
         cells[i].number = i;
-        cells[i].flip_x = false;
-        cells[i].flip_y = false;
-        cells[i].feed_through = false;
+        cells[i].term = new term_t[4];
         for (int t=0; t<4; t++) {
-            cells[i].term[t].dest_cell = nullptr;
-            cells[i].term[t].connected = false;
-            cells[i].term[t].track = -1;
             cells[i].term[t].cell = &cells[i];
+            cells[i].term[t].number = t;
         }
     }
 

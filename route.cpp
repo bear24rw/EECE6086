@@ -44,7 +44,7 @@ channels_t route(rows_t& rows)
         for (auto &cell : rows[row_idx]) {
             int num_terms = cell->feed_through ? 2 : 4;
             for (int term=0; term<num_terms; term++) {
-                if (term_on_top(cell, term)) {
+                if (cell->term[term].on_top()) {
                     channels[row_idx + 1].terms.push_back(&cell->term[term]);
                 } else {
                     channels[row_idx].terms.push_back(&cell->term[term]);

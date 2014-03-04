@@ -70,18 +70,18 @@ void add_feed_throughs(rows_t& rows)
                 dst_cell->term[dst_term].connected = true;
 
                 // terminals are in the same row and both facing same direction there is no need for feed through
-                if (src_cell->row == dst_cell->row && term_on_top(src_cell, src_term) == term_on_top(dst_cell, dst_term))
+                if (src_cell->row == dst_cell->row && src_cell->term[src_term].on_top() == dst_cell->term[dst_term].on_top())
                     continue;
 
                 // same row but the source is on top and the dst is on the bottom
-                if (src_cell->row == dst_cell-> row && term_on_top(src_cell, src_term) && !term_on_top(dst_cell, dst_term)) {
+                if (src_cell->row == dst_cell-> row && src_cell->term[src_term].on_top() && !dst_cell->term[dst_term].on_top()) {
                     cell_t *feed = new cell_t;
                     feed->number = 0;
                     feed->feed_through = true;
                     feed->flip_x = false;
                     feed->flip_y = false;
                     // figure out if we should add the feeder to the left or right side of the cell
-                    if (term_on_left(src_cell, src_term)) {
+                    if (src_cell->term[src_term].on_left()) {
                         row.insert(row.begin()+row_idx, feed);
                     } else {
                         row.insert(row.begin()+row_idx+1, feed);
