@@ -58,11 +58,10 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
     fprintf(fp, "<< metal1 >>\n");
     for (auto &row : rows) {
         for (auto &cell : row) {
-            int num_terms = cell->feed_through ? 2 : 4;
-            for (int term=0; term<num_terms; term++) {
+            for (auto &term : cell->terms) {
 
-                term_t *src_term = &cell->terms[term];
-                term_t *dst_term = cell->terms[term].dest_term;
+                term_t *src_term = &term;
+                term_t *dst_term = src_term->dest_term;
 
                 if (src_term->dest_cell == nullptr) continue;
                 if (src_term->track == -1) continue;
@@ -93,10 +92,9 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
     fprintf(fp, "<< metal2 >>\n");
     for (auto &row : rows) {
         for (auto &cell : row) {
-            int num_terms = cell->feed_through ? 2 : 4;
-            for (int term=0; term<num_terms; term++) {
+            for (auto &term : cell->terms) {
 
-                term_t *src_term = &cell->terms[term];
+                term_t *src_term = &term;
                 term_t *dst_term = src_term->dest_term;
 
                 if (dst_term == nullptr) continue;
@@ -144,10 +142,9 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
     fprintf(fp, "<< m2contact >>\n");
     for (auto &row : rows) {
         for (auto &cell : row) {
-            int num_terms = cell->feed_through ? 2 : 4;
-            for (int term=0; term<num_terms; term++) {
+            for (auto &term : cell->terms) {
 
-                term_t *src_term = &cell->terms[term];
+                term_t *src_term = &term;
                 term_t *dst_term = src_term->dest_term;
 
                 if (dst_term == nullptr) continue;

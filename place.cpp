@@ -50,13 +50,9 @@ void add_feed_throughs(rows_t& rows)
 
             cell_t *src_cell = row[row_idx];
 
-            // if this is a feed_through cell there are only two terminals
-            int num_terms = src_cell->feed_through ? 2 : 4;
+            for (auto &term : src_cell->terms) {
 
-            // loop through all the terminals in this cell
-            for (int term=0; term<num_terms; term++) {
-
-                term_t *src_term = &src_cell->terms[term];
+                term_t *src_term = &term;
 
                 // dont process terminals that have already been checked
                 if (src_term->connected) continue;
@@ -77,8 +73,7 @@ void add_feed_throughs(rows_t& rows)
 
                 // same row but the source is on top and the dst is on the bottom
                 if (src_cell->row == dst_cell-> row && src_term->on_top() && !dst_term->on_top()) {
-                    cell_t *feed = new cell_t;
-                    feed->feed_through = true;
+                    cell_t *feed = new cell_t(/*feed_through=*/true);
                     // figure out if we should add the feeder to the left or right side of the cell
                     if (src_term->on_left()) {
                         row.insert(row.begin()+row_idx, feed);

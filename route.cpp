@@ -42,12 +42,11 @@ channels_t route(rows_t& rows)
     // to the correct channels
     for (unsigned int row_idx=0; row_idx<rows.size(); row_idx++) {
         for (auto &cell : rows[row_idx]) {
-            int num_terms = cell->feed_through ? 2 : 4;
-            for (int term=0; term<num_terms; term++) {
-                if (cell->terms[term].on_top()) {
-                    channels[row_idx + 1].terms.push_back(&cell->terms[term]);
+            for (auto &term : cell->terms) {
+                if (term.on_top()) {
+                    channels[row_idx + 1].terms.push_back(&term);
                 } else {
-                    channels[row_idx].terms.push_back(&cell->terms[term]);
+                    channels[row_idx].terms.push_back(&term);
                 }
             }
         }
