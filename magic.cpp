@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include "magic.h"
 #include "main.h"
 
@@ -68,11 +69,15 @@ void write_magic(std::string filename, rows_t& rows)
                     p1.y -= cell->term[term].track * 2;
                 }
                 p2.y = p1.y;
-                fprintf(fp, "rect %d %d %d %d\n", p1.x, p1.y, p2.x, p2.y);
+                int x1 = std::min(p1.x, p2.x);
+                int x2 = std::max(p1.x, p2.x);
+                int y1 = p1.y;
+                int y2 = p1.y + 1;
+                fprintf(fp, "rect %d %d %d %d\n", x1, y1, x2, y2);
             }
         }
     }
 
-
+    fprintf(fp, "<< end >>\n");
     fclose(fp);
 }
