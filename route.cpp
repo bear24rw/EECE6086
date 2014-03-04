@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <vector>
 #include "route.h"
 #include "main.h"
@@ -59,6 +60,7 @@ void route(rows_t& rows)
         int track = 0;
         for (auto &term : channel) {
             if (term->track != -1) continue;
+            if (term->dest_cell == nullptr) continue;
             term->track = track;
             term->dest_cell->term[term->dest_term].track = track;
             track++;

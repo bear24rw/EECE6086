@@ -59,6 +59,7 @@ void write_magic(std::string filename, rows_t& rows)
         for (auto &cell : row) {
             int num_terms = cell->feed_through ? 2 : 4;
             for (int term=0; term<num_terms; term++) {
+                if (cell->term[term].dest_cell == nullptr) continue;
                 point_t p1 = get_term_position(cell, term);
                 point_t p2 = get_term_position(cell->term[term].dest_cell, cell->term[term].dest_term);
                 if (term_on_top(cell, term)) {
