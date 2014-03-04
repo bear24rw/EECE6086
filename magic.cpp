@@ -56,32 +56,29 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
     //
 
     fprintf(fp, "<< metal1 >>\n");
-    for (auto &row : rows) {
-        for (auto &cell : row) {
-            for (auto &term : cell->terms) {
+    for (auto &channel : channels) {
+        for (auto &src_term : channel.terms) {
 
-                term_t *src_term = &term;
-                term_t *dst_term = src_term->dest_term;
+            term_t *dst_term = src_term->dest_term;
 
-                if (src_term->dest_cell == nullptr) continue;
-                if (src_term->track == -1) continue;
+            if (src_term->dest_cell == nullptr) continue;
+            if (src_term->track == UNROUTED) continue;
+            if (src_term->track == VERTICAL) continue;
 
-                point_t p1 = src_term->position();
-                point_t p2 = dst_term->position();
+            point_t p1 = src_term->position();
+            point_t p2 = dst_term->position();
 
-                if (src_term->on_top()) {
-                    p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
-                } else {
-                    p1.y -= 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
-                }
-
-                p2.y = p1.y;
-                int x1 = std::min(p1.x, p2.x);
-                int x2 = std::max(p1.x, p2.x)+1;
-                int y1 = p1.y;
-                int y2 = p1.y + 1;
-                fprintf(fp, "rect %d %d %d %d\n", x1, y1, x2, y2);
+            if (src_term->on_top()) {
+                p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
+            } else {
+                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track) * (TRACK_WIDTH + TRACK_SPACING);
             }
+
+            int x1 = std::min(p1.x, p2.x);
+            int x2 = std::max(p1.x, p2.x)+1;
+            int y1 = p1.y;
+            int y2 = p1.y + 1;
+            fprintf(fp, "rect %d %d %d %d\n", x1, y1, x2, y2);
         }
     }
 
@@ -90,47 +87,39 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
     //
 
     fprintf(fp, "<< metal2 >>\n");
-    for (auto &row : rows) {
-        for (auto &cell : row) {
-            for (auto &term : cell->terms) {
+    for (auto &channel : channels) {
+        for (auto &src_term : channel.terms) {
 
-                term_t *src_term = &term;
-                term_t *dst_term = src_term->dest_term;
+            term_t *dst_term = src_term->dest_term;
 
-                if (dst_term == nullptr) continue;
-                if (src_term->track == -1) continue;
+            if (dst_term == nullptr) continue;
+            if (src_term->track == UNROUTED) continue;
 
-                point_t p1, p2;
-                int x1, y1, x2, y2;
+            point_t p1, p2;
+            int x1, y1, x2, y2;
 
-                // source terminal
+            if (src_term->track == VERTICAL) {
                 p1 = src_term->position();
-                p2 = p1;
-                if (src_term->on_top()) {
-                    p2.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
-                } else {
-                    p2.y -= 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
-                }
+                p2 = dst_term->position();
                 x1 = std::min(p1.x, p2.x);
-                x2 = std::max(p1.x, p2.x);
                 y1 = std::min(p1.y, p2.y);
-                y2 = std::max(p1.y, p2.y);
-                fprintf(fp, "rect %d %d %d %d\n", x1, y1, x2+TRACK_WIDTH, y2+TRACK_WIDTH);
-
-                // destination terminal
-                p1 = dst_term->position();
-                p2 = p1;
-                if (dst_term->on_top()) {
-                    p2.y += 1 + CELL_SPACING + dst_term->track * (TRACK_WIDTH + TRACK_SPACING);
-                } else {
-                    p2.y -= 1 + CELL_SPACING + dst_term->track * (TRACK_WIDTH + TRACK_SPACING);
-                }
-                x1 = std::min(p1.x, p2.x);
-                x2 = std::max(p1.x, p2.x);
-                y1 = std::min(p1.y, p2.y);
-                y2 = std::max(p1.y, p2.y);
-                fprintf(fp, "rect %d %d %d %d\n", x1, y1, x2+TRACK_WIDTH, y2+TRACK_WIDTH);
+                x2 = std::max(p1.x, p2.x) + TRACK_WIDTH;
+                y2 = std::max(p1.y, p2.y) + TRACK_WIDTH;
+                fprintf(fp, "rect %d %d %d %d\n", x1, y1, x2, y2);
+                continue;
             }
+
+            p1 = p2 = src_term->position();
+            if (src_term->on_top()) {
+                p2.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
+            } else {
+                p2.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track) * (TRACK_WIDTH + TRACK_SPACING);
+            }
+            x1 = std::min(p1.x, p2.x);
+            y1 = std::min(p1.y, p2.y);
+            x2 = std::max(p1.x, p2.x) + TRACK_WIDTH;
+            y2 = std::max(p1.y, p2.y) + TRACK_WIDTH;
+            fprintf(fp, "rect %d %d %d %d\n", x1, y1, x2, y2);
         }
     }
 
@@ -140,32 +129,28 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
     //
 
     fprintf(fp, "<< m2contact >>\n");
-    for (auto &row : rows) {
-        for (auto &cell : row) {
-            for (auto &term : cell->terms) {
+    for (auto &channel : channels) {
+        for (auto &src_term : channel.terms) {
 
-                term_t *src_term = &term;
-                term_t *dst_term = src_term->dest_term;
+            term_t *dst_term = src_term->dest_term;
 
-                if (dst_term == nullptr) continue;
-                if (src_term->track == -1) continue;
+            if (dst_term == nullptr) continue;
+            if (src_term->track == UNROUTED) continue;
+            if (src_term->track == VERTICAL) continue;
 
-                point_t p1 = src_term->position();
-                point_t p2 = dst_term->position();
+            point_t p1 = src_term->position();
 
-                if (src_term->on_top()) {
-                    p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
-                } else {
-                    p1.y -= 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
-                }
-                p2.y = p1.y;
-
-                fprintf(fp, "rect %d %d %d %d\n", p1.x, p1.y, p1.x+1, p1.y+1);
-                fprintf(fp, "rect %d %d %d %d\n", p2.x, p2.y, p2.x+1, p2.y+1);
+            if (src_term->on_top()) {
+                p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
+            } else {
+                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track) * (TRACK_WIDTH + TRACK_SPACING);
             }
+
+            fprintf(fp, "rect %d %d %d %d\n", p1.x, p1.y, p1.x+1, p1.y+1);
         }
     }
 
     fprintf(fp, "<< end >>\n");
     fclose(fp);
 }
+

@@ -57,8 +57,18 @@ channels_t route(rows_t& rows)
         for (auto &term : channel.terms) {
             if (term->dest_cell == nullptr) continue;
             if (term->track >= 0) continue;
+
+            // if the two terminals are directly above each
+            // other there is no need for a track
+            if (term->position().x == term->dest_term->position().x) {
+                term->track = VERTICAL;
+                term->dest_term->track = VERTICAL;
+                continue;
+            }
+
             term->track = channel.tracks.size();
             term->dest_term->track = channel.tracks.size();
+
             std::vector<term_t*> track;
             track.push_back(term);
             track.push_back(term->dest_term);
@@ -68,4 +78,5 @@ channels_t route(rows_t& rows)
 
     return channels;
 }
+
 
