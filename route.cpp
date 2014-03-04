@@ -44,10 +44,10 @@ channels_t route(rows_t& rows)
         for (auto &cell : rows[row_idx]) {
             int num_terms = cell->feed_through ? 2 : 4;
             for (int term=0; term<num_terms; term++) {
-                if (cell->term[term].on_top()) {
-                    channels[row_idx + 1].terms.push_back(&cell->term[term]);
+                if (cell->terms[term].on_top()) {
+                    channels[row_idx + 1].terms.push_back(&cell->terms[term]);
                 } else {
-                    channels[row_idx].terms.push_back(&cell->term[term]);
+                    channels[row_idx].terms.push_back(&cell->terms[term]);
                 }
             }
         }
@@ -59,10 +59,10 @@ channels_t route(rows_t& rows)
             if (term->dest_cell == nullptr) continue;
             if (term->track >= 0) continue;
             term->track = channel.tracks.size();
-            term->dest_cell->term[term->dest_term].track = channel.tracks.size();
+            term->dest_cell->terms[term->dest_term].track = channel.tracks.size();
             std::vector<term_t*> track;
             track.push_back(term);
-            track.push_back(&term->dest_cell->term[term->dest_term]);
+            track.push_back(&term->dest_cell->terms[term->dest_term]);
             channel.tracks.push_back(track);
         }
     }

@@ -60,14 +60,14 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
         for (auto &cell : row) {
             int num_terms = cell->feed_through ? 2 : 4;
             for (int term=0; term<num_terms; term++) {
-                if (cell->term[term].dest_cell == nullptr) continue;
-                if (cell->term[term].track == -1) continue;
-                point_t p1 = cell->term[term].position();
-                point_t p2 = cell->term[term].dest_cell->term[cell->term[term].dest_term].position();
-                if (cell->term[term].on_top()) {
-                    p1.y += 1 + CELL_SPACING + cell->term[term].track * (TRACK_WIDTH + TRACK_SPACING);
+                if (cell->terms[term].dest_cell == nullptr) continue;
+                if (cell->terms[term].track == -1) continue;
+                point_t p1 = cell->terms[term].position();
+                point_t p2 = cell->terms[term].dest_cell->terms[cell->terms[term].dest_term].position();
+                if (cell->terms[term].on_top()) {
+                    p1.y += 1 + CELL_SPACING + cell->terms[term].track * (TRACK_WIDTH + TRACK_SPACING);
                 } else {
-                    p1.y -= 1 + CELL_SPACING + cell->term[term].track * (TRACK_WIDTH + TRACK_SPACING);
+                    p1.y -= 1 + CELL_SPACING + cell->terms[term].track * (TRACK_WIDTH + TRACK_SPACING);
                 }
                 p2.y = p1.y;
                 int x1 = std::min(p1.x, p2.x);
@@ -89,19 +89,19 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             int num_terms = cell->feed_through ? 2 : 4;
             for (int term=0; term<num_terms; term++) {
 
-                if (cell->term[term].dest_cell == nullptr) continue;
-                if (cell->term[term].track == -1) continue;
+                if (cell->terms[term].dest_cell == nullptr) continue;
+                if (cell->terms[term].track == -1) continue;
 
                 point_t p1, p2;
                 int x1, y1, x2, y2;
 
                 // source terminal
-                p1 = cell->term[term].position();
+                p1 = cell->terms[term].position();
                 p2 = p1;
-                if (cell->term[term].on_top()) {
-                    p2.y += cell->term[term].track * (TRACK_WIDTH + TRACK_SPACING);
+                if (cell->terms[term].on_top()) {
+                    p2.y += cell->terms[term].track * (TRACK_WIDTH + TRACK_SPACING);
                 } else {
-                    p2.y -= cell->term[term].track * (TRACK_WIDTH + TRACK_SPACING);
+                    p2.y -= cell->terms[term].track * (TRACK_WIDTH + TRACK_SPACING);
                 }
                 x1 = std::min(p1.x, p2.x);
                 x2 = std::max(p1.x, p2.x);
@@ -110,12 +110,12 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
                 fprintf(fp, "rect %d %d %d %d\n", x1, y1, x2+TRACK_WIDTH, y2+TRACK_WIDTH);
 
                 // destination terminal
-                p1 = cell->term[term].dest_cell->term[cell->term[term].dest_term].position();
+                p1 = cell->terms[term].dest_cell->terms[cell->terms[term].dest_term].position();
                 p2 = p1;
-                if (cell->term[term].dest_cell->term[cell->term[term].dest_term].on_top()) {
-                    p2.y += 1 + CELL_SPACING + cell->term[term].dest_cell->term[cell->term[term].dest_term].track * (TRACK_WIDTH + TRACK_SPACING);
+                if (cell->terms[term].dest_cell->terms[cell->terms[term].dest_term].on_top()) {
+                    p2.y += 1 + CELL_SPACING + cell->terms[term].dest_cell->terms[cell->terms[term].dest_term].track * (TRACK_WIDTH + TRACK_SPACING);
                 } else {
-                    p2.y -= 1 + CELL_SPACING + cell->term[term].dest_cell->term[cell->term[term].dest_term].track * (TRACK_WIDTH + TRACK_SPACING);
+                    p2.y -= 1 + CELL_SPACING + cell->terms[term].dest_cell->terms[cell->terms[term].dest_term].track * (TRACK_WIDTH + TRACK_SPACING);
                 }
                 x1 = std::min(p1.x, p2.x);
                 x2 = std::max(p1.x, p2.x);
@@ -136,14 +136,14 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
         for (auto &cell : row) {
             int num_terms = cell->feed_through ? 2 : 4;
             for (int term=0; term<num_terms; term++) {
-                if (cell->term[term].dest_cell == nullptr) continue;
-                if (cell->term[term].track == -1) continue;
-                point_t p1 = cell->term[term].position();
-                point_t p2 = cell->term[term].dest_cell->term[cell->term[term].dest_term].position();
-                if (cell->term[term].on_top()) {
-                    p1.y += 1 + CELL_SPACING + cell->term[term].track * (TRACK_WIDTH + TRACK_SPACING);
+                if (cell->terms[term].dest_cell == nullptr) continue;
+                if (cell->terms[term].track == -1) continue;
+                point_t p1 = cell->terms[term].position();
+                point_t p2 = cell->terms[term].dest_cell->terms[cell->terms[term].dest_term].position();
+                if (cell->terms[term].on_top()) {
+                    p1.y += 1 + CELL_SPACING + cell->terms[term].track * (TRACK_WIDTH + TRACK_SPACING);
                 } else {
-                    p1.y -= 1 + CELL_SPACING + cell->term[term].track * (TRACK_WIDTH + TRACK_SPACING);
+                    p1.y -= 1 + CELL_SPACING + cell->terms[term].track * (TRACK_WIDTH + TRACK_SPACING);
                 }
                 p2.y = p1.y;
                 fprintf(fp, "rect %d %d %d %d\n", p1.x, p1.y, p1.x+1, p1.y+1);

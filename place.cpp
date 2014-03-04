@@ -57,50 +57,50 @@ void add_feed_throughs(rows_t& rows)
             for (int src_term=0; src_term<num_terms; src_term++) {
 
                 // dont process terminals that have already been checked
-                if (src_cell->term[src_term].connected) continue;
+                if (src_cell->terms[src_term].connected) continue;
 
                 // get the cell that this terminal is connected to
-                cell_t *dst_cell = src_cell->term[src_term].dest_cell;
-                int dst_term     = src_cell->term[src_term].dest_term;
+                cell_t *dst_cell = src_cell->terms[src_term].dest_cell;
+                int dst_term     = src_cell->terms[src_term].dest_term;
 
                 if (dst_cell == nullptr) continue;
 
                 // we're about to handle this net so just mark it as done
-                src_cell->term[src_term].connected = true;
-                dst_cell->term[dst_term].connected = true;
+                src_cell->terms[src_term].connected = true;
+                dst_cell->terms[dst_term].connected = true;
 
                 // terminals are in the same row and both facing same direction there is no need for feed through
-                if (src_cell->row == dst_cell->row && src_cell->term[src_term].on_top() == dst_cell->term[dst_term].on_top())
+                if (src_cell->row == dst_cell->row && src_cell->terms[src_term].on_top() == dst_cell->terms[dst_term].on_top())
                     continue;
 
                 // same row but the source is on top and the dst is on the bottom
-                if (src_cell->row == dst_cell-> row && src_cell->term[src_term].on_top() && !dst_cell->term[dst_term].on_top()) {
+                if (src_cell->row == dst_cell-> row && src_cell->terms[src_term].on_top() && !dst_cell->terms[dst_term].on_top()) {
                     cell_t *feed = new cell_t;
                     feed->number = 0;
                     feed->feed_through = true;
                     feed->flip_x = false;
                     feed->flip_y = false;
                     // figure out if we should add the feeder to the left or right side of the cell
-                    if (src_cell->term[src_term].on_left()) {
+                    if (src_cell->terms[src_term].on_left()) {
                         row.insert(row.begin()+row_idx, feed);
                     } else {
                         row.insert(row.begin()+row_idx+1, feed);
                     }
                     // remap the source to go through top of the feed cell
-                    src_cell->term[src_term].dest_cell = feed;
-                    src_cell->term[src_term].dest_term = 0;
+                    src_cell->terms[src_term].dest_cell = feed;
+                    src_cell->terms[src_term].dest_term = 0;
                     // remap the top of feed cell to connect to source
-                    feed->term[0].dest_cell = src_cell;
-                    feed->term[0].dest_term = src_term;
+                    feed->terms[0].dest_cell = src_cell;
+                    feed->terms[0].dest_term = src_term;
                     // remap the bottom of the feed cell to connect to original dest
-                    feed->term[1].dest_cell = dst_cell;
-                    feed->term[1].dest_term = dst_term;
+                    feed->terms[1].dest_cell = dst_cell;
+                    feed->terms[1].dest_term = dst_term;
                     // remap the original destination to connect to bottom of feed cell
-                    dst_cell->term[dst_term].dest_cell = feed;
-                    dst_cell->term[dst_term].dest_term = 1;
+                    dst_cell->terms[dst_term].dest_cell = feed;
+                    dst_cell->terms[dst_term].dest_term = 1;
                     // both terminals of the feeder are now connected
-                    feed->term[0].connected = true;
-                    feed->term[1].connected = true;
+                    feed->terms[0].connected = true;
+                    feed->terms[1].connected = true;
 
                     // since we just added a cell we need to skip
                     row_idx++;

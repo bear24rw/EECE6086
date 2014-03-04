@@ -23,7 +23,7 @@ struct cell_t {
     bool flip_y;
     bool feed_through;
     int row, col; // the row and col of the cell in the placement grid, before feed throughs are added
-    term_t *term;
+    term_t *terms;
 
     cell_t() {
         flip_x = false;

@@ -22,8 +22,8 @@ int wirelength(cell_t *cell_a, int term_a, cell_t *cell_b, int term_b)
     // Returns the manhatten distance between two terminals of two given cells
     //
 
-    point_t term_a_pos = cell_a->term[term_a].position();
-    point_t term_b_pos = cell_b->term[term_a].position();
+    point_t term_a_pos = cell_a->terms[term_a].position();
+    point_t term_b_pos = cell_b->terms[term_a].position();
 
     int x_len = abs(term_a_pos.x - term_b_pos.x);
     int y_len = abs(term_a_pos.y - term_b_pos.y);
@@ -70,10 +70,10 @@ int main(int argc, char *argv[])
 
     for (int i=0; i<num_cells; i++) {
         cells[i].number = i;
-        cells[i].term = new term_t[4];
+        cells[i].terms = new term_t[4];
         for (int t=0; t<4; t++) {
-            cells[i].term[t].cell = &cells[i];
-            cells[i].term[t].number = t;
+            cells[i].terms[t].cell = &cells[i];
+            cells[i].terms[t].number = t;
         }
     }
 
@@ -85,10 +85,10 @@ int main(int argc, char *argv[])
         // subtract 1 from all the numbers to 0 index them
         cell_a--; cell_b--;
         term_a--; term_b--;
-        cells[cell_a].term[term_a].dest_cell = &cells[cell_b];
-        cells[cell_a].term[term_a].dest_term = term_b;
-        cells[cell_b].term[term_b].dest_cell = &cells[cell_a];
-        cells[cell_b].term[term_b].dest_term = term_a;
+        cells[cell_a].terms[term_a].dest_cell = &cells[cell_b];
+        cells[cell_a].terms[term_a].dest_term = term_b;
+        cells[cell_b].terms[term_b].dest_cell = &cells[cell_a];
+        cells[cell_b].terms[term_b].dest_term = term_a;
     }
 
     printf("Placing cells\n");
