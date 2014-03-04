@@ -55,7 +55,6 @@ channels_t route(rows_t& rows)
 
     // go through each channel and figure out what track to put each terminal in
     for (auto &channel : channels) {
-        printf("channel --------------\n");
         for (auto &term : channel.terms) {
             if (term->dest_cell == nullptr) continue;
             if (term->track >= 0) continue;
