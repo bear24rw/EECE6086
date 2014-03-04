@@ -55,17 +55,17 @@ void add_feed_throughs(rows_t& rows)
                 term_t *src_term = &term;
 
                 // dont process terminals that have already been checked
-                if (src_term->connected) continue;
+                if (src_term->in_correct_channel) continue;
 
-                // get the cell that this terminal is connected to
+                // get the cell and terminal of the destination
                 cell_t *dst_cell = src_term->dest_cell;
                 term_t *dst_term = src_term->dest_term;
 
                 if (dst_cell == nullptr) continue;
 
                 // we're about to handle this net so just mark it as done
-                src_term->connected = true;
-                dst_term->connected = true;
+                src_term->in_correct_channel = true;
+                dst_term->in_correct_channel = true;
 
                 // terminals are in the same row and both facing same direction there is no need for feed through
                 if (src_cell->row == dst_cell->row && src_term->on_top() == dst_term->on_top())
@@ -92,9 +92,9 @@ void add_feed_throughs(rows_t& rows)
                     // remap the original destination to connect to bottom of feed cell
                     dst_term->dest_cell = feed;
                     dst_term->dest_term = &feed->terms[1];
-                    // both terminals of the feeder are now connected
-                    feed->terms[0].connected = true;
-                    feed->terms[1].connected = true;
+                    // both terminals of the feeder are now in_correct_channel
+                    feed->terms[0].in_correct_channel = true;
+                    feed->terms[1].in_correct_channel = true;
 
                     // since we just added a cell we need to skip
                     row_idx++;
@@ -102,7 +102,7 @@ void add_feed_throughs(rows_t& rows)
                     continue;
                 }
 
-                // TODO: if src_term is on the top and the term it's connected is not on the bottom of the next row up
+                // TODO: if src_term is on the top and the term it's connected to is not on the bottom of the next row up
                 // then we need to insert a feeder on the next row
             }
 

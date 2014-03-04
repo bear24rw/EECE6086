@@ -3,7 +3,7 @@
 
 term_t::term_t() {
     dest_cell = nullptr;
-    connected = false;
+    in_correct_channel = false;
     track = UNROUTED;
 }
 

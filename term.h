@@ -18,9 +18,8 @@ struct term_t {
     term_t *dest_term;
 
     // this gets set to true in add_feed_throughs to indicate the term is
-    // in the proper channel (area between two rows) probably needs a
-    // better name
-    bool connected;
+    // in the proper channel (area between two rows)
+    bool in_correct_channel;
 
     // 3 possible values:
     //  - track # within the channel (0-n)
