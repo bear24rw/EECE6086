@@ -19,6 +19,10 @@ void write_magic(std::string filename, rows_t& rows)
     fprintf(fp, "magic\n");
     fprintf(fp, "tech scmos\n");
 
+    //
+    // Place all the cells
+    //
+
     for (auto &row : rows) {
         for (auto &cell : row) {
 
@@ -45,6 +49,29 @@ void write_magic(std::string filename, rows_t& rows)
             }
         }
     }
+
+    //
+    // Place all the horizontal routes
+    //
+
+    fprintf(fp, "<< metal1 >>\n");
+    for (auto &row : rows) {
+        for (auto &cell : row) {
+            int num_terms = cell->feed_through ? 2 : 4;
+            for (int term=0; term<num_terms; term++) {
+                point_t p1 = get_term_position(cell, term);
+                point_t p2 = get_term_position(cell->term[term].dest_cell, cell->term[term].dest_term);
+                if (term_on_top(cell, term)) {
+                    p1.y += cell->term[term].track * 2;
+                } else {
+                    p1.y -= cell->term[term].track * 2;
+                }
+                p2.y = p1.y;
+                fprintf(fp, "rect %d %d %d %d\n", p1.x, p1.y, p2.x, p2.y);
+            }
+        }
+    }
+
 
     fclose(fp);
 }

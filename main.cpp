@@ -8,6 +8,7 @@
 #include <string>
 #include "main.h"
 #include "place.h"
+#include "route.h"
 #include "magic.h"
 #include "test.h"
 
@@ -144,6 +145,7 @@ int main(int argc, char *argv[])
         for (int t=0; t<4; t++) {
             cells[i].term[t].dest_cell = nullptr;
             cells[i].term[t].connected = false;
+            cells[i].term[t].track = -1;
         }
     }
 
@@ -161,11 +163,19 @@ int main(int argc, char *argv[])
         cells[cell_b].term[term_b].dest_term = term_a;
     }
 
+    printf("Placing cells\n");
     rows_t rows = place(cells);
 
+    printf("Calculating cell X positions\n");
     calculate_x_values(rows);
+
+    printf("Routing cells\n");
+    route(rows);
+
+    printf("Calculating cell Y positions\n");
     calculate_y_values(rows);
 
+    printf("Writing magic file\n");
     write_magic(filename, rows);
 
     printf("Done.\n");
