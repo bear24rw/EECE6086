@@ -51,11 +51,11 @@ point_t term_t::position(void)
     point_t offsets_y[]  = {{4,5}, {1,5}, {4,0}, {1,0}};
     point_t offsets_xy[] = {{4,0}, {1,0}, {4,5}, {1,5}};
 
-    point_t position = cell->position + offsets[number];
+    point_t term_position = offsets[number];
 
-    if (cell->flip_x)                 { position = cell->position + offsets_x[number];  }
-    if (cell->flip_y)                 { position = cell->position + offsets_y[number];  }
-    if (cell->flip_x && cell->flip_y) { position = cell->position + offsets_xy[number]; }
+    if (cell->flip_x)                 { term_position = offsets_x[number];  }
+    if (cell->flip_y)                 { term_position = offsets_y[number];  }
+    if (cell->flip_x && cell->flip_y) { term_position = offsets_xy[number]; }
 
-    return position;
+    return cell->position + term_position;
 }
