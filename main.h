@@ -2,136 +2,14 @@
 #define __MAIN_H__
 
 #include <vector>
+#include "cell.h"
+#include "term.h"
 
 #define TRACK_WIDTH   1
 #define TRACK_SPACING 1
 #define CELL_SPACING  1
 #define CELL_HEIGHT   6
 #define CELL_WIDTH    6
-
-typedef struct point_t point_t;
-
-struct point_t{
-    int x, y;
-
-    point_t() {}
-
-    point_t(int _x, int _y) {
-        x = _x;
-        y = _y;
-    }
-
-    point_t operator+(const point_t p) {
-        return point_t(x+p.x, y+p.y);
-    }
-
-    point_t operator-(const point_t p) {
-        return point_t(x-p.x, y-p.y);
-    }
-};
-
-typedef struct cell_t cell_t;
-typedef struct term_t term_t;
-
-struct cell_t {
-    int number;
-    point_t position;
-    bool flip_x;
-    bool flip_y;
-    bool feed_through;
-    int row, col; // the row and col of the cell in the placement grid, before feed throughs are added
-    term_t *terms;
-
-    cell_t() {
-        flip_x = false;
-        flip_y = false;
-        feed_through = false;
-    }
-};
-
-struct term_t {
-    // pointer to cell that this term belongs too
-    cell_t *cell;
-
-    int number;
-
-    cell_t *dest_cell;
-    int dest_term;
-
-    // this gets set to true in add_feed_throughs to indicate the term is
-    // in the proper channel (area between two rows) probably needs a
-    // better name
-    bool connected;
-
-    // 3 possible values:
-    //  - track # within the channel (0-n)
-    //  - UNROUTED means this term doesn't need any routing
-    //  - VERTICAL means doesn't need a track since the connection is purely vertical
-    #define UNROUTED -1
-    #define VERTICAL -2
-    int track;
-
-    term_t() {
-        dest_cell = nullptr;
-        connected = false;
-        track = UNROUTED;
-    }
-
-    bool on_top(void)
-    {
-        // Returns true if the terminal is currently on the top edge of the cell
-
-        if (cell->feed_through) {
-            if (number == 0)
-                return !cell->flip_x;
-            else
-                return cell->flip_x;
-        }
-
-        if (number == 0 || number == 1)
-            return !cell->flip_x;
-        else
-            return cell->flip_x;
-    }
-
-    bool on_left(void)
-    {
-        // Returns true if the terminal is currently on the left side of the cell
-
-        if (cell->feed_through) {
-            return true;
-        }
-
-        if (number == 0 || number == 2)
-            return !cell->flip_y;
-        else
-            return cell->flip_y;
-    }
-
-    point_t position(void)
-    {
-        //
-        // Returns the absolute world position of this terminal
-        //
-
-        // coordinates of terminals are -1 from what is given in
-        // the pdf since we want to work with 0 based indexing
-        point_t offsets[]    = {{1,5}, {4,5}, {1,0}, {4,0}};
-        point_t offsets_x[]  = {{1,0}, {4,0}, {1,5}, {4,5}};
-        point_t offsets_y[]  = {{4,5}, {1,5}, {4,0}, {1,0}};
-        point_t offsets_xy[] = {{4,0}, {1,0}, {4,5}, {1,5}};
-
-        point_t position = cell->position + offsets[number];
-
-        if (cell->flip_x)                 { position = cell->position + offsets_x[number];  }
-        if (cell->flip_y)                 { position = cell->position + offsets_y[number];  }
-        if (cell->flip_x && cell->flip_y) { position = cell->position + offsets_xy[number]; }
-
-        return position;
-    }
-
-};
-
 
 
 // a vector of rows where each row is a vector of pointers to cells

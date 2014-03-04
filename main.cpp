@@ -70,11 +70,6 @@ int main(int argc, char *argv[])
 
     for (int i=0; i<num_cells; i++) {
         cells[i].number = i;
-        cells[i].terms = new term_t[4];
-        for (int t=0; t<4; t++) {
-            cells[i].terms[t].cell = &cells[i];
-            cells[i].terms[t].number = t;
-        }
     }
 
     //
