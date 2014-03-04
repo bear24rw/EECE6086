@@ -12,7 +12,11 @@ struct term_t {
     // pointer to cell that this term belongs too
     cell_t *cell;
 
+    // which terminal (pin) this is
     int number;
+
+    // label of the net attacked to this term
+    int label;
 
     cell_t *dest_cell;
     term_t *dest_term;

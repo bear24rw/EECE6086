@@ -96,6 +96,9 @@ void add_feed_throughs(rows_t& rows)
                     feed->terms[0].in_correct_channel = true;
                     feed->terms[1].in_correct_channel = true;
 
+                    feed->terms[0].label = src_term->label;
+                    feed->terms[1].label = src_term->label;
+
                     // since we just added a cell we need to skip
                     row_idx++;
 

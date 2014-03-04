@@ -52,6 +52,37 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
     }
 
     //
+    // Place all the net labels centered on the horizontal routes
+    //
+
+    fprintf(fp, "<< labels >>\n");
+    for (auto &channel : channels) {
+        for (auto &src_term : channel.terms) {
+
+            term_t *dst_term = src_term->dest_term;
+
+            if (src_term->dest_cell == nullptr) continue;
+            if (src_term->track == UNROUTED) continue;
+            if (src_term->track == VERTICAL) continue;
+
+            point_t p1 = src_term->position();
+            point_t p2 = dst_term->position();
+
+            if (src_term->on_top()) {
+                p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
+            } else {
+                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track) * (TRACK_WIDTH + TRACK_SPACING);
+            }
+
+            int x1 = std::min(p1.x, p2.x);
+            int x2 = std::max(p1.x, p2.x)+1;
+            int y1 = p1.y;
+            int y2 = p1.y + 1;
+            fprintf(fp, "rlabel metal1 %d %d %d %d 0 %d\n", x1, y1, x2, y2, src_term->label);
+        }
+    }
+
+    //
     // Place all the horizontal routes
     //
 
