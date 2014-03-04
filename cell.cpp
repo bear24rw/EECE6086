@@ -2,6 +2,7 @@
 #include "term.h"
 
 cell_t::cell_t() {
+    number = 0;
     flip_x = false;
     flip_y = false;
     feed_through = false;

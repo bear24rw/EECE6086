@@ -59,10 +59,10 @@ channels_t route(rows_t& rows)
             if (term->dest_cell == nullptr) continue;
             if (term->track >= 0) continue;
             term->track = channel.tracks.size();
-            term->dest_cell->terms[term->dest_term].track = channel.tracks.size();
+            term->dest_term->track = channel.tracks.size();
             std::vector<term_t*> track;
             track.push_back(term);
-            track.push_back(&term->dest_cell->terms[term->dest_term]);
+            track.push_back(term->dest_term);
             channel.tracks.push_back(track);
         }
     }

@@ -81,9 +81,9 @@ int main(int argc, char *argv[])
         cell_a--; cell_b--;
         term_a--; term_b--;
         cells[cell_a].terms[term_a].dest_cell = &cells[cell_b];
-        cells[cell_a].terms[term_a].dest_term = term_b;
+        cells[cell_a].terms[term_a].dest_term = &cells[cell_b].terms[term_b];
         cells[cell_b].terms[term_b].dest_cell = &cells[cell_a];
-        cells[cell_b].terms[term_b].dest_term = term_a;
+        cells[cell_b].terms[term_b].dest_term = &cells[cell_a].terms[term_a];
     }
 
     printf("Placing cells\n");

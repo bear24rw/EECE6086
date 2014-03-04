@@ -15,7 +15,7 @@ struct term_t {
     int number;
 
     cell_t *dest_cell;
-    int dest_term;
+    term_t *dest_term;
 
     // this gets set to true in add_feed_throughs to indicate the term is
     // in the proper channel (area between two rows) probably needs a
