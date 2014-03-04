@@ -28,9 +28,9 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
         for (auto &cell : row) {
 
             if (cell->feed_through) {
-                fprintf(fp, "use feed_through feed_though_%d\n", cell->number);
+                fprintf(fp, "use feed_through feed_though_%d\n", cell->number+1);
             } else {
-                fprintf(fp, "use cell cell_%d\n", cell->number);
+                fprintf(fp, "use cell cell_%d\n", cell->number+1);
             }
 
             if (cell->flip_x && cell->flip_y) {
