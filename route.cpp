@@ -217,7 +217,8 @@ bool shrink(channel_t& channel)
                 if (term->dest_term == existing_term) continue;
 
                 // if there is enough horizontal spacing between these terms skip it
-                if (abs(term->position().x - existing_term->position().x) > TRACK_SPACING)
+                if ((abs(term->position().x - existing_term->position().x) > TRACK_SPACING) &&
+                    (abs(term->dest_term->position().x - existing_term->position().x) > TRACK_SPACING))
                     continue;
 
                 // if the existing term is on top of its cell that means
