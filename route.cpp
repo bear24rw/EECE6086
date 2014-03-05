@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <vector>
+#include <set>
 #include <climits>
 #include <stdlib.h>
 #include "route.h"
@@ -73,115 +74,115 @@ channels_t route(rows_t& rows)
                 continue;
             }
 
-            int lowest_allowed_track = -1;
-            int highest_allowed_track = INT_MAX;
+            unsigned int track_num = -1;
 
-            int track_num = -1;
+            std::set<int> open_tracks;
 
-            // figure out the highest and lowest track we are allowed to place this net.
-            // if two terminals are on either side of the channel and they don't have
-            // greater than TRACK_SPACING horizontal distance between them then we
-            // can't allow them to cross. this image illustrates the problem we
-            // are solving (net 4 should not be allowed to cross net 2):
+            // assume all tracks are intially open
+            for (track_num=0; track_num<channel.tracks.size(); track_num++) {
+                open_tracks.insert(track_num);
+            }
+
+
+            // if there is not enough horizontal space between this terminal
+            // and an existing one the track becomes invalid. also, every track
+            // between the terminal itself and the track its going to is
+            // invalid.  this image illustrates the problem we are solving (net
+            // 4 should not be allowed to cross net 2):
             // http://i.imgur.com/zPGh1AP.png
+            track_num = -1;
             for (auto &track : channel.tracks) {
                 track_num++;
                 for (auto &existing_term : track) {
 
                     // if there is enough horizontal spacing between these terms skip it
-                    if (abs(term->position().x - existing_term->position().x) > TRACK_SPACING) continue;
+                    if (abs(term->position().x - existing_term->position().x) > TRACK_SPACING)
+                        continue;
 
-                    // if we are above the existing terminal than that terminal defines our new lowest
-                    if (term->cell->row > existing_term->cell->row) {
-                        if (track_num > lowest_allowed_track)
-                            lowest_allowed_track = track_num;
-                    } else {
-                        if (track_num < highest_allowed_track)
-                            highest_allowed_track = track_num;
+                    // if the existing term is on top of its cell that means
+                    // there is a trace spanning up from the term to the
+                    // current track. all the tracks in this area are invalid.
+                    if (existing_term->on_top()) {
+                        for (unsigned int t=0; t<=track_num; t++) {
+                            open_tracks.erase(t);
+                        }
+                    }
+
+                    // if the existing term is on bottom of its cell that means
+                    // there is a trace spanning down from the term to the
+                    // current track. all the tracks in this area are invalid.
+                    if (!existing_term->on_top()) {
+                        for (unsigned int t=track_num; t<=channel.tracks.size(); t++) {
+                            open_tracks.erase(t);
+                        }
                     }
                 }
             }
 
-            // loop through each existing tracks and see if there is a spot for this net
 
             /*
+                check to make sure that we dont directly overlap an existing net in each track
+                there are 4 possible overlap conditions. if any of them occur the track is invalid
+
+
                         1A--------------1B
                                  2A-----------2B
+
 
                         1A--------------1B
                  2A-----------2B
 
+
                         1A--------------1B
                             2A----2B
+
 
                         1A--------------1B
                     2A---------------------------2B
             */
 
-            // if both terms are on the bottom of the cell we actually want to find the
-            // highest track in order to pull the net up closer to the bottom of the cell
-            bool find_highest = !term->on_top() && !term->dest_term->on_top();
-            int highest_track = -1;
-
             track_num = -1;
-            bool fits = false;
             for (auto &track : channel.tracks) {
-
                 track_num++;
-
-                if (track_num < lowest_allowed_track) continue;
-                if (track_num > highest_allowed_track) continue;
-
-                // assume we are able to fit this net on this track unless we determine otherwise
-                fits = true;
-
-                // TODO: if both terms are on the bottom we want to iterate backwards over the tracks
-                // check if this new net intersect with any of the existing nets
                 for (auto &existing_term : track) {
+                    bool fits = true;
                     int x2_a = std::min(existing_term->position().x, existing_term->dest_term->position().x);
                     int x2_b = std::max(existing_term->position().x, existing_term->dest_term->position().x);
                     if (x2_a >= x1_a-TRACK_SPACING && x2_a <= x1_b+TRACK_SPACING) { fits = false; }
                     if (x2_b >= x1_a-TRACK_SPACING && x2_b <= x1_b+TRACK_SPACING) { fits = false; }
                     if (x2_a >= x1_a-TRACK_SPACING && x2_b <= x1_b+TRACK_SPACING) { fits = false; }
                     if (x2_a <= x1_a-TRACK_SPACING && x2_b >= x1_b+TRACK_SPACING) { fits = false; }
+                    if (!fits){
+                        open_tracks.erase(track_num);
+                    }
                 }
-
-                // if we are looking for the highest track and this track fits then it is the new highest, but continue looking
-                if (find_highest && fits) {
-                    highest_track = track_num;
-                    continue;
-                }
-
-                // if fits is still true it means we didn't hit an existing net, we can add it to this existing track and stop searching
-                if (fits) {
-                    term->track = track_num;
-                    term->dest_term->track = track_num;
-                    track.push_back(term);
-                    track.push_back(term->dest_term);
-                    break;
-                }
-
             }
 
-            // if we're looking for the highest track and we found a valid one add the term to it
-            if (find_highest && highest_track != -1) {
-                term->track = highest_track;
-                term->dest_term->track = highest_track;
-                channel.tracks[highest_track].push_back(term);
-                channel.tracks[highest_track].push_back(term->dest_term);
-                continue;
-            }
-
-            // if we weren't able to fit this term onto an existing track then create a new one for it
-            if (!fits) {
+            // if there are no open tracks left we have to make a new one
+            if (open_tracks.empty()) {
                 term->track = channel.tracks.size();
                 term->dest_term->track = channel.tracks.size();
-
                 std::vector<term_t*> track;
                 track.push_back(term);
                 track.push_back(term->dest_term);
                 channel.tracks.push_back(track);
+                continue;
             }
+
+            // if both terms are on the bottom of the cell we actually want to find the
+            // highest track in order to pull the net up closer to the bottom of the cell
+            bool find_highest = !term->on_top() && !term->dest_term->on_top();
+
+            if (find_highest)
+                track_num = *open_tracks.rbegin();
+            else
+                track_num = *open_tracks.begin();
+
+            term->track = track_num;
+            term->dest_term->track = track_num;
+            channel.tracks[track_num].push_back(term);
+            channel.tracks[track_num].push_back(term->dest_term);
+
         }
     }
 
