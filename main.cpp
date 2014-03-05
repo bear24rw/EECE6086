@@ -110,28 +110,19 @@ void calculate_x_values(rows_t& rows)
     for (auto &row : rows) {
 
         int current_x = 0;
-        bool last_was_feed_through = false;
 
         for (auto &cell : row) {
 
-            // if this cell is a feed through we want to put it right up
-            // against the previous cell which usually has a 1 unit boarder on
-            // the right. but, if the last cell we placed was a feed through we
-            // don't need to account for any border if the first cell is a
-            // feed_through we don't want it to go negative.
-            if (cell->feed_through && !last_was_feed_through)
-                current_x = std::max(current_x-1, 0);
-
             cell->position.x = current_x;
 
-            // feed through cells are 3 wide with no border
-            // normal cells are 6 wide with border of 1
+            // feed through cells are 3 wide
+            // normal cells are 6 wide
+            // every cell as a seperation of 1
             if (cell->feed_through)
-                current_x += 3;
+                current_x += 4;
             else
                 current_x += 7;
 
-            last_was_feed_through = cell->feed_through;
         }
     }
 }
