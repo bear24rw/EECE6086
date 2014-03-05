@@ -63,50 +63,124 @@ void add_feed_throughs(rows_t& rows)
 
                 if (dst_cell == nullptr) continue;
 
-                // we're about to handle this net so just mark it as done
-                src_term->in_correct_channel = true;
-                dst_term->in_correct_channel = true;
+                /*
 
-                // terminals are in the same row and both facing same direction there is no need for feed through
-                if (src_cell->row == dst_cell->row && src_term->on_top() == dst_term->on_top())
+                   Terminals are in the same row and both facing same direction there is no need for feed through
+
+                   /----S--\    /--D----\        /-------\    /-------\
+                   |       |    |       |        |       |    |       |
+                   |       |    |       |   OR   |       |    |       |
+                   |       |    |       |        |       |    |       |
+                   \-------/    \-------/        \----S--/    \--D----/
+
+               */
+
+                if (src_cell->row == dst_cell->row && src_term->on_top() == dst_term->on_top()) {
+                    src_term->in_correct_channel = true;
+                    dst_term->in_correct_channel = true;
                     continue;
+                }
 
-                // same row but the source is on top and the dst is on the bottom
-                if (src_cell->row == dst_cell-> row && src_term->on_top() && !dst_term->on_top()) {
+                /*
+
+                   Destination is in the row above and they are facing each other
+
+                   /-------\
+                   |       |
+                   |       |
+                   |       |
+                   \----D--/
+
+                   /----S--\
+                   |       |
+                   |       |
+                   |       |
+                   \-------/
+
+               */
+
+                if (src_cell->row + 1 == dst_cell->row && src_term->on_top() && !dst_term->on_top()) {
+                    src_term->in_correct_channel = true;
+                    dst_term->in_correct_channel = true;
+                    continue;
+                }
+
+                /*
+
+                   Source is on bottom and the destination is somewhere above it
+                   We need a feeder cell to get to the source to the top of the row
+
+                                                    /-------\
+                                                    |       |
+                                                    |       |
+                                                    |       |
+                                                    \----D--/
+                                             OR
+                   /----D--\    /-------\           /-------\
+                   |       |    |       |           |       |
+                   |       |    |       |           |       |
+                   |       |    |       |           |       |
+                   \-------/    \--S----/           \----S--/
+
+
+
+               */
+
+                if (src_cell->row == dst_cell->row && !src_term->on_top() && dst_term->on_top()) {
+
                     cell_t *feed = new cell_t(/*feed_through=*/true);
+                    feed->row = src_cell->row;
+
                     // figure out if we should add the feeder to the left or right side of the cell
                     if (src_term->on_left()) {
                         row.insert(row.begin()+row_idx, feed);
                     } else {
                         row.insert(row.begin()+row_idx+1, feed);
                     }
-                    // remap the source to go through top of the feed cell
+
+                    // remap the source to go through bottom of the feed cell
                     src_term->dest_cell = feed;
-                    src_term->dest_term = &feed->terms[0];
-                    // remap the top of feed cell to connect to source
-                    feed->terms[0].dest_cell = src_cell;
-                    feed->terms[0].dest_term = src_term;
-                    // remap the bottom of the feed cell to connect to original dest
-                    feed->terms[1].dest_cell = dst_cell;
-                    feed->terms[1].dest_term = dst_term;
-                    // remap the original destination to connect to bottom of feed cell
+                    src_term->dest_term = &feed->terms[1];
+
+                    // remap the bottom of feed cell to connect to source
+                    feed->terms[1].dest_cell = src_cell;
+                    feed->terms[1].dest_term = src_term;
+
+                    // remap the top of the feed cell to connect to original dest
+                    feed->terms[0].dest_cell = dst_cell;
+                    feed->terms[0].dest_term = dst_term;
+
+                    // remap the original destination to connect to top of feed cell
                     dst_term->dest_cell = feed;
-                    dst_term->dest_term = &feed->terms[1];
-                    // both terminals of the feeder are now in_correct_channel
-                    feed->terms[0].in_correct_channel = true;
+                    dst_term->dest_term = &feed->terms[0];
+
+                    // the source and bottom of feeder terms are now in_correct_channel
                     feed->terms[1].in_correct_channel = true;
+                    src_term->in_correct_channel = true;
 
                     feed->terms[0].label = src_term->label;
                     feed->terms[1].label = src_term->label;
 
-                    // since we just added a cell we need to skip
-                    row_idx++;
-
                     continue;
                 }
 
-                // TODO: if src_term is on the top and the term it's connected to is not on the bottom of the next row up
-                // then we need to insert a feeder on the next row
+
+                /*
+                   Source is on the top of this row and the destination is in some row above it
+                   we need to add a feeder cell to get it up into at least the next row
+
+                    /----D--\
+                    |       |
+                    |       |
+                    |       |
+                    \-------/
+
+                    /----S--\
+                    |       |
+                    |       |
+                    |       |
+                    \-------/
+                */
             }
 
             row_idx++;
