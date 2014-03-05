@@ -91,21 +91,22 @@ void add_feed_throughs(rows_t& rows)
 
                    Destination is in the row above and they are facing each other
 
-                   /-------\
-                   |       |
-                   |       |
-                   |       |
-                   \----D--/
-
-                   /----S--\
-                   |       |
-                   |       |
-                   |       |
-                   \-------/
+                   /-------\        /-------\
+                   |       |        |       |
+                   |       |        |       |
+                   |       |        |       |
+                   \----D--/        \----S--/
+                               OR
+                   /----S--\        /----D--\
+                   |       |        |       |
+                   |       |        |       |
+                   |       |        |       |
+                   \-------/        \-------/
 
                */
 
-                if (src_cell->row + 1 == dst_cell->row && src_term->on_top() && !dst_term->on_top()) {
+                if ((src_cell->row + 1 == dst_cell->row && src_term->on_top() && !dst_term->on_top()) ||
+                    (dst_cell->row + 1 == src_cell->row && dst_term->on_top() && !src_term->on_top())) {
                     src_term->in_correct_channel = true;
                     dst_term->in_correct_channel = true;
                     continue;
@@ -131,6 +132,55 @@ void add_feed_throughs(rows_t& rows)
 
 
                */
+
+                if ((!src_term->on_top() && dst_term->on_top() && dst_cell->row == src_cell->row) ||
+                    (!src_term->on_top() && dst_cell->row > src_cell->row)) {
+
+                    cell_t *feed = new cell_t(true);
+                    feed->row = src_cell->row;
+
+                    auto position = rows[row_idx].begin() + cell_idx;
+
+                    if (!src_term->on_left())
+                        position++;
+
+                    if (position > rows[row_idx].end())
+                        position = rows[row_idx].end();
+
+                    rows[row_idx].insert(position, feed);
+
+                    // remap the source to go through bottom of the feed cell
+                    src_term->dest_cell = feed;
+                    src_term->dest_term = &feed->terms[1];
+
+                    // remap the bottom of feed cell to connect to source
+                    feed->terms[1].dest_cell = src_cell;
+                    feed->terms[1].dest_term = src_term;
+
+                    // remap the top of the feed cell to connect to original dest
+                    feed->terms[0].dest_cell = dst_cell;
+                    feed->terms[0].dest_term = dst_term;
+
+                    // remap the original destination to connect to top of feed cell
+                    dst_term->dest_cell = feed;
+                    dst_term->dest_term = &feed->terms[0];
+
+                    // the source and bottom of feeder terms are now
+                    // in_correct_channel we can't say the destination is in
+                    // correct channels since it might be more than 1 row above
+                    // us
+                    feed->terms[1].in_correct_channel = true;
+                    src_term->in_correct_channel = true;
+
+                    feed->terms[0].label = src_term->label;
+                    feed->terms[1].label = src_term->label;
+
+                    // since we just added a cell to this row we need to go back and do it again
+                    rescan_row = true;
+                    break;
+
+                }
+
                 /*
                    Source is on the top of this row and the destination is in some row above it
                    we need to add a feeder cell to get it up into at least the next row
@@ -148,70 +198,51 @@ void add_feed_throughs(rows_t& rows)
                     \-------/
                 */
 
-                cell_t *feed = new cell_t(true);
 
-                if (src_term->on_top()) {
+                if (src_term->on_top() && dst_cell->row > src_cell->row) {
 
+                    cell_t *feed = new cell_t(true);
                     feed->row = src_cell->row + 1;
-
-                    // figure out if we should add the feeder to the left or
-                    // right side of the cell and add it to the row above
-
-                    // TODO: maybe try to figure out the closest x position
-
 
                     auto position = rows[row_idx+1].begin() + cell_idx;
 
+                    if (!src_term->on_left())
+                        position++;
+
                     if (position > rows[row_idx+1].end())
-                        position = rows[row_idx+1].end() - 1;
-                    else
-                        position = rows[row_idx+1].begin() + cell_idx;
+                        position = rows[row_idx+1].end();
 
-                    if (src_term->on_left()) {
-                        rows[row_idx+1].insert(position, feed);
-                    } else {
-                        rows[row_idx+1].insert(position+0, feed);
-                    }
+                    rows[row_idx+1].insert(position, feed);
 
-                } else {
+                    // remap the source to go through bottom of the feed cell
+                    src_term->dest_cell = feed;
+                    src_term->dest_term = &feed->terms[1];
 
-                    feed->row = src_cell->row;
+                    // remap the bottom of feed cell to connect to source
+                    feed->terms[1].dest_cell = src_cell;
+                    feed->terms[1].dest_term = src_term;
 
-                    // figure out if we should add the feeder to the left or right side of the cell
-                    if (src_term->on_left()) {
-                        rows[row_idx].insert(rows[row_idx].begin()+cell_idx, feed);
-                    } else {
-                        rows[row_idx].insert(rows[row_idx].begin()+cell_idx+1, feed);
-                    }
+                    // remap the top of the feed cell to connect to original dest
+                    feed->terms[0].dest_cell = dst_cell;
+                    feed->terms[0].dest_term = dst_term;
+
+                    // remap the original destination to connect to top of feed cell
+                    dst_term->dest_cell = feed;
+                    dst_term->dest_term = &feed->terms[0];
+
+                    // the source and bottom of feeder terms are now in_correct_channel
+                    feed->terms[1].in_correct_channel = true;
+                    src_term->in_correct_channel = true;
+
+                    feed->terms[0].label = src_term->label;
+                    feed->terms[1].label = src_term->label;
+
+                    // since we just added a cell to this row we need to go back and do it again
+                    rescan_row = true;
+                    break;
 
                 }
 
-                // remap the source to go through bottom of the feed cell
-                src_term->dest_cell = feed;
-                src_term->dest_term = &feed->terms[1];
-
-                // remap the bottom of feed cell to connect to source
-                feed->terms[1].dest_cell = src_cell;
-                feed->terms[1].dest_term = src_term;
-
-                // remap the top of the feed cell to connect to original dest
-                feed->terms[0].dest_cell = dst_cell;
-                feed->terms[0].dest_term = dst_term;
-
-                // remap the original destination to connect to top of feed cell
-                dst_term->dest_cell = feed;
-                dst_term->dest_term = &feed->terms[0];
-
-                // the source and bottom of feeder terms are now in_correct_channel
-                feed->terms[1].in_correct_channel = true;
-                src_term->in_correct_channel = true;
-
-                feed->terms[0].label = src_term->label;
-                feed->terms[1].label = src_term->label;
-
-                // since we just added a cell to this row we need to go back and do it again
-                rescan_row = true;
-                break;
             }
 
             if (rescan_row) break;
