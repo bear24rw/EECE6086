@@ -140,10 +140,10 @@ channels_t route(rows_t& rows)
                 for (auto &existing_term : track) {
                     int x2_a = std::min(existing_term->position().x, existing_term->dest_term->position().x);
                     int x2_b = std::max(existing_term->position().x, existing_term->dest_term->position().x);
-                    if (x2_a >= x1_a && x2_a <= x1_b) { fits = false; }
-                    if (x2_b >= x1_a && x2_b <= x1_b) { fits = false; }
-                    if (x2_a >= x1_a && x2_b <= x1_b) { fits = false; }
-                    if (x2_a <= x1_a && x2_b >= x1_b) { fits = false; }
+                    if (x2_a >= x1_a-TRACK_SP && x2_a <= x1_b+TRACK_SPACING) { fits = false; }
+                    if (x2_b >= x1_a-TRACK_SP && x2_b <= x1_b+TRACK_SPACING) { fits = false; }
+                    if (x2_a >= x1_a-TRACK_SP && x2_b <= x1_b+TRACK_SPACING) { fits = false; }
+                    if (x2_a <= x1_a-TRACK_SP && x2_b >= x1_b+TRACK_SPACING) { fits = false; }
                 }
 
                 // if we are looking for the highest track and this track fits then it is the new highest, but continue looking
