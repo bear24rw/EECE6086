@@ -13,7 +13,8 @@
 
 
 // a vector of rows where each row is a vector of pointers to cells
-typedef std::vector<std::vector<cell_t*>> rows_t;
+typedef std::vector<cell_t*> row_t;
+typedef std::vector<row_t> rows_t;
 
 
 typedef struct {
