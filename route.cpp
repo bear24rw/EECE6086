@@ -10,8 +10,9 @@
 void assign_terms_to_channels(channels_t& channels, rows_t& rows);
 void assign_terms_to_tracks(channels_t& channels);
 void find_vertical_nets(channels_t& channels);
-void shrink(channels_t& channels);
+bool shrink(channels_t& channels);
 void remove_empty_tracks(channels_t& channels);
+void reset_term_track_numbers(channels_t& channels);
 
 channels_t route(rows_t& rows)
 {
@@ -37,8 +38,18 @@ channels_t route(rows_t& rows)
     assign_terms_to_channels(channels, rows);
     assign_terms_to_tracks(channels);
     find_vertical_nets(channels);
-    shrink(channels);
-    remove_empty_tracks(channels);
+
+
+    /*
+    int i = 0;
+    while (shrink(channels)) {
+        printf("[route] shrink iteration %d\n", i);
+        i++;
+        if (i==20) break;
+    }
+    */
+
+    //remove_empty_tracks(channels);
 
     return channels;
 }
@@ -113,8 +124,12 @@ void find_vertical_nets(channels_t& channels)
     }
 }
 
-void shrink(channels_t& channels)
+
+bool shrink(channels_t& channels)
 {
+    // return if any net was moved or not
+    bool net_was_moved = false;
+
     // attempt to pull each net closer to the cells
 
     for (auto &channel : channels) {
@@ -147,6 +162,9 @@ void shrink(channels_t& channels)
                 if (term->track == track_num) continue;
 
                 for (auto &existing_term : track) {
+
+                    // don't consider our destination
+                    if (term->dest_term == existing_term) continue;
 
                     // if there is enough horizontal spacing between these terms skip it
                     if (abs(term->position().x - existing_term->position().x) > TRACK_SPACING)
@@ -203,6 +221,10 @@ void shrink(channels_t& channels)
                 if (term->track == track_num) continue;
 
                 for (auto &existing_term : track) {
+
+                    // don't consider our destination
+                    if (term->dest_term == existing_term) continue;
+
                     bool fits = true;
                     int x1_a = std::min(term->position().x, term->dest_term->position().x);
                     int x1_b = std::max(term->position().x, term->dest_term->position().x);
@@ -232,8 +254,13 @@ void shrink(channels_t& channels)
             else
                 track_num = *open_tracks.begin();
 
-            // if it turns out we have no were to move, just leave it
-            if (term->track == track_num) continue;
+            // if we were looking for the highest and we didn't improve just leave it
+            //if (find_highest && track_num <= term->track) continue;
+
+            // if we were looking for the lowest and we didn't improve just leave it
+            //if (track_num >= term->track) continue;
+
+            if (track_num == term->track) continue;
 
             printf("Moving net %d from track %d to track %d\n", term->label, term->track, track_num);
 
@@ -247,8 +274,12 @@ void shrink(channels_t& channels)
             channel.tracks[track_num].insert(term);
             channel.tracks[track_num].insert(term->dest_term);
 
+            net_was_moved = true;
+
         }
     }
+
+    return net_was_moved;
 }
 
 void remove_empty_tracks(channels_t& channels)
@@ -264,6 +295,12 @@ void remove_empty_tracks(channels_t& channels)
         }
     }
 
+    reset_term_track_numbers(channels);
+
+}
+
+void reset_term_track_numbers(channels_t& channels)
+{
     // reset the track number for each term
 
     int track_num = 0;
@@ -277,7 +314,5 @@ void remove_empty_tracks(channels_t& channels)
             track_num++;
         }
     }
-
 }
-
 
