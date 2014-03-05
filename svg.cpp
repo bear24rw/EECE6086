@@ -114,7 +114,7 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
 
             if (cell->feed_through) {
                 draw_rect(fp, cell->position.x, cell->position.y, 3, 6, std::string("white"), 0.75);
-                draw_text(fp, std::string("FT").append(std::to_string(cell->number+1)), cell->position.x + 1.5, cell->position.y + 3, 12);
+                draw_text(fp, std::string("FT").append(std::to_string(cell->number+1)), cell->position.x + 1.5, cell->position.y + 3, 12, std::string("black"), 270);
             } else {
                 draw_rect(fp, cell->position.x, cell->position.y, 6, 6, std::string("white"), 0.75);
                 draw_text(fp, std::string("C").append(std::to_string(cell->number+1)), cell->position.x + 3, cell->position.y + 3, 12);
