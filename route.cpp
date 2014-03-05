@@ -11,6 +11,7 @@ void assign_terms_to_channels(channels_t& channels, rows_t& rows);
 
 void assign_terms_to_tracks(channel_t& channel);
 void find_vertical_nets(channel_t& channel);
+void expand(channel_t& channel);
 bool shrink(channel_t& channel);
 void remove_empty_tracks(channel_t& channel);
 void reset_term_track_numbers(channel_t& channel);
@@ -41,13 +42,13 @@ channels_t route(rows_t& rows)
     for (auto &channel : channels) {
         assign_terms_to_tracks(channel);
         find_vertical_nets(channel);
+        expand(channel);
+        shrink(channel);
 
-        int i = 0;
-        while (shrink(channel)) {
+        /*
+        for (int i=0; i<20 && shrink(channel); i++)
             printf("[route] shrink iteration %d\n", i);
-            i++;
-            if (i==20) break;
-        }
+            */
 
         remove_empty_tracks(channel);
     }
@@ -117,6 +118,60 @@ void find_vertical_nets(channel_t& channel)
             term->track = VERTICAL;
             term->dest_term->track = UNROUTED;
         }
+    }
+}
+
+void expand(channel_t& channel)
+{
+    // keep track of which nets we have already fixed so we don't touch them again
+    std::vector<term_t*> moved;
+
+    for (auto &term : channel.terms) {
+        for (auto &existing_term : channel.terms) {
+
+            // don't consider our ourself or our destination
+            if (existing_term == term->dest_term) continue;
+            if (existing_term == term) continue;
+            if (term->track == VERTICAL) continue;
+            if (term->track == UNROUTED) continue;
+            if (existing_term->track == VERTICAL) continue;
+            if (existing_term->track == UNROUTED) continue;
+
+            if (std::count(moved.begin(), moved.end(), term) > 0) continue;
+
+            // if there is enough horizontal spacing between these terms skip it
+            if (abs(term->position().x - existing_term->position().x) > TRACK_SPACING)
+                continue;
+
+            if (term->on_top() && term->track < existing_term->track && !existing_term->on_top())
+                continue;
+
+            if (!term->on_top() && term->track > existing_term->track && existing_term->on_top())
+                continue;
+
+            // erase the terms from their original track
+            channel.tracks[term->track].erase(term);
+            channel.tracks[term->track].erase(term->dest_term);
+
+            // make a new one for them
+            track_t track;
+            track.insert(term);
+            track.insert(term->dest_term);
+
+            // if the existing term is on top of its cell that means there is a
+            // trace spanning up from the term to its track so place above it
+            if (existing_term->on_top()) {
+                channel.tracks.insert(channel.tracks.begin() + existing_term->track+1, track);
+            } else {
+                channel.tracks.insert(channel.tracks.begin() + existing_term->track+0, track);
+            }
+
+            reset_term_track_numbers(channel);
+
+            moved.push_back(term);
+            moved.push_back(existing_term);
+        }
+
     }
 }
 
@@ -257,7 +312,7 @@ bool shrink(channel_t& channel)
 
         if (track_num == term->track) continue;
 
-        printf("Moving net %d from track %d to track %d\n", term->label, term->track, track_num);
+        //printf("Moving net %d from track %d to track %d\n", term->label, term->track, track_num);
 
         // remove them from the original track
         channel.tracks[term->track].erase(term);
