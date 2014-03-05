@@ -9,6 +9,7 @@
 
 void assign_terms_to_channels(channels_t& channels, rows_t& rows);
 void assign_terms_to_tracks(channels_t& channels);
+void find_vertical_nets(channels_t& channels);
 void shrink(channels_t& channels);
 void remove_empty_tracks(channels_t& channels);
 
@@ -35,6 +36,7 @@ channels_t route(rows_t& rows)
 
     assign_terms_to_channels(channels, rows);
     assign_terms_to_tracks(channels);
+    find_vertical_nets(channels);
     shrink(channels);
     remove_empty_tracks(channels);
 
@@ -84,17 +86,15 @@ void assign_terms_to_tracks(channels_t& channels)
     }
 }
 
-void shrink(channels_t& channels)
+void find_vertical_nets(channels_t& channels)
 {
-
-    // attempt to pull each net closer to the cells
-
     for (auto &channel : channels) {
         for (auto &term : channel.terms) {
 
             if (term->dest_cell == nullptr) continue;
-            if (term->track == VERTICAL) continue;
-            if (term->dest_term->track == VERTICAL) continue;
+
+            if (term->track == VERTICAL || term->dest_term->track == VERTICAL)
+                continue;
 
             int x1_a = std::min(term->position().x, term->dest_term->position().x);
             int x1_b = std::max(term->position().x, term->dest_term->position().x);
@@ -108,18 +108,29 @@ void shrink(channels_t& channels)
                 channel.tracks[term->track].erase(term->dest_term);
                 term->track = VERTICAL;
                 term->dest_term->track = UNROUTED;
-                continue;
             }
+        }
+    }
+}
 
-            int track_num = -1;
+void shrink(channels_t& channels)
+{
+    // attempt to pull each net closer to the cells
+
+    for (auto &channel : channels) {
+        for (auto &term : channel.terms) {
+
+            if (term->dest_cell == nullptr) continue;
+
+            if (term->track == VERTICAL || term->dest_term->track == VERTICAL)
+                continue;
 
             std::set<int> open_tracks;
 
             // assume all tracks are intially open
-            for (track_num=0; track_num<(int)channel.tracks.size(); track_num++) {
+            for (unsigned int track_num=0; track_num<channel.tracks.size(); track_num++) {
                 open_tracks.insert(track_num);
             }
-
 
             // if there is not enough horizontal space between this terminal
             // and an existing one the track becomes invalid. also, every track
@@ -127,7 +138,7 @@ void shrink(channels_t& channels)
             // invalid.  this image illustrates the problem we are solving (net
             // 4 should not be allowed to cross net 2):
             // http://i.imgur.com/zPGh1AP.png
-            track_num = -1;
+            int track_num = -1;
             for (auto &track : channel.tracks) {
 
                 track_num++;
@@ -193,6 +204,8 @@ void shrink(channels_t& channels)
 
                 for (auto &existing_term : track) {
                     bool fits = true;
+                    int x1_a = std::min(term->position().x, term->dest_term->position().x);
+                    int x1_b = std::max(term->position().x, term->dest_term->position().x);
                     int x2_a = std::min(existing_term->position().x, existing_term->dest_term->position().x);
                     int x2_b = std::max(existing_term->position().x, existing_term->dest_term->position().x);
                     if (x2_a >= x1_a-TRACK_SPACING && x2_a <= x1_b+TRACK_SPACING) { fits = false; }
