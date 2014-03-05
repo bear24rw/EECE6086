@@ -41,30 +41,67 @@ void draw_via(FILE *fp, int x, int y)
 void write_svg(std::string filename, rows_t& rows, channels_t& channels)
 {
 
+    //
+    // Figure out the bounding box
+    //
+
+    // X Extents
+
+    int biggest_x = 0;
+    int current_x = 0;
+
+    for (auto &row : rows) {
+        for (auto &cell : row) {
+            current_x = cell->position.x;
+            current_x += cell->feed_through ? 3 : 6;
+            if (current_x > biggest_x)
+                biggest_x = current_x;
+        }
+    }
+
+    // Y Extents
+
+    int biggest_y = rows.size() * 6;
+
+    for (auto &channel : channels) {
+        biggest_y += channel.tracks.size() * 2 + 1;
+    }
+    // outer 2 channels don't have the +1
+    biggest_y -= 2;
+
+    printf("SVG Extents: %d %d\n", biggest_x, biggest_y);
+
+    //
+    // Calculate viewport
+    //
+
     int width = 1000;
     int height = 1000;
-    int view_x = -50;
-    int view_y = -950;
-    //int view_y = -50;
-    int view_w = 1000;
-    int view_h = 1000;
 
+    int view_w = (biggest_x + 2*GRID_BORDER) * PX_PER_GRID;
+    int view_h = (biggest_y + 2*GRID_BORDER) * PX_PER_GRID;
+    int view_x = -GRID_BORDER * PX_PER_GRID;
+    int view_y = -1*view_h + GRID_BORDER * PX_PER_GRID;
 
     filename.append(".svg");
 
     FILE *fp = fopen(filename.c_str(), "w");
 
     fprintf(fp, "<?xml version='1.0' encoding='utf-8' ?>\n");
-    fprintf(fp, "<svg baseProfile='full' width='%dpx' height='%dpx' version='1.1' viewBox='%d %d %d %d' xmlns='http://www.w3.org/2000/svg' xmlns:ev='http://www.w3.org/2001/xml-events' xmlns:xlink='http://www.w3.org/1999/xlink'>\n", width, height, view_x, view_y, view_w, view_h);
+    fprintf(fp, "<svg baseProfile='full' width='%dpx' height='%dpx' version='1.1' viewBox='%d %d %d %d' preserveAspectRatio='xMinYMin meet' xmlns='http://www.w3.org/2000/svg' xmlns:ev='http://www.w3.org/2001/xml-events' xmlns:xlink='http://www.w3.org/1999/xlink'>\n", width, height, view_x, view_y, view_w, view_h);
     fprintf(fp, "<defs />\n");
+
+    //draw_rect(fp, 0, 0, biggest_x, biggest_y);
 
     //
     // Draw a grid
     //
 
-    for (int i=0; i<1000; i++) {
-        draw_line(fp, i, 0, i, 1000, std::string("gray"));
-        draw_line(fp, 0, i, 1000, i, std::string("gray"));
+    for (int i=-GRID_BORDER; i<biggest_x+GRID_BORDER; i++) {
+        draw_line(fp, i, -GRID_BORDER, i, biggest_y+GRID_BORDER, std::string("gray"));
+    }
+    for (int i=-GRID_BORDER; i<biggest_y+GRID_BORDER; i++) {
+        draw_line(fp, -GRID_BORDER, i, biggest_x+GRID_BORDER, i, std::string("gray"));
     }
 
 
