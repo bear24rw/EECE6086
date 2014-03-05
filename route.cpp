@@ -43,12 +43,9 @@ channels_t route(rows_t& rows)
         assign_terms_to_tracks(channel);
         find_vertical_nets(channel);
         expand(channel);
-        shrink(channel);
 
-        /*
         for (int i=0; i<20 && shrink(channel); i++)
             printf("[route] shrink iteration %d\n", i);
-            */
 
         remove_empty_tracks(channel);
     }
