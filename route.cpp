@@ -63,10 +63,11 @@ channels_t route(rows_t& rows)
             int x1_b = std::max(term->position().x, term->dest_term->position().x);
 
             // if the two terminals are directly above each
-            // other there is no need for a track
+            // other there is no need for a track. mark the
+            // destination term as unrouted so we don't draw it twice
             if (x1_a == x1_b) {
                 term->track = VERTICAL;
-                term->dest_term->track = VERTICAL;
+                term->dest_term->track = UNROUTED;
                 continue;
             }
 
