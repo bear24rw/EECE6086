@@ -10,7 +10,7 @@
 #include "place.h"
 #include "route.h"
 #include "magic.h"
-#include "test.h"
+#include "svg.h"
 
 int num_nets;
 int num_cells;
@@ -34,10 +34,6 @@ int wirelength(cell_t *cell_a, int term_a, cell_t *cell_b, int term_b)
 
 int main(int argc, char *argv[])
 {
-    #ifdef TEST
-    test();
-    return 0;
-    #endif
 
     //
     // Get number of cells and nets
@@ -102,6 +98,9 @@ int main(int argc, char *argv[])
 
     printf("Writing magic file\n");
     write_magic(filename, rows, channels);
+
+    printf("Writing svg file\n");
+    write_svg(filename, rows, channels);
 
     printf("Done.\n");
 }
