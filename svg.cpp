@@ -75,8 +75,8 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
     // Calculate viewport
     //
 
-    int width = 1000;
-    int height = 1000;
+    int width = 2000;
+    int height = 2000;
 
     int view_w = (biggest_x + 2*GRID_BORDER) * PX_PER_GRID;
     int view_h = (biggest_y + 2*GRID_BORDER) * PX_PER_GRID;
