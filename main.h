@@ -1,6 +1,7 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <unordered_set>
 #include <vector>
 #include "cell.h"
 #include "term.h"
@@ -17,9 +18,11 @@ typedef std::vector<cell_t*> row_t;
 typedef std::vector<row_t> rows_t;
 
 
+typedef std::unordered_set<term_t*> track_t;
+
 typedef struct {
     std::vector<term_t*> terms;
-    std::vector<std::vector<term_t*>> tracks;
+    std::vector<track_t> tracks;
 } channel_t;
 
 typedef std::vector<channel_t> channels_t;
