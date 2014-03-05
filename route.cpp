@@ -131,7 +131,6 @@ channels_t route(rows_t& rows)
 
             // if we're looking for the highest track and we found a valid one add the term to it
             if (find_highest && highest_track != -1) {
-                printf("found highest: %d\n", highest_track);
                 term->track = highest_track;
                 term->dest_term->track = highest_track;
                 channel.tracks[highest_track].push_back(term);
