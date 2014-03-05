@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <vector>
+#include <climits>
+#include <stdlib.h>
 #include "route.h"
 #include "main.h"
 
@@ -71,6 +73,35 @@ channels_t route(rows_t& rows)
                 continue;
             }
 
+            int lowest_allowed_track = -1;
+            int highest_allowed_track = INT_MAX;
+
+            int track_num = -1;
+
+            // figure out the highest and lowest track we are allowed to place this net.
+            // if two terminals are on either side of the channel and they don't have
+            // greater than TRACK_SPACING horizontal distance between them then we
+            // can't allow them to cross. this image illustrates the problem we
+            // are solving (net 4 should not be allowed to cross net 2):
+            // http://i.imgur.com/zPGh1AP.png
+            for (auto &track : channel.tracks) {
+                track_num++;
+                for (auto &existing_term : track) {
+
+                    // if there is enough horizontal spacing between these terms skip it
+                    if (abs(term->position().x - existing_term->position().x) > TRACK_SPACING) continue;
+
+                    // if we are above the existing terminal than that terminal defines our new lowest
+                    if (term->cell->row > existing_term->cell->row) {
+                        if (track_num > lowest_allowed_track)
+                            lowest_allowed_track = track_num;
+                    } else {
+                        if (track_num < highest_allowed_track)
+                            highest_allowed_track = track_num;
+                    }
+                }
+            }
+
             // loop through each existing tracks and see if there is a spot for this net
 
             /*
@@ -92,11 +123,14 @@ channels_t route(rows_t& rows)
             bool find_highest = !term->on_top() && !term->dest_term->on_top();
             int highest_track = -1;
 
-            int track_num = -1;
+            track_num = -1;
             bool fits = false;
             for (auto &track : channel.tracks) {
 
                 track_num++;
+
+                if (track_num < lowest_allowed_track) continue;
+                if (track_num > highest_allowed_track) continue;
 
                 // assume we are able to fit this net on this track unless we determine otherwise
                 fits = true;
