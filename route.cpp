@@ -1,27 +1,19 @@
 #include <stdio.h>
 #include <vector>
+#include <algorithm>
 #include <set>
 #include <climits>
 #include <stdlib.h>
 #include "route.h"
 #include "main.h"
 
+void assign_terms_to_channels(channels_t& channels, rows_t& rows);
+void assign_terms_to_tracks(channels_t& channels);
+void shrink(channels_t& channels);
+void remove_empty_tracks(channels_t& channels);
+
 channels_t route(rows_t& rows)
 {
-    /*
-       ============== CHANNEL 5
-       [] [] [] [] [] ROW 4
-       ============== CHANNEL 4
-       [] [] [] [] [] ROW 3
-       ============== CHANNEL 3
-       [] [] [] [] [] ROW 2
-       ============== CHANNEL 2
-       [] [] [] [] [] ROW 1
-       ============== CHANNEL 1
-       [] [] [] [] [] ROW 0
-       ============== CHANNEL 0
-    */
-
     /*
        ...
        -------------- CHANNEL 2 TRACK 0
@@ -41,6 +33,16 @@ channels_t route(rows_t& rows)
     // list of terminals in each channel
     channels_t channels(rows.size()+1);
 
+    assign_terms_to_channels(channels, rows);
+    assign_terms_to_tracks(channels);
+    shrink(channels);
+    remove_empty_tracks(channels);
+
+    return channels;
+}
+
+void assign_terms_to_channels(channels_t& channels, rows_t& rows)
+{
     // go through the terminals of each cell in each row and add the terminals
     // to the correct channels
     for (unsigned int row_idx=0; row_idx<rows.size(); row_idx++) {
@@ -55,31 +57,66 @@ channels_t route(rows_t& rows)
         }
     }
 
+}
 
-    // go through each channel and figure out what track to put each terminal in
+void assign_terms_to_tracks(channels_t& channels)
+{
+    // give each terminal in the channel its own track
+
+    unsigned int track_num;
+
     for (auto &channel : channels) {
+        track_num = 0;
         for (auto &term : channel.terms) {
             if (term->dest_cell == nullptr) continue;
             if (term->track >= 0) continue;
 
+            term->track            = track_num;
+            term->dest_term->track = track_num;
+
+            track_t track;
+            track.insert(term);
+            track.insert(term->dest_term);
+            channel.tracks.push_back(track);
+
+            track_num++;
+        }
+    }
+}
+
+void shrink(channels_t& channels)
+{
+
+    // attempt to pull each net closer to the cells
+
+    for (auto &channel : channels) {
+        for (auto &term : channel.terms) {
+
+            if (term->dest_cell == nullptr) continue;
+            if (term->track == VERTICAL) continue;
+            if (term->dest_term->track == VERTICAL) continue;
+
             int x1_a = std::min(term->position().x, term->dest_term->position().x);
             int x1_b = std::max(term->position().x, term->dest_term->position().x);
 
-            // if the two terminals are directly above each
-            // other there is no need for a track. mark the
-            // destination term as unrouted so we don't draw it twice
+            // if the two terminals are directly above each other there is no
+            // need for them to be on a track. remove them from the track they
+            // were on and mark it as a vertical track. also mark destination
+            // term as unrouted so we don't draw it twice
             if (x1_a == x1_b) {
+                channel.tracks[term->track].erase(term);
+                channel.tracks[term->track].erase(term->dest_term);
                 term->track = VERTICAL;
                 term->dest_term->track = UNROUTED;
                 continue;
             }
 
-            unsigned int track_num = -1;
+            int track_num = -1;
 
             std::set<int> open_tracks;
 
             // assume all tracks are intially open
-            for (track_num=0; track_num<channel.tracks.size(); track_num++) {
+            for (track_num=0; track_num<(int)channel.tracks.size(); track_num++) {
                 open_tracks.insert(track_num);
             }
 
@@ -92,7 +129,12 @@ channels_t route(rows_t& rows)
             // http://i.imgur.com/zPGh1AP.png
             track_num = -1;
             for (auto &track : channel.tracks) {
+
                 track_num++;
+
+                // don't consider the track we are already on
+                if (term->track == track_num) continue;
+
                 for (auto &existing_term : track) {
 
                     // if there is enough horizontal spacing between these terms skip it
@@ -103,7 +145,7 @@ channels_t route(rows_t& rows)
                     // there is a trace spanning up from the term to the
                     // current track. all the tracks in this area are invalid.
                     if (existing_term->on_top()) {
-                        for (unsigned int t=0; t<=track_num; t++) {
+                        for (int t=0; t<=track_num; t++) {
                             open_tracks.erase(t);
                         }
                     }
@@ -143,7 +185,12 @@ channels_t route(rows_t& rows)
 
             track_num = -1;
             for (auto &track : channel.tracks) {
+
                 track_num++;
+
+                // don't consider the track we are already on
+                if (term->track == track_num) continue;
+
                 for (auto &existing_term : track) {
                     bool fits = true;
                     int x2_a = std::min(existing_term->position().x, existing_term->dest_term->position().x);
@@ -158,14 +205,8 @@ channels_t route(rows_t& rows)
                 }
             }
 
-            // if there are no open tracks left we have to make a new one
+            // if there are no open tracks left we have to just leave it
             if (open_tracks.empty()) {
-                term->track = channel.tracks.size();
-                term->dest_term->track = channel.tracks.size();
-                std::vector<term_t*> track;
-                track.push_back(term);
-                track.push_back(term->dest_term);
-                channel.tracks.push_back(track);
                 continue;
             }
 
@@ -178,15 +219,52 @@ channels_t route(rows_t& rows)
             else
                 track_num = *open_tracks.begin();
 
+            // if it turns out we have no were to move, just leave it
+            if (term->track == track_num) continue;
+
+            printf("Moving net %d from track %d to track %d\n", term->label, term->track, track_num);
+
+            // remove them from the original track
+            channel.tracks[term->track].erase(term);
+            channel.tracks[term->track].erase(term->dest_term);
+
+            // add them to the new one
             term->track = track_num;
             term->dest_term->track = track_num;
-            channel.tracks[track_num].push_back(term);
-            channel.tracks[track_num].push_back(term->dest_term);
+            channel.tracks[track_num].insert(term);
+            channel.tracks[track_num].insert(term->dest_term);
 
         }
     }
+}
 
-    return channels;
+void remove_empty_tracks(channels_t& channels)
+{
+    // remove empty tracks
+
+    for (auto &channel : channels) {
+        for (unsigned int i=0; i<channel.tracks.size(); i++) {
+            if (channel.tracks[i].empty()) {
+                channel.tracks.erase(channel.tracks.begin()+i);
+                i--;
+            }
+        }
+    }
+
+    // reset the track number for each term
+
+    int track_num = 0;
+
+    for (auto &channel : channels) {
+        track_num = 0;
+        for (auto &track : channel.tracks) {
+            for (auto &term : track) {
+                term->track = track_num;
+            }
+            track_num++;
+        }
+    }
+
 }
 
 
