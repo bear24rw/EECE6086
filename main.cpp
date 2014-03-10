@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     printf("Calculating cell X positions\n");
     calculate_x_values(rows);
 
-    calculate_term_positions(cells);
+    calculate_term_positions(rows);
 
     printf("Routing cells\n");
     channels_t channels = route(rows);
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     printf("Calculating cell Y positions\n");
     calculate_y_values(rows, channels);
 
-    calculate_term_positions(cells);
+    calculate_term_positions(rows);
 
     printf("Writing magic file\n");
     write_magic(filename, rows, channels);
@@ -133,12 +133,14 @@ void calculate_y_values(rows_t& rows, channels_t& channels)
     }
 }
 
-void calculate_term_positions(std::vector<cell_t>& cells)
+void calculate_term_positions(rows_t& rows)
 {
     // calculates the absolute xy position of each term within each cell
-    for (auto &cell : cells) {
-        for (auto &term : cell.terms) {
-            term.position = get_term_position(term);
+    for (auto &row : rows) {
+        for (auto &cell : row) {
+            for (auto &term : cell->terms) {
+                term.position = get_term_position(term);
+            }
         }
     }
 }
