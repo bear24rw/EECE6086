@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++0x -Wall -lm -g -pg
+CXXFLAGS = -std=c++0x -Wall -lm -g -pg -O3
 
 BINARY := main
 SOURCES := $(wildcard *.cpp)
