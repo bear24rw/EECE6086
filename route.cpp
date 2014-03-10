@@ -197,18 +197,16 @@ bool shrink(channel_t& channel)
         if (term->track == VERTICAL || term->dest_term->track == VERTICAL)
             continue;
 
-        std::set<int> open_tracks;
+        int *open_tracks = new int[channel.tracks.size()];
 
         // assume all tracks are intially open
-        for (unsigned int track_num=0; track_num<channel.tracks.size(); track_num++) {
-            open_tracks.insert(track_num);
-        }
+        memset(open_tracks, 1, channel.tracks.size() * sizeof(int));
 
         // if we are the only net on this track then we really want to try to
         // move it to another track that already has nets on it so remove its
         // current track from the list of possible tracks it can end up
         if (channel.tracks[term->track].size() == 2) {
-            open_tracks.erase(term->track);
+            open_tracks[term->track] = 0;
         }
 
         // if there is not enough horizontal space between this terminal
@@ -240,7 +238,7 @@ bool shrink(channel_t& channel)
                 // current track. all the tracks in this area are invalid.
                 if (existing_term->on_top()) {
                     for (int t=0; t<=track_num; t++) {
-                        open_tracks.erase(t);
+                        open_tracks[t] = 0;
                     }
                 }
 
@@ -248,8 +246,8 @@ bool shrink(channel_t& channel)
                 // there is a trace spanning down from the term to the
                 // current track. all the tracks in this area are invalid.
                 if (!existing_term->on_top()) {
-                    for (unsigned int t=track_num; t<=channel.tracks.size(); t++) {
-                        open_tracks.erase(t);
+                    for (unsigned int t=track_num; t<channel.tracks.size(); t++) {
+                        open_tracks[t] = 0;
                     }
                 }
             }
@@ -300,13 +298,17 @@ bool shrink(channel_t& channel)
                 if (x2_a >= x1_a-TRACK_SPACING && x2_b <= x1_b+TRACK_SPACING) { fits = false; }
                 if (x2_a <= x1_a-TRACK_SPACING && x2_b >= x1_b+TRACK_SPACING) { fits = false; }
                 if (!fits){
-                    open_tracks.erase(track_num);
+                    open_tracks[track_num] = 0;
                 }
             }
         }
 
         // if there are no open tracks left we have to just leave it
-        if (open_tracks.empty()) {
+        bool none_open = true;
+        for (int t=0; t<channel.tracks.size(); t++) {
+            if (open_tracks[t]) none_open = false;
+        }
+        if (none_open) {
             continue;
         }
 
@@ -314,10 +316,12 @@ bool shrink(channel_t& channel)
         // highest track in order to pull the net up closer to the bottom of the cell
         bool find_highest = !term->on_top() && !term->dest_term->on_top();
 
-        if (find_highest)
-            track_num = *open_tracks.rbegin();
-        else
-            track_num = *open_tracks.begin();
+        for (int t=0; t<channel.tracks.size(); t++) {
+            if (open_tracks[t]) {
+                track_num = t;
+                if (!find_highest) break;
+            }
+        }
 
         // if we were looking for the highest and we didn't improve just leave it
         //if (find_highest && track_num <= term->track) continue;
