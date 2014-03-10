@@ -119,6 +119,10 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
                 draw_rect(fp, cell->position.x, cell->position.y, 6, 6, std::string("white"), 0.75);
                 draw_text(fp, std::string("C").append(std::to_string(cell->number+1)), cell->position.x + 3, cell->position.y + 3, 12);
             }
+
+            for (auto &term : cell->terms) {
+                draw_text(fp, std::to_string(term.number+1), term.position().x + 0.5, term.position().y + 0.5, 6);
+            }
         }
     }
 
