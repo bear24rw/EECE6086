@@ -107,8 +107,8 @@ void find_vertical_nets(channel_t& channel)
         if (term->track == VERTICAL || term->dest_term->track == VERTICAL)
             continue;
 
-        int x1_a = std::min(term->position().x, term->dest_term->position().x);
-        int x1_b = std::max(term->position().x, term->dest_term->position().x);
+        int x1_a = std::min(term->position.x, term->dest_term->position.x);
+        int x1_b = std::max(term->position.x, term->dest_term->position.x);
 
         // if the two terminals are directly above each other there is no
         // need for them to be on a track. remove them from the track they
@@ -142,7 +142,7 @@ void expand(channel_t& channel)
             if (std::count(moved.begin(), moved.end(), term) > 0) continue;
 
             // if there is enough horizontal spacing between these terms skip it
-            if (abs(term->position().x - existing_term->position().x) > TRACK_SPACING)
+            if (abs(term->position.x - existing_term->position.x) > TRACK_SPACING)
                 continue;
 
             if (term->on_top() && term->track < existing_term->track && !existing_term->on_top())
@@ -231,8 +231,8 @@ bool shrink(channel_t& channel)
                 if (term->dest_term == existing_term) continue;
 
                 // if there is enough horizontal spacing between these terms skip it
-                if ((abs(term->position().x - existing_term->position().x) > TRACK_SPACING) &&
-                    (abs(term->dest_term->position().x - existing_term->position().x) > TRACK_SPACING))
+                if ((abs(term->position.x - existing_term->position.x) > TRACK_SPACING) &&
+                    (abs(term->dest_term->position.x - existing_term->position.x) > TRACK_SPACING))
                     continue;
 
                 // if the existing term is on top of its cell that means
@@ -291,10 +291,10 @@ bool shrink(channel_t& channel)
                 if (term->dest_term == existing_term) continue;
 
                 bool fits = true;
-                int x1_a = std::min(term->position().x, term->dest_term->position().x);
-                int x1_b = std::max(term->position().x, term->dest_term->position().x);
-                int x2_a = std::min(existing_term->position().x, existing_term->dest_term->position().x);
-                int x2_b = std::max(existing_term->position().x, existing_term->dest_term->position().x);
+                int x1_a = std::min(term->position.x, term->dest_term->position.x);
+                int x1_b = std::max(term->position.x, term->dest_term->position.x);
+                int x2_a = std::min(existing_term->position.x, existing_term->dest_term->position.x);
+                int x2_b = std::max(existing_term->position.x, existing_term->dest_term->position.x);
                 if (x2_a >= x1_a-TRACK_SPACING && x2_a <= x1_b+TRACK_SPACING) { fits = false; }
                 if (x2_b >= x1_a-TRACK_SPACING && x2_b <= x1_b+TRACK_SPACING) { fits = false; }
                 if (x2_a >= x1_a-TRACK_SPACING && x2_b <= x1_b+TRACK_SPACING) { fits = false; }

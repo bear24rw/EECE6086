@@ -18,6 +18,9 @@ struct term_t {
     // label of the net attacked to this term
     int label;
 
+    // absolute world position of this term
+    point_t position;
+
     cell_t *dest_cell;
     term_t *dest_term;
 
@@ -36,7 +39,6 @@ struct term_t {
     term_t();
     bool on_top(void);
     bool on_left(void);
-    point_t position(void);
 
 };
 

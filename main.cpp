@@ -75,11 +75,15 @@ int main(int argc, char *argv[])
     printf("Calculating cell X positions\n");
     calculate_x_values(rows);
 
+    calculate_term_positions(cells);
+
     printf("Routing cells\n");
     channels_t channels = route(rows);
 
     printf("Calculating cell Y positions\n");
     calculate_y_values(rows, channels);
+
+    calculate_term_positions(cells);
 
     printf("Writing magic file\n");
     write_magic(filename, rows, channels);
@@ -127,4 +131,40 @@ void calculate_y_values(rows_t& rows, channels_t& channels)
         }
         current_y += CELL_HEIGHT + CELL_SPACING;
     }
+}
+
+void calculate_term_positions(std::vector<cell_t>& cells)
+{
+    // calculates the absolute xy position of each term within each cell
+    for (auto &cell : cells) {
+        for (auto &term : cell.terms) {
+            term.position = get_term_position(term);
+        }
+    }
+}
+
+point_t get_term_position(term_t& term)
+{
+    //
+    // Returns the absolute world position of this terminal
+    //
+
+    // coordinates of terminals are -1 from what is given in
+    // the pdf since we want to work with 0 based indexing
+    point_t offsets[]    = {{1,5}, {4,5}, {1,0}, {4,0}};
+    point_t offsets_x[]  = {{1,0}, {4,0}, {1,5}, {4,5}};
+    point_t offsets_y[]  = {{4,5}, {1,5}, {4,0}, {1,0}};
+    point_t offsets_xy[] = {{4,0}, {1,0}, {4,5}, {1,5}};
+    point_t offsets_ft[] = {{1,5}, {1,0}};
+
+    point_t term_position = offsets[term.number];
+
+    if (term.cell->feed_through)
+        return term.cell->position + offsets_ft[term.number];
+
+    if (term.cell->flip_x)                      { term_position = offsets_x[term.number];  }
+    if (term.cell->flip_y)                      { term_position = offsets_y[term.number];  }
+    if (term.cell->flip_x && term.cell->flip_y) { term_position = offsets_xy[term.number]; }
+
+    return term.cell->position + term_position;
 }

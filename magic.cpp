@@ -65,8 +65,8 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             if (src_term->track == UNROUTED) continue;
             if (src_term->track == VERTICAL) continue;
 
-            point_t p1 = src_term->position();
-            point_t p2 = dst_term->position();
+            point_t p1 = src_term->position;
+            point_t p2 = dst_term->position;
 
             if (src_term->on_top()) {
                 p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
@@ -96,8 +96,8 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             if (src_term->track == UNROUTED) continue;
             if (src_term->track == VERTICAL) continue;
 
-            point_t p1 = src_term->position();
-            point_t p2 = dst_term->position();
+            point_t p1 = src_term->position;
+            point_t p2 = dst_term->position;
 
             if (src_term->on_top()) {
                 p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
@@ -130,8 +130,8 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             int x1, y1, x2, y2;
 
             if (src_term->track == VERTICAL) {
-                p1 = src_term->position();
-                p2 = dst_term->position();
+                p1 = src_term->position;
+                p2 = dst_term->position;
                 x1 = std::min(p1.x, p2.x);
                 y1 = std::min(p1.y, p2.y);
                 x2 = std::max(p1.x, p2.x) + TRACK_WIDTH;
@@ -140,7 +140,7 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
                 continue;
             }
 
-            p1 = p2 = src_term->position();
+            p1 = p2 = src_term->position;
             if (src_term->on_top()) {
                 p2.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
             } else {
@@ -169,7 +169,7 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             if (src_term->track == UNROUTED) continue;
             if (src_term->track == VERTICAL) continue;
 
-            point_t p1 = src_term->position();
+            point_t p1 = src_term->position;
 
             if (src_term->on_top()) {
                 p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
