@@ -38,15 +38,21 @@ channels_t route(rows_t& rows)
 
     assign_terms_to_channels(channels, rows);
 
+    int channel_num = 1;
     for (auto &channel : channels) {
+        printf("[route] ====== CHANNEL %d/%zu ======\n", channel_num, channels.size());
         assign_terms_to_tracks(channel);
         find_vertical_nets(channel);
         expand(channel);
 
-        for (int i=0; i<20 && shrink(channel); i++)
+        for (int i=0; i<20; i++) {
             printf("[route] shrink iteration %d\n", i);
+            if (!shrink(channel)) break;
+            remove_empty_tracks(channel);
+        }
 
         remove_empty_tracks(channel);
+        channel_num++;
     }
 
     return channels;
@@ -174,12 +180,17 @@ void expand(channel_t& channel)
 
 bool shrink(channel_t& channel)
 {
+    // keep track of which nets we have already fixed so we don't touch them again
+    std::vector<term_t*> moved;
+
     // return if any net was moved or not
     bool net_was_moved = false;
 
     // attempt to pull each net closer to the cells
 
     for (auto &term : channel.terms) {
+
+        if (std::count(moved.begin(), moved.end(), term) > 0) continue;
 
         if (term->dest_cell == nullptr) continue;
 
@@ -191,6 +202,13 @@ bool shrink(channel_t& channel)
         // assume all tracks are intially open
         for (unsigned int track_num=0; track_num<channel.tracks.size(); track_num++) {
             open_tracks.insert(track_num);
+        }
+
+        // if we are the only net on this track then we really want to try to
+        // move it to another track that already has nets on it so remove its
+        // current track from the list of possible tracks it can end up
+        if (channel.tracks[term->track].size() == 2) {
+            open_tracks.erase(term->track);
         }
 
         // if there is not enough horizontal space between this terminal
@@ -320,6 +338,9 @@ bool shrink(channel_t& channel)
         term->dest_term->track = track_num;
         channel.tracks[track_num].insert(term);
         channel.tracks[track_num].insert(term->dest_term);
+
+        moved.push_back(term);
+        moved.push_back(term->dest_term);
 
         net_was_moved = true;
 
