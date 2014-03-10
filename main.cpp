@@ -12,32 +12,13 @@
 #include "magic.h"
 #include "svg.h"
 
-int num_nets;
-int num_cells;
-
-
-int wirelength(cell_t *cell_a, int term_a, cell_t *cell_b, int term_b)
-{
-    //
-    // Returns the manhatten distance between two terminals of two given cells
-    //
-
-    point_t term_a_pos = cell_a->terms[term_a].position();
-    point_t term_b_pos = cell_b->terms[term_a].position();
-
-    int x_len = abs(term_a_pos.x - term_b_pos.x);
-    int y_len = abs(term_a_pos.y - term_b_pos.y);
-
-    return x_len + y_len;
-}
-
-
 int main(int argc, char *argv[])
 {
 
     //
     // Get number of cells and nets
     //
+
 
     if (argc < 2) {
         printf("Usage: ./main inputfile\n");
@@ -52,6 +33,9 @@ int main(int argc, char *argv[])
         printf("Cannot open file.\n");
         return ENOENT;
     }
+
+    int num_nets;
+    int num_cells;
 
     fp >> num_cells;
     fp >> num_nets;
@@ -76,9 +60,10 @@ int main(int argc, char *argv[])
         // subtract 1 from all the numbers to 0 index them
         cell_a--; cell_b--;
         term_a--; term_b--;
+        // create symetric connection for each net
         cells[cell_a].terms[term_a].dest_cell = &cells[cell_b];
-        cells[cell_a].terms[term_a].dest_term = &cells[cell_b].terms[term_b];
         cells[cell_b].terms[term_b].dest_cell = &cells[cell_a];
+        cells[cell_a].terms[term_a].dest_term = &cells[cell_b].terms[term_b];
         cells[cell_b].terms[term_b].dest_term = &cells[cell_a].terms[term_a];
         cells[cell_a].terms[term_a].label = net;
         cells[cell_b].terms[term_b].label = net;
@@ -107,6 +92,8 @@ int main(int argc, char *argv[])
 
 void calculate_x_values(rows_t& rows)
 {
+    // update the absolute x position of each cell in each row
+
     for (auto &row : rows) {
 
         int current_x = 0;
@@ -115,9 +102,8 @@ void calculate_x_values(rows_t& rows)
 
             cell->position.x = current_x;
 
-            // feed through cells are 3 wide
-            // normal cells are 6 wide
-            // every cell as a seperation of 1
+            // feed through cells are 3 wide, normal cells are 6 wide
+            // every cell has a seperation of 1
             if (cell->feed_through)
                 current_x += 4;
             else
@@ -129,6 +115,9 @@ void calculate_x_values(rows_t& rows)
 
 void calculate_y_values(rows_t& rows, channels_t& channels)
 {
+    // update the absolute y position of each cell in each row based
+    // on the height of the channel between the rows
+
     int current_y = 0;
 
     for (unsigned int i=0; i<channels.size()-1; i++) {

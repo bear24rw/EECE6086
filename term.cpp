@@ -1,7 +1,8 @@
 #include "term.h"
 #include "cell.h"
 
-term_t::term_t() {
+term_t::term_t()
+{
     dest_cell = nullptr;
     in_correct_channel = false;
     track = UNROUTED;

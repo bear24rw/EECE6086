@@ -8,7 +8,6 @@
 #include "main.h"
 
 void assign_terms_to_channels(channels_t& channels, rows_t& rows);
-
 void assign_terms_to_tracks(channel_t& channel);
 void find_vertical_nets(channel_t& channel);
 void expand(channel_t& channel);
@@ -244,21 +243,21 @@ bool shrink(channel_t& channel)
            there are 4 possible overlap conditions. if any of them occur the track is invalid
 
 
-           1A--------------1B
+               1A--------------1B
            2A-----------2B
 
 
            1A--------------1B
-           2A-----------2B
+                   2A-----------2B
 
 
            1A--------------1B
-           2A----2B
+               2A----2B
 
 
-           1A--------------1B
+               1A--------------1B
            2A---------------------------2B
-           */
+        */
 
         track_num = -1;
         for (auto &track : channel.tracks) {
@@ -331,7 +330,7 @@ bool shrink(channel_t& channel)
 
 void remove_empty_tracks(channel_t& channel)
 {
-    // remove empty tracks
+    // if there are terms in the track we are free to remove it
 
     for (unsigned int i=0; i<channel.tracks.size(); i++) {
         if (channel.tracks[i].empty()) {
@@ -346,7 +345,9 @@ void remove_empty_tracks(channel_t& channel)
 
 void reset_term_track_numbers(channel_t& channel)
 {
-    // reset the track number for each term
+    // if tracks get removed then all the terminals in tracks above it will
+    // have the wrong track number. this function just goes through each track
+    // and resets the track number of each terminal in each track
 
     int track_num = 0;
 

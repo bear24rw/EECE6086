@@ -10,7 +10,6 @@ rows_t place(std::vector<cell_t>& cells)
 
     rows_t rows(grid_h);
 
-
     // just arrange the cells into a square for now
     for (unsigned int i=0; i<cells.size(); i++) {
         rows[i/grid_w].push_back(&cells[i]);
@@ -26,6 +25,10 @@ rows_t place(std::vector<cell_t>& cells)
 
 void update_cell_rows(rows_t& rows)
 {
+    // after placement we need to update the row and column of each cell
+    // since we need that information when adding feed through cells in
+    // the next stage
+
     int current_row = 0;
     int current_col = 0;
 
@@ -41,6 +44,9 @@ void update_cell_rows(rows_t& rows)
 
 void add_feed_throughs(rows_t& rows)
 {
+    // go through the terminals of each row and figure out if we need to add a
+    // feedthrough since we are modifying the row vectors we can't use iterators
+
     unsigned int row_idx = 0;
 
     while (row_idx < rows.size()) {
@@ -49,9 +55,11 @@ void add_feed_throughs(rows_t& rows)
 
         unsigned int cell_idx = 0;
 
+        // when we add a feedthrough to the current row we need to rescan the
+        // row because we might need to add another feedthrough for the
+        // feedthrough we just added
         bool rescan_row = false;
 
-        // since we are modifying the row vector in the loop we can't use an iterator
         while (cell_idx < row.size()) {
 
             cell_t *src_cell = row[cell_idx];

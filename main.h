@@ -13,7 +13,6 @@
 #define CELL_WIDTH    6
 
 
-// a vector of rows where each row is a vector of pointers to cells
 typedef std::vector<cell_t*> row_t;
 typedef std::vector<row_t> rows_t;
 
@@ -27,7 +26,6 @@ typedef struct {
 
 typedef std::vector<channel_t> channels_t;
 
-int wirelength(cell_t cell_a, int term_a, cell_t cell_b, int term_b);
 void calculate_x_values(rows_t& rows);
 void calculate_y_values(rows_t& rows, channels_t& channels);
 
