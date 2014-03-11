@@ -121,12 +121,12 @@ rows_t place(std::vector<cell_t>& cells)
             #endif
 
             // figure out the status of the target point
-            if (target_pos == seed_pos) {
-                target_point = SAME_LOC;
-            } else if (rows[target_pos.y][target_pos.x] == nullptr) {
+            if (rows[target_pos.y][target_pos.x] == nullptr) {
                 target_point = VACANT;
             } else if (rows[target_pos.y][target_pos.x]->locked) {
                 target_point = LOCKED;
+            } else if (target_pos == seed_pos) {
+                target_point = SAME_LOC;
             } else if (rows[target_pos.y][target_pos.x] != nullptr) {
                 target_point = OCCUPIED;
             } else {
@@ -222,6 +222,8 @@ rows_t place(std::vector<cell_t>& cells)
                     seed_cell->locked = true;
 
                     seed_cell = new_seed_cell;
+                    seed_pos.x = seed_cell->col;
+                    seed_pos.y = seed_cell->row;
 
                     end_ripple = false;
                     abort_count = 0;
