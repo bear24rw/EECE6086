@@ -16,4 +16,11 @@ int wirelen(cell_t& a, cell_t& b);
 void update_cell_rows(rows_t& rows);
 void add_feed_throughs(rows_t& rows);
 
+typedef struct {
+    bool operator()(cell_t *a, cell_t *b)
+    {
+    return (a->force < b->force);
+    }
+} force_compare_t;
+
 #endif

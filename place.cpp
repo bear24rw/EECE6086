@@ -1,3 +1,4 @@
+#include <queue>
 #include <climits>
 #include "place.h"
 #include "main.h"
@@ -29,6 +30,8 @@ rows_t place(std::vector<cell_t>& cells)
     }
     printf("----------------------------------\n");
 
+    std::priority_queue<cell_t*, std::vector<cell_t*>, force_compare_t> sorted_cells;
+
     #ifdef DEBUGGING
     printf("--------------------------------------------\n");
     printf("             INITIAL PLACEMENT              \n");
@@ -52,6 +55,7 @@ rows_t place(std::vector<cell_t>& cells)
                     cell.force);
             #endif
         }
+        sorted_cells.push(&cell);
     }
 
     // sort in descending order
@@ -79,7 +83,6 @@ rows_t place(std::vector<cell_t>& cells)
     int abort_count = 0;
     int abort_limit = 10;
 
-    unsigned int seed_idx = 0;
     point_t target_pos;
     point_t seed_pos;
 
@@ -93,10 +96,11 @@ rows_t place(std::vector<cell_t>& cells)
     while (iteration_count < iteration_limit) {
 
         // if we run out of seed cells we need to stop
-        if (seed_idx >= cells.size())
+        if (sorted_cells.empty())
             break;
 
-        cell_t *seed_cell = &cells[seed_idx++];
+        cell_t *seed_cell = sorted_cells.top();
+        sorted_cells.pop();
 
         seed_pos.x = seed_cell->col;
         seed_pos.y = seed_cell->row;
