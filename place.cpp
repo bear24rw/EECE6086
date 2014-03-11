@@ -209,7 +209,7 @@ rows_t place(std::vector<cell_t>& cells)
                         iteration_count++;
                     }
 
-                     break;
+                    break;
                 }
 
                 case OCCUPIED:
