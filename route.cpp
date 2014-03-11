@@ -4,6 +4,7 @@
 #include <set>
 #include <climits>
 #include <stdlib.h>
+#include <string.h>
 #include "route.h"
 #include "main.h"
 
