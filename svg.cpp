@@ -6,13 +6,13 @@
 #include "svg.h"
 
 
-void draw_line(FILE *fp, int x1, int y1, int x2, int y2, std::string color=std::string("black"))
+void draw_line(FILE *fp, float x1, float y1, float x2, float y2, std::string color=std::string("black"))
 {
     x1 *= PX_PER_GRID; y1 *= PX_PER_GRID;
     x2 *= PX_PER_GRID; y2 *= PX_PER_GRID;
     y1 *= -1;
     y2 *= -1;
-    fprintf(fp, "<line stroke='%s' stroke-width='1px' x1='%d' x2='%d' y1='%d' y2='%d' />\n", color.c_str(), x1, x2, y1, y2);
+    fprintf(fp, "<line stroke='%s' stroke-width='1px' x1='%f' x2='%f' y1='%f' y2='%f' />\n", color.c_str(), x1, x2, y1, y2);
 }
 
 void draw_rect(FILE *fp, int x, int y, int w, int h, std::string fill=std::string(""), float fill_opacity=0, int stroke_width=5)
@@ -217,6 +217,70 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
             y = y1 + 0.5;
             draw_text(fp, std::to_string(src_term->label), x, y, 10, std::string("yellow"));
 
+        }
+    }
+
+    fprintf(fp, "</svg>\n");
+    fclose(fp);
+}
+
+void write_placement_svg(std::string filename, std::vector<cell_t>& cells)
+{
+    // calculate extents
+
+    int biggest_x = 0;
+    int biggest_y = 0;
+    for (auto &cell : cells) {
+        if (cell.position.x > biggest_x) biggest_x = cell.position.x;
+        if (cell.position.y > biggest_y) biggest_y = cell.position.y;
+    }
+    biggest_x += 6;
+    biggest_y += 6;
+
+    // calculate viewport
+
+    int width = 2000;
+    int height = 2000;
+
+    int view_w = (biggest_x + 2*GRID_BORDER) * PX_PER_GRID;
+    int view_h = (biggest_y + 2*GRID_BORDER) * PX_PER_GRID;
+    int view_x = -GRID_BORDER * PX_PER_GRID;
+    int view_y = -1*view_h + GRID_BORDER * PX_PER_GRID;
+
+    filename.append(".svg");
+
+    FILE *fp = fopen(filename.c_str(), "w");
+
+    fprintf(fp, "<?xml version='1.0' encoding='utf-8' ?>\n");
+    fprintf(fp, "<svg baseProfile='full' width='%dpx' height='%dpx' version='1.1' viewBox='%d %d %d %d' preserveAspectRatio='xMinYMin meet' xmlns='http://www.w3.org/2000/svg' xmlns:ev='http://www.w3.org/2001/xml-events' xmlns:xlink='http://www.w3.org/1999/xlink'>\n", width, height, view_x, view_y, view_w, view_h);
+    fprintf(fp, "<defs />\n");
+
+    // draw a grid
+
+    for (int i=-GRID_BORDER; i<biggest_x+GRID_BORDER; i++) {
+        draw_line(fp, i, -GRID_BORDER, i, biggest_y+GRID_BORDER, std::string("gray"));
+    }
+    for (int i=-GRID_BORDER; i<biggest_y+GRID_BORDER; i++) {
+        draw_line(fp, -GRID_BORDER, i, biggest_x+GRID_BORDER, i, std::string("gray"));
+    }
+    // draw all the cells
+
+    for (auto &cell : cells) {
+
+        draw_rect(fp, cell.position.x, cell.position.y, 6, 6, std::string("white"), 0.75);
+        draw_text(fp, std::string("C").append(std::to_string(cell.number+1)), cell.position.x + 3, cell.position.y + 3, 12);
+
+        for (auto &term : cell.terms) {
+            draw_text(fp, std::to_string(term.number+1), term.position.x + 0.5, term.position.y + 0.5, 6);
+
+        }
+    }
+
+    // draw all the connections
+    for (auto &cell : cells) {
+        for (auto &term : cell.terms) {
+            if (term.dest_term != nullptr)
+                draw_line(fp, term.position.x+0.5, term.position.y+0.5, term.dest_term->position.x+0.5, term.dest_term->position.y+0.5, std::string("red"));
         }
     }
 
