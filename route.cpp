@@ -332,7 +332,7 @@ bool shrink(channel_t& channel)
 
         if (track_num == term->track_num) continue;
 
-        printf("Moving net %d from track %d to track %d\n", term->label, term->track_num, track_num);
+        //printf("Moving net %d from track %d to track %d\n", term->label, term->track_num, track_num);
 
         // remove them from the original track
         channel.tracks[term->track_num].erase(term);
