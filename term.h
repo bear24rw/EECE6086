@@ -9,7 +9,7 @@ typedef struct cell_t cell_t;
 typedef struct point_t point_t;
 
 struct term_t {
-    // pointer to cell that this term belongs too
+    // pointer to cell that this term belongs to
     cell_t *cell;
 
     // which terminal (pin) this is
