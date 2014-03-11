@@ -65,16 +65,9 @@ rows_t place(std::vector<cell_t>& cells)
         */
     }
 
-    // bubble sort - descending order
-    for (unsigned int i=cells.size(); i>0; i--) {
-        for (unsigned int j=1; j<cells.size(); j++) {
-            if (cells[j-1].force < cells[j].force) {
-                //printf("[%d | %d] %d | %d\n", i, j, cells[j-1].force, cells[j].force);
-                std::swap(cells[j-1], cells[j]);
-                //printf("[%d | %d] %d | %d\n", i, j, cells[j-1].force, cells[j].force);
-            }
-        }
-    }
+    // sort in descending order
+    std::sort(cells.begin(), cells.end(), compare_force);
+
     #ifdef DEBUGGING
     printf("\n");
     #endif
@@ -275,7 +268,7 @@ rows_t place(std::vector<cell_t>& cells)
                         // area for the whole time we have gone along
                         // the x, then let's try setting x back to 0
                         // and incrememnt the y value, and try the
-                        // sme thing.
+                        // same thing.
 
                         if (inc_x && temp_x++ > grid_w) {
                             inc_x = 0;
@@ -366,8 +359,6 @@ rows_t place(std::vector<cell_t>& cells)
 
         }
     }
-    /*
-    */
 
     // recalculate the current row and col of each cell
     update_cell_rows(rows);
@@ -377,23 +368,17 @@ rows_t place(std::vector<cell_t>& cells)
     return rows;
 }
 
-void swap_xy(int col1, int row1, int col2, int row2)
-{
-    int temp_c1 = col1;
-    col1 = col2;
-    col2 = temp_c1;
-
-    int temp_r1 = row1;
-    row1 = row2;
-    row2 = temp_r1;
-}
-
 int wirelen(int x1, int y1, int x2, int y2)
 {
     int dx = abs(x2 - x1);
     int dy = abs(y2 - y1);
 
     return dx + dy;
+}
+
+bool compare_force(cell_t c1, cell_t c2)
+{
+    return (c1.force > c2.force);
 }
 
 void update_cell_rows(rows_t& rows)

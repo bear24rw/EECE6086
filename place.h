@@ -13,7 +13,7 @@
 
 rows_t place(std::vector<cell_t>& cells);
 int wirelen(int x1, int y1, int x2, int y2);
-void swap_xy(int col1, int row1, int col2, int row2);
+bool compare_force(cell_t c1, cell_t c2);
 void update_cell_rows(rows_t& rows);
 void add_feed_throughs(rows_t& rows);
 
