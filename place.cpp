@@ -26,42 +26,23 @@ rows_t place(std::vector<cell_t>& cells)
     printf(" c1 | c2  |  (x1, y1)  |  (x2, y2)  | force \n");
     printf("--------------------------------------------\n");
     #endif
-    for (unsigned int i=0; i<cells.size(); i++) {
-        for (auto &row : rows) {
-            for (auto &cell : row) {
-                for (int t = 0; t < 4; t++) {
-                    if (cell->terms[t].dest_cell == &cells[i]) {
-                        cells[i].total_conn += 1;
-                        cells[i].x = cells[i].col + cell->col;
-                        cells[i].y = cells[i].row + cell->row;
-                        cells[i].sum_x += cells[i].x;
-                        cells[i].sum_y += cells[i].y;
-                        // f_i = sum_j(w_ij * d_ij), weight of cell = 1
-                        //cells[i].distance = wirelen(cells[i].col, cells[i].row, cell->col, cell->row);
-                        if (cells[i].total_conn != 0)
-                            cells[i].force += wirelen(cells[i].col, cells[i].row, cell->col, cell->row);
-                        else
-                            cells[i].force = 0;
-
-                        #ifdef DEBUGGING
-                        printf("%03d | %03d | (%03d, %03d) | (%03d, %03d) | %03d\n", cells[i].number+1, cell->number+1, \
-                                cells[i].col, cells[i].row, cell->col, cell->row, cells[i].force);
-                        #endif
-                    }
-                }
+    for (auto &cell_1 : cells) {
+        for (auto &cell_2 : cells) {
+            for (auto &term : cell_2.terms) {
+                // dont continue if these cells are not connected
+                if (term.dest_cell != &cell_1) continue;
+                cell_1.total_conn += 1;
+                cell_1.sum_x += cell_2.col;
+                cell_1.sum_y += cell_2.row;
+                cell_1.force += wirelen(cell_1.col, cell_1.row, cell_2.col, cell_2.row);
+                #ifdef DEBUGGING
+                printf("%3d | %3d | (%3d, %3d) | (%3d, %3d) | %3d\n", cell_1.number+1, cell_2.number+1,
+                                                                      cell_1.col, cell_1.row,
+                                                                      cell_2.col, cell_2.row,
+                                                                      cell_1.force);
+                #endif
             }
         }
-        /*
-        #ifdef DEBUGGING
-        if (cells[i].total_conn != 0) {
-            cells[i].dest_x = round(cells[i].sum_x / cells[i].total_conn);
-            cells[i].dest_y = round(cells[i].sum_y / cells[i].total_conn);
-            printf("--------------------------------------------  \n");
-            printf("cell %02d has zero-force location at: (%d, %d)\n", cells[i].number+1, cells[i].dest_x, cells[i].dest_y);
-            printf("--------------------------------------------  \n");
-        }
-        #endif
-        */
     }
 
     // sort in descending order
