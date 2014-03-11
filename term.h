@@ -36,6 +36,9 @@ struct term_t {
     #define VERTICAL -2
     int track_num;
 
+    // absolute y position of the track this term is connected to
+    int track_y;
+
     term_t();
     bool on_top(void);
     bool on_left(void);

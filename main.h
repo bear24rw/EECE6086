@@ -29,6 +29,7 @@ typedef std::vector<channel_t> channels_t;
 void calculate_x_values(rows_t& rows);
 void calculate_y_values(rows_t& rows, channels_t& channels);
 void calculate_term_positions(rows_t& rows);
+void calculate_track_positions(channels_t& channels);
 point_t get_term_position(term_t& term);
 
 #endif

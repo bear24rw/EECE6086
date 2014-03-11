@@ -85,6 +85,8 @@ int main(int argc, char *argv[])
 
     calculate_term_positions(rows);
 
+    calculate_track_positions(channels);
+
     printf("Writing magic file\n");
     write_magic(filename, rows, channels);
 
@@ -169,4 +171,22 @@ point_t get_term_position(term_t& term)
     if (term.cell->flip_x && term.cell->flip_y) { term_position = offsets_xy[term.number]; }
 
     return term.cell->position + term_position;
+}
+
+void calculate_track_positions(channels_t& channels)
+{
+    for (auto &channel : channels) {
+        for (auto &term : channel.terms) {
+
+            int y = term->position.y;
+
+            if (term->on_top()) {
+                y += 1 + CELL_SPACING + term->track_num * (TRACK_WIDTH + TRACK_SPACING);
+            } else {
+                y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - term->track_num) * (TRACK_WIDTH + TRACK_SPACING);
+            }
+
+            term->track_y = y;
+        }
+    }
 }

@@ -68,11 +68,7 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             point_t p1 = src_term->position;
             point_t p2 = dst_term->position;
 
-            if (src_term->on_top()) {
-                p1.y += 1 + CELL_SPACING + src_term->track_num * (TRACK_WIDTH + TRACK_SPACING);
-            } else {
-                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track_num) * (TRACK_WIDTH + TRACK_SPACING);
-            }
+            p1.y = src_term->track_y;
 
             int x1 = std::min(p1.x, p2.x);
             int x2 = std::max(p1.x, p2.x)+1;
@@ -99,11 +95,7 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             point_t p1 = src_term->position;
             point_t p2 = dst_term->position;
 
-            if (src_term->on_top()) {
-                p1.y += 1 + CELL_SPACING + src_term->track_num * (TRACK_WIDTH + TRACK_SPACING);
-            } else {
-                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track_num) * (TRACK_WIDTH + TRACK_SPACING);
-            }
+            p1.y = src_term->track_y;
 
             int x1 = std::min(p1.x, p2.x);
             int x2 = std::max(p1.x, p2.x)+1;
@@ -141,15 +133,13 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             }
 
             p1 = p2 = src_term->position;
-            if (src_term->on_top()) {
-                p2.y += 1 + CELL_SPACING + src_term->track_num * (TRACK_WIDTH + TRACK_SPACING);
-            } else {
-                p2.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track_num) * (TRACK_WIDTH + TRACK_SPACING);
-            }
+            p2.y = src_term->track_y;
+
             x1 = std::min(p1.x, p2.x);
             y1 = std::min(p1.y, p2.y);
             x2 = std::max(p1.x, p2.x) + TRACK_WIDTH;
             y2 = std::max(p1.y, p2.y) + TRACK_WIDTH;
+
             fprintf(fp, "rect %d %d %d %d\n", x1, y1, x2, y2);
         }
     }
@@ -171,11 +161,7 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
 
             point_t p1 = src_term->position;
 
-            if (src_term->on_top()) {
-                p1.y += 1 + CELL_SPACING + src_term->track_num * (TRACK_WIDTH + TRACK_SPACING);
-            } else {
-                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track_num) * (TRACK_WIDTH + TRACK_SPACING);
-            }
+            p1.y = src_term->track_y;
 
             fprintf(fp, "rect %d %d %d %d\n", p1.x, p1.y, p1.x+1, p1.y+1);
         }
