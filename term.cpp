@@ -5,7 +5,7 @@ term_t::term_t()
 {
     dest_cell = nullptr;
     in_correct_channel = false;
-    track = UNROUTED;
+    track_num = UNROUTED;
 }
 
 bool term_t::on_top(void)

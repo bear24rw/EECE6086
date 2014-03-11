@@ -34,7 +34,7 @@ struct term_t {
     //  - VERTICAL means doesn't need a track since the connection is purely vertical
     #define UNROUTED -1
     #define VERTICAL -2
-    int track;
+    int track_num;
 
     term_t();
     bool on_top(void);

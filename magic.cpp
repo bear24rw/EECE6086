@@ -62,16 +62,16 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             term_t *dst_term = src_term->dest_term;
 
             if (src_term->dest_cell == nullptr) continue;
-            if (src_term->track == UNROUTED) continue;
-            if (src_term->track == VERTICAL) continue;
+            if (src_term->track_num == UNROUTED) continue;
+            if (src_term->track_num == VERTICAL) continue;
 
             point_t p1 = src_term->position;
             point_t p2 = dst_term->position;
 
             if (src_term->on_top()) {
-                p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
+                p1.y += 1 + CELL_SPACING + src_term->track_num * (TRACK_WIDTH + TRACK_SPACING);
             } else {
-                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track) * (TRACK_WIDTH + TRACK_SPACING);
+                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track_num) * (TRACK_WIDTH + TRACK_SPACING);
             }
 
             int x1 = std::min(p1.x, p2.x);
@@ -93,16 +93,16 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             term_t *dst_term = src_term->dest_term;
 
             if (src_term->dest_cell == nullptr) continue;
-            if (src_term->track == UNROUTED) continue;
-            if (src_term->track == VERTICAL) continue;
+            if (src_term->track_num == UNROUTED) continue;
+            if (src_term->track_num == VERTICAL) continue;
 
             point_t p1 = src_term->position;
             point_t p2 = dst_term->position;
 
             if (src_term->on_top()) {
-                p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
+                p1.y += 1 + CELL_SPACING + src_term->track_num * (TRACK_WIDTH + TRACK_SPACING);
             } else {
-                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track) * (TRACK_WIDTH + TRACK_SPACING);
+                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track_num) * (TRACK_WIDTH + TRACK_SPACING);
             }
 
             int x1 = std::min(p1.x, p2.x);
@@ -124,12 +124,12 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             term_t *dst_term = src_term->dest_term;
 
             if (dst_term == nullptr) continue;
-            if (src_term->track == UNROUTED) continue;
+            if (src_term->track_num == UNROUTED) continue;
 
             point_t p1, p2;
             int x1, y1, x2, y2;
 
-            if (src_term->track == VERTICAL) {
+            if (src_term->track_num == VERTICAL) {
                 p1 = src_term->position;
                 p2 = dst_term->position;
                 x1 = std::min(p1.x, p2.x);
@@ -142,9 +142,9 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
 
             p1 = p2 = src_term->position;
             if (src_term->on_top()) {
-                p2.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
+                p2.y += 1 + CELL_SPACING + src_term->track_num * (TRACK_WIDTH + TRACK_SPACING);
             } else {
-                p2.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track) * (TRACK_WIDTH + TRACK_SPACING);
+                p2.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track_num) * (TRACK_WIDTH + TRACK_SPACING);
             }
             x1 = std::min(p1.x, p2.x);
             y1 = std::min(p1.y, p2.y);
@@ -166,15 +166,15 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
             term_t *dst_term = src_term->dest_term;
 
             if (dst_term == nullptr) continue;
-            if (src_term->track == UNROUTED) continue;
-            if (src_term->track == VERTICAL) continue;
+            if (src_term->track_num == UNROUTED) continue;
+            if (src_term->track_num == VERTICAL) continue;
 
             point_t p1 = src_term->position;
 
             if (src_term->on_top()) {
-                p1.y += 1 + CELL_SPACING + src_term->track * (TRACK_WIDTH + TRACK_SPACING);
+                p1.y += 1 + CELL_SPACING + src_term->track_num * (TRACK_WIDTH + TRACK_SPACING);
             } else {
-                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track) * (TRACK_WIDTH + TRACK_SPACING);
+                p1.y -= 1 + CELL_SPACING + (channel.tracks.size()-1 - src_term->track_num) * (TRACK_WIDTH + TRACK_SPACING);
             }
 
             fprintf(fp, "rect %d %d %d %d\n", p1.x, p1.y, p1.x+1, p1.y+1);
