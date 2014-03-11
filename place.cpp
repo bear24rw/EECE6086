@@ -31,7 +31,7 @@ rows_t place(std::vector<cell_t>& cells)
                 cell_1.total_conn += 1;
                 cell_1.sum_x += cell_2.col;
                 cell_1.sum_y += cell_2.row;
-                cell_1.force += wirelen(cell_1.col, cell_1.row, cell_2.col, cell_2.row);
+                cell_1.force += wirelen(cell_1, cell_2);
                 #ifdef DEBUGGING
                 printf("%3d | %3d | (%3d, %3d) | (%3d, %3d) | %3d\n", cell_1.number+1, cell_2.number+1,
                                                                       cell_1.col, cell_1.row,
@@ -322,10 +322,10 @@ rows_t place(std::vector<cell_t>& cells)
     return rows;
 }
 
-int wirelen(int x1, int y1, int x2, int y2)
+int wirelen(cell_t& a, cell_t& b)
 {
-    int dx = abs(x2 - x1);
-    int dy = abs(y2 - y1);
+    int dx = abs(a.row - b.row);
+    int dy = abs(a.col - b.col);
 
     return dx + dy;
 }

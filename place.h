@@ -12,7 +12,7 @@
 #define OCCUPIED 4
 
 rows_t place(std::vector<cell_t>& cells);
-int wirelen(int x1, int y1, int x2, int y2);
+int wirelen(cell_t& a, cell_t& b);
 bool compare_force(cell_t c1, cell_t c2);
 void update_cell_rows(rows_t& rows);
 void add_feed_throughs(rows_t& rows);
