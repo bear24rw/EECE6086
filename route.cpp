@@ -306,7 +306,7 @@ bool shrink(channel_t& channel)
 
         // if there are no open tracks left we have to just leave it
         bool none_open = true;
-        for (int t=0; t<channel.tracks.size(); t++) {
+        for (unsigned int t=0; t<channel.tracks.size(); t++) {
             if (open_tracks[t]) none_open = false;
         }
         if (none_open) {
@@ -317,7 +317,7 @@ bool shrink(channel_t& channel)
         // highest track in order to pull the net up closer to the bottom of the cell
         bool find_highest = !term->on_top() && !term->dest_term->on_top();
 
-        for (int t=0; t<channel.tracks.size(); t++) {
+        for (unsigned int t=0; t<channel.tracks.size(); t++) {
             if (open_tracks[t]) {
                 track_num = t;
                 if (!find_highest) break;
