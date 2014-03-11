@@ -91,8 +91,6 @@ rows_t place(std::vector<cell_t>& cells)
     // next_iteration_total_force: min_total_force = next_total_iteration_force
     while (iteration_count < iteration_limit) {
 
-        iteration_count++;
-
         printf("[place] ====== ITERATION %d ======\n", iteration_count);
 
         // if we run out of seed cells we need to stop
@@ -208,7 +206,7 @@ rows_t place(std::vector<cell_t>& cells)
                             cell.locked = false;
                         }
 
-                        iteration_count += 1;
+                        iteration_count++;
                     }
 
                      break;
