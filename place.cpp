@@ -1,7 +1,7 @@
 #include <climits>
 #include "place.h"
 #include "main.h"
-//#define DEBUGGING
+#define DEBUGGING
 
 rows_t place(std::vector<cell_t>& cells)
 {
