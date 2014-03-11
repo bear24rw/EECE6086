@@ -103,59 +103,45 @@ rows_t place(std::vector<cell_t>& cells)
     int grid_x = cells.size();
     int grid_y = cells.size();
 
-    // TODO: make iteration limit:
-    // if min_total_force > next_iteration_total_force:
-    //      min_total_force = next_total_iteration_force
+    // TODO: make iteration limit: if min_total_force >
+    // next_iteration_total_force: min_total_force = next_total_iteration_force
     while (iter_cnt < 3) {
 
-        // all the cells are in descending order
-        // (maximum force first)...let's make that the seed first
-        // s_row  = seed row
-        // s_cell = seed cell
+        // all the cells are in descending order (maximum force first)...let's
+        // make that the seed first s_row  = seed row s_cell = seed cell
 
-        //if (&cells[s_cell] != nullptr)
         if (s_cell < cells.size())
             rows[s_row][s_cell] = &cells[s_cell];
         else
             break;
 
-        // if we have grabbed a cell outside the
-        // width of the grid, set s_cell to 0,
-        // and increment the row
+        // if we have grabbed a cell outside the width of the grid, set s_cell
+        // to 0, and increment the row
         if (s_cell > grid_x && s_row < grid_y) {
             s_cell = 0;
             s_row++;
             continue;
         }
-        // since in the occupied case we keep
-        // end_ripple = false, it's quite possible
-        // that we may have already placed that cell,
-        // so we want to make sure to not place it again
-        // so go ahead and grab another cell
+
+        // since in the occupied case we keep end_ripple = false, it's quite
+        // possible that we may have already placed that cell, so we want to
+        // make sure to not place it again so go ahead and grab another cell
         if (rows[s_row][s_cell]->placed) {
             s_cell++;
             continue;
         }
-        // since we're going to move this cell anyways
-        // we're going to go ahead and just mark the
-        // position of that cell as vacant
+
+        // since we're going to move this cell anyways we're going to go ahead
+        // and just mark the position of that cell as vacant
         rows[s_row][s_cell]->vacant = true;
         end_ripple = false;
         while (end_ripple == false) {
             printf("inner\n");
-            /*
-            if (seed->dest_x > grid_w || seed->dest_y > grid_h) {
-                printf("cell[%d]: (%d, %d) is outside of grid\n", \
-                        seed->number+1, seed->dest_x, seed->dest_y);
-                break;
-            }
-            */
 
             // zero-force target = sum of distance among all of the cells
-            // connected divided by how many connections
-            // that specific cell has.
-            // check for 0 connections so we do not get a divide
-            // by zero error
+            // connected divided by how many connections that specific cell
+            // has.  check for 0 connections so we do not get a divide by zero
+            // error
             if (rows[s_row][s_cell]->total_conn != 0) {
                 rows[s_row][s_cell]->dest_x = round(rows[s_row][s_cell]->sum_x / rows[s_row][s_cell]->total_conn);
                 rows[s_row][s_cell]->dest_y = round(rows[s_row][s_cell]->sum_y / rows[s_row][s_cell]->total_conn);
@@ -164,9 +150,9 @@ rows_t place(std::vector<cell_t>& cells)
                         rows[s_row][s_cell]->number+1, rows[s_row][s_cell]->dest_x, rows[s_row][s_cell]->dest_y);
                 printf("--------------------------------------------  \n");
             }
-            // TODO: if cell has no connections i may just move it to
-            // the next vacant area since it doesn't matter where it's
-            // located on the grid
+            // TODO: if cell has no connections i may just move it to the next
+            // vacant area since it doesn't matter where it's located on the
+            // grid
             else {
                 printf("--------------------------------------------  \n");
                 printf("cell %02d has no connections\n", rows[s_row][s_cell]->number+1);
@@ -175,13 +161,12 @@ rows_t place(std::vector<cell_t>& cells)
                 s_cell++;
                 break;
             }
-            // is the zero-force location already occupied
-            // and locked for that cell? if so set target point
-            // to LOCKED and handle that case, otherwise
-            // the cell is occupied, but not locked so handle
-            // that case. if we exit the for loop without setting
-            // the target location, then we know that the target
-            // location is vacant and that case is handled.
+            // is the zero-force location already occupied and locked for that
+            // cell? if so set target point to LOCKED and handle that case,
+            // otherwise the cell is occupied, but not locked so handle that
+            // case. if we exit the for loop without setting the target
+            // location, then we know that the target location is vacant and
+            // that case is handled.
             for (unsigned int i = 0; i < cells.size(); i++) {
                 if (rows[s_row][s_cell]         != &cells[i]    &&
                     rows[s_row][s_cell]->dest_x == cells[i].col &&
@@ -191,8 +176,8 @@ rows_t place(std::vector<cell_t>& cells)
                         break;
                     }
                     else if (!cells[i].placed && !rows[s_row][s_cell]->locked) {
-                        target_point = OCCUPIED;
                         idx = i;
+                        target_point = OCCUPIED;
                         break;
                     }
                     // TODO: remove this...
@@ -203,8 +188,8 @@ rows_t place(std::vector<cell_t>& cells)
                     }
                     */
                 }
-                // check if zero-force location of cell is in
-                // the same place it is already located in
+                // check if zero-force location of cell is in the same place it
+                // is already located in
                 else if (rows[s_row][s_cell]         == &(cells[i])  &&
                          rows[s_row][s_cell]->dest_x == cells[i].col &&
                          rows[s_row][s_cell]->dest_y == cells[i].row) {
@@ -241,8 +226,8 @@ rows_t place(std::vector<cell_t>& cells)
 
                 case SAME_LOC:
                     //rows[s_row][s_cell]->vacant = false;
-                    rows[s_row][s_cell]->placed = true;
-                    rows[s_row][s_cell]->locked = true;
+                    //rows[s_row][s_cell]->placed = true;
+                    //rows[s_row][s_cell]->locked = true;
 
                     printf("cell[%d] is placed in same location: (%d, %d)\n", \
                             rows[s_row][s_cell]->number+1, rows[s_row][s_cell]->col, rows[s_row][s_cell]->row);
@@ -262,13 +247,11 @@ rows_t place(std::vector<cell_t>& cells)
 
                     inc_x = 1;
                     for (unsigned int i = 0; i < cells.size(); i++) {
-                        // so if we increment the x value, we
-                        // want to stay inside the grid so check
-                        // for that, but if we never reach a vacant
-                        // area for the whole time we have gone along
-                        // the x, then let's try setting x back to 0
-                        // and incrememnt the y value, and try the
-                        // same thing.
+                        // so if we increment the x value, we want to stay
+                        // inside the grid so check for that, but if we never
+                        // reach a vacant area for the whole time we have gone
+                        // along the x, then let's try setting x back to 0 and
+                        // incrememnt the y value, and try the same thing.
 
                         if (inc_x && temp_x++ > grid_w) {
                             inc_x = 0;
@@ -327,8 +310,7 @@ rows_t place(std::vector<cell_t>& cells)
                     printf("cell[%d] before being moved: (%d, %d)\n", \
                             rows[s_row][s_cell]->number+1, rows[s_row][s_cell]->col, rows[s_row][s_cell]->row);
 
-                    // go ahead and set the current
-                    // location of the cell to the
+                    // go ahead and set the current location of the cell to the
                     // occupied cell and lock it
                     rows[s_row][s_cell]->col = rows[s_row][s_cell]->dest_x;
                     rows[s_row][s_cell]->row = rows[s_row][s_cell]->dest_y;
@@ -338,9 +320,8 @@ rows_t place(std::vector<cell_t>& cells)
                             rows[s_row][s_cell]->number+1, rows[s_row][s_cell]->col, rows[s_row][s_cell]->row);
                     rows[s_row][s_cell]->placed = true;
 
-                    // since we just placed the previous cell
-                    // in this location, we now must find
-                    // a new place for this cell
+                    // since we just placed the previous cell in this location,
+                    // we now must find a new place for this cell
                     s_cell = idx;
                     rows[s_row][s_cell] = &cells[s_cell];
                     printf("cell[%d] was at: (%d, %d) and now needs to be moved\n",
