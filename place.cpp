@@ -53,10 +53,10 @@ rows_t place(std::vector<cell_t>& cells)
     printf("--------------------------------------------\n");
     printf("               FORCE ON CELL                \n");
     printf("--------------------------------------------\n");
-    printf("C# | TC | F  | CNT                          \n");
+    printf(" C# | TC | F  | CNT                          \n");
     printf("--------------------------------------------\n");
     for (unsigned int i=0; i<cells.size(); i++) {
-        printf("[%02d] %02d | %02d | %d\n", cells[i].number+1, cells[i].total_conn, cells[i].force, i);
+        printf(" %2d | %2d | %2d | %d\n", cells[i].number+1, cells[i].total_conn, cells[i].force, i);
     }
     #endif
 
