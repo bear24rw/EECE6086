@@ -42,6 +42,7 @@ struct term_t {
     term_t();
     bool on_top(void);
     bool on_left(void);
+    int distance(point_t&);
 
 };
 

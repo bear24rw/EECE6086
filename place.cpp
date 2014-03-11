@@ -246,8 +246,13 @@ rows_t place(std::vector<cell_t>& cells)
     }
 
     // recalculate the current row and col of each cell
+    printf("[place] updating cell rows\n");
     update_cell_rows(rows);
 
+    printf("[place] trying flips\n");
+    try_flips(rows);
+
+    printf("[place] adding feed throughs\n");
     add_feed_throughs(rows);
 
     return rows;
@@ -265,7 +270,9 @@ void update_cell_rows(rows_t& rows)
 {
     // after placement we need to update the row and column of each cell
     // since we need that information when adding feed through cells in
-    // the next stage
+    // the next stage. also arrange the cells in a grid so that we
+    // can calculate the terminal positons which we need to figure
+    // out if we need to flip a cell or not.
 
     int current_row = 0;
     int current_col = 0;
@@ -274,9 +281,60 @@ void update_cell_rows(rows_t& rows)
         for (auto &cell : row) {
             cell->row = current_row;
             cell->col = current_col;
+            cell->x = cell->col * 6;
+            cell->y = cell->row * 6;
             current_col++;
         }
         current_row++;
+    }
+
+    calculate_term_positions(rows);
+}
+
+void try_flips(rows_t& rows)
+{
+    for (auto &row : rows) {
+        for (auto &cell : row) {
+
+            int force = 0;
+            int min_force = INT_MAX;
+            bool do_x = false;
+            bool do_y = false;
+
+            bool flips[4][2] = { {false, false},
+                                 {false, true},
+                                 {true, false},
+                                 {true, true} };
+
+            printf("[flip] trying cell %d\n", cell->number);
+
+            for (int f=0; f<4; f++) {
+
+                force = 0;
+                cell->flip_x = flips[f][0];
+                cell->flip_y = flips[f][1];
+
+                calculate_term_positions(rows);
+
+                for (auto &term : cell->terms) {
+                    if (term.dest_term == nullptr) continue;
+                    force += term.distance(term.dest_term->position);
+                }
+
+                printf("[flip] force for flip %d %d = %d\n", cell->flip_x, cell->flip_y, force);
+
+                if (force < min_force) {
+                    min_force = force;
+                    do_x = cell->flip_x;
+                    do_y = cell->flip_y;
+                }
+
+            }
+
+            cell->flip_x = do_x;
+            cell->flip_y = do_y;
+
+        }
     }
 }
 

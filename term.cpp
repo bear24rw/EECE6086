@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "term.h"
 #include "cell.h"
 
@@ -40,3 +41,7 @@ bool term_t::on_left(void)
         return cell->flip_y;
 }
 
+int term_t::distance(point_t& p)
+{
+    return abs(position.x-p.x)+abs(position.y-p.y);
+}
