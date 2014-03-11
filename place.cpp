@@ -25,6 +25,24 @@ rows_t place(std::vector<cell_t>& cells)
 
     write_placement_svg(std::string("placement_0_start"), cells);
 
+    force_directed(cells, rows);
+
+    // recalculate the current row and col of each cell
+    update_cell_positions(rows);
+
+    write_placement_svg(std::string("placement_1_force"), cells);
+
+    try_flips(rows);
+
+    write_placement_svg(std::string("placement_2_flip"), cells);
+
+    add_feed_throughs(rows);
+
+    return rows;
+}
+
+void force_directed(std::vector<cell_t>& cells, rows_t& rows)
+{
     std::priority_queue<cell_t*, std::vector<cell_t*>, force_compare_t> sorted_cells;
 
     #ifdef DEBUGGING
@@ -239,19 +257,6 @@ rows_t place(std::vector<cell_t>& cells)
 
         }
     }
-
-    // recalculate the current row and col of each cell
-    update_cell_positions(rows);
-
-    write_placement_svg(std::string("placement_1_force"), cells);
-
-    try_flips(rows);
-
-    write_placement_svg(std::string("placement_2_flip"), cells);
-
-    add_feed_throughs(rows);
-
-    return rows;
 }
 
 int wirelen(cell_t& a, cell_t& b)
