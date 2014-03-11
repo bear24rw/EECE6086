@@ -22,7 +22,6 @@ struct cell_t {
     int total_conn;
     int x, y;
     int sum_x, sum_y;
-    int dest_x, dest_y;
     int row, col; // the row and col of the cell in the placement grid, before feed throughs are added
     std::vector<term_t> terms;
     cell_t();

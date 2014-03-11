@@ -84,8 +84,9 @@ rows_t place(std::vector<cell_t>& cells)
     #endif
 
     int iter_cnt = 0;
-    int abrt_cnt = 0;
-    int abrt_lim = 0;
+
+    int abort_count = 0;
+    int abort_limit = 0;
 
     int idx = 0;
 
@@ -94,11 +95,10 @@ rows_t place(std::vector<cell_t>& cells)
 
     bool end_ripple = false;
     int target_point = VACANT;
-    //int target_point = INITIAL;
 
     int inc_x  = 0;
-    int temp_x = 0;
-    int temp_y = 0;
+    int dest_x, dest_y = 0;
+    int temp_x, temp_y = 0;
 
     int grid_x = cells.size();
     int grid_y = cells.size();
@@ -143,11 +143,11 @@ rows_t place(std::vector<cell_t>& cells)
             // has.  check for 0 connections so we do not get a divide by zero
             // error
             if (rows[s_row][s_cell]->total_conn != 0) {
-                rows[s_row][s_cell]->dest_x = round(rows[s_row][s_cell]->sum_x / rows[s_row][s_cell]->total_conn);
-                rows[s_row][s_cell]->dest_y = round(rows[s_row][s_cell]->sum_y / rows[s_row][s_cell]->total_conn);
+                dest_x = round(rows[s_row][s_cell]->sum_x / rows[s_row][s_cell]->total_conn);
+                dest_y = round(rows[s_row][s_cell]->sum_y / rows[s_row][s_cell]->total_conn);
                 printf("--------------------------------------------  \n");
                 printf("cell %02d has zero-force location at: (%d, %d)\n", \
-                        rows[s_row][s_cell]->number+1, rows[s_row][s_cell]->dest_x, rows[s_row][s_cell]->dest_y);
+                        rows[s_row][s_cell]->number+1, dest_x, dest_y);
                 printf("--------------------------------------------  \n");
             }
             // TODO: if cell has no connections i may just move it to the next
@@ -168,9 +168,8 @@ rows_t place(std::vector<cell_t>& cells)
             // location, then we know that the target location is vacant and
             // that case is handled.
             for (unsigned int i = 0; i < cells.size(); i++) {
-                if (rows[s_row][s_cell]         != &cells[i]    &&
-                    rows[s_row][s_cell]->dest_x == cells[i].col &&
-                    rows[s_row][s_cell]->dest_y == cells[i].row) {
+                if ((rows[s_row][s_cell] != &cells[i]               ) &&
+                    dest_x == cells[i].col && dest_y == cells[i].row) {
                     if (!cells[i].placed && cells[i].locked && !rows[s_row][s_cell]->locked) {
                         target_point = LOCKED;
                         break;
@@ -190,9 +189,8 @@ rows_t place(std::vector<cell_t>& cells)
                 }
                 // check if zero-force location of cell is in the same place it
                 // is already located in
-                else if (rows[s_row][s_cell]         == &(cells[i])  &&
-                         rows[s_row][s_cell]->dest_x == cells[i].col &&
-                         rows[s_row][s_cell]->dest_y == cells[i].row) {
+                else if (rows[s_row][s_cell]  == &(cells[i]              ) &&
+                         dest_x == cells[i].col && dest_y == cells[i].row) {
 
                          target_point = SAME_LOC;
                          break;
@@ -212,8 +210,8 @@ rows_t place(std::vector<cell_t>& cells)
                     printf("cell[%d] before being moved: (%d, %d)\n", \
                             rows[s_row][s_cell]->number+1, rows[s_row][s_cell]->col, rows[s_row][s_cell]->row);
 
-                    rows[s_row][s_cell]->col = rows[s_row][s_cell]->dest_x;
-                    rows[s_row][s_cell]->row = rows[s_row][s_cell]->dest_y;
+                    rows[s_row][s_cell]->col = dest_x;
+                    rows[s_row][s_cell]->row = dest_y;
 
                     printf("cell[%d] is being moved to: (%d, %d)\n", \
                             rows[s_row][s_cell]->number+1, rows[s_row][s_cell]->col, rows[s_row][s_cell]->row);
@@ -221,7 +219,7 @@ rows_t place(std::vector<cell_t>& cells)
                     rows[s_row][s_cell]->locked = true;
                     s_cell++;
                     end_ripple = true;
-                    abrt_cnt = 0;
+                    abort_count = 0;
                     break;
 
                 case SAME_LOC:
@@ -233,13 +231,13 @@ rows_t place(std::vector<cell_t>& cells)
                             rows[s_row][s_cell]->number+1, rows[s_row][s_cell]->col, rows[s_row][s_cell]->row);
                     s_cell++;
                     end_ripple = true;
-                    abrt_cnt = 0;
+                    abort_count = 0;
                     break;
 
                 case LOCKED:
                     rows[s_row][s_cell]->placed = true;
-                    temp_x = rows[s_row][s_cell]->dest_x;
-                    temp_y = rows[s_row][s_cell]->dest_y;
+                    temp_x = dest_x;
+                    temp_y = dest_y;
 
                     printf("in locked\n");
                     printf("cell[%d] before being moved: (%d, %d)\n", \
@@ -256,28 +254,25 @@ rows_t place(std::vector<cell_t>& cells)
                         if (inc_x && temp_x++ > grid_w) {
                             inc_x = 0;
                             printf("inc x\n");
-                            temp_x = rows[s_row][s_cell]->dest_x;
+                            temp_x = dest_x;
                             break;
                         }
                         else if (!inc_x && temp_y++ > grid_h) {
                             inc_x = 1;
                             printf("inc y\n");
-                            temp_y = rows[s_row][s_cell]->dest_y;
+                            temp_y = dest_y;
                             break;
                         }
 
-                        if (rows[s_row][s_cell]         != &(cells[i])  &&
-                            rows[s_row][s_cell]->dest_x != cells[i].col &&
-                            rows[s_row][s_cell]->dest_y != cells[i].row) {
+                        if (rows[s_row][s_cell]         != &(cells[i]       ) &&
+                            dest_x != cells[i].col && dest_y != cells[i].row) {
                             printf("find xy\n");
-                            printf("x = %d | y = %d\n", rows[s_row][s_cell]->dest_x, rows[s_row][s_cell]->dest_y);
+                            printf("x = %d | y = %d\n", dest_x, dest_y);
 
-                            rows[s_row][s_cell]->dest_x = temp_x;
-                            rows[s_row][s_cell]->dest_y = temp_y;
                             rows[s_row][s_cell]->col = temp_x;
                             rows[s_row][s_cell]->row = temp_y;
 
-                            printf("x = %d | y = %d\n", rows[s_row][s_cell]->dest_x, rows[s_row][s_cell]->dest_y);
+                            printf("x = %d | y = %d\n", dest_x, dest_y);
                             break;
                         }
                         else
@@ -294,8 +289,8 @@ rows_t place(std::vector<cell_t>& cells)
 
                     s_cell++;
                     end_ripple = true;
-                    abrt_cnt += 1;
-                    if (abrt_cnt > abrt_lim) {
+                    abort_count += 1;
+                    if (abort_count > abort_limit) {
                         for (unsigned int i=0; i<cells.size(); i++) {
                             //if (cells[i].locked) cells[i].locked = false;
                             cells[i].locked = false;
@@ -312,8 +307,8 @@ rows_t place(std::vector<cell_t>& cells)
 
                     // go ahead and set the current location of the cell to the
                     // occupied cell and lock it
-                    rows[s_row][s_cell]->col = rows[s_row][s_cell]->dest_x;
-                    rows[s_row][s_cell]->row = rows[s_row][s_cell]->dest_y;
+                    rows[s_row][s_cell]->col = dest_x;
+                    rows[s_row][s_cell]->row = dest_y;
                     rows[s_row][s_cell]->locked = true;
 
                     printf("cell[%d] is being moved to: (%d, %d)\n", \
@@ -330,7 +325,7 @@ rows_t place(std::vector<cell_t>& cells)
                     //target_point = VACANT;
                     target_point = 0;
                     end_ripple = false;
-                    abrt_cnt = 0;
+                    abort_count = 0;
                     break;
 
                 default:
