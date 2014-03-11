@@ -1,7 +1,10 @@
+#include <stdlib.h>
+#include <string>
 #include <queue>
 #include <climits>
 #include "place.h"
 #include "main.h"
+#include "svg.h"
 #define DEBUGGING
 
 rows_t place(std::vector<cell_t>& cells)
@@ -18,17 +21,9 @@ rows_t place(std::vector<cell_t>& cells)
         cells[i].col = i % grid_w;
     }
 
-    printf("----------------------------------\n");
-    for (auto &row : rows) {
-        for (auto &cell : row) {
-            if (cell == nullptr)
-                printf("null   ");
-            else
-                printf("%3d   ", cell->number);
-        }
-        printf("\n");
-    }
-    printf("----------------------------------\n");
+    update_cell_positions(rows);
+
+    write_placement_svg(std::string("placement_0_start"), cells);
 
     std::priority_queue<cell_t*, std::vector<cell_t*>, force_compare_t> sorted_cells;
 
@@ -246,13 +241,14 @@ rows_t place(std::vector<cell_t>& cells)
     }
 
     // recalculate the current row and col of each cell
-    printf("[place] updating cell rows\n");
-    update_cell_rows(rows);
+    update_cell_positions(rows);
 
-    printf("[place] trying flips\n");
+    write_placement_svg(std::string("placement_1_force"), cells);
+
     try_flips(rows);
 
-    printf("[place] adding feed throughs\n");
+    write_placement_svg(std::string("placement_2_flip"), cells);
+
     add_feed_throughs(rows);
 
     return rows;
@@ -266,7 +262,7 @@ int wirelen(cell_t& a, cell_t& b)
     return dx + dy;
 }
 
-void update_cell_rows(rows_t& rows)
+void update_cell_positions(rows_t& rows)
 {
     // after placement we need to update the row and column of each cell
     // since we need that information when adding feed through cells in
@@ -331,6 +327,8 @@ void try_flips(rows_t& rows)
                 }
 
             }
+
+            printf("[flip] choosing flip %d %d\n", do_x, do_y);
 
             cell->flip_x = do_x;
             cell->flip_y = do_y;
