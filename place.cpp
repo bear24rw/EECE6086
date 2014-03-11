@@ -1,14 +1,11 @@
 #include "place.h"
 #include "main.h"
 #define DEBUGGING
-//#define NEW
 
 rows_t place(std::vector<cell_t>& cells)
 {
     int grid_w = ceil(sqrt(cells.size()));
     int grid_h = ceil(sqrt(cells.size()));
-    //int grid_w = cells.size();
-    //int grid_h = cells.size();
 
     rows_t rows(grid_h);
 
@@ -63,10 +60,11 @@ rows_t place(std::vector<cell_t>& cells)
     }
     #endif
 
-    int iter_cnt = 0;
+    int iteration_count = 0;
+    int iteration_limit = 3;
 
     int abort_count = 0;
-    int abort_limit = 0;
+    int abort_limit = 3;
 
     int idx = 0;
 
@@ -85,11 +83,10 @@ rows_t place(std::vector<cell_t>& cells)
 
     // TODO: make iteration limit: if min_total_force >
     // next_iteration_total_force: min_total_force = next_total_iteration_force
-    while (iter_cnt < 3) {
+    while (iteration_count < iteration_limit) {
 
         // all the cells are in descending order (maximum force first)...let's
         // make that the seed first s_row  = seed row s_cell = seed cell
-
         if (s_cell < cells.size())
             rows[s_row][s_cell] = &cells[s_cell];
         else
@@ -245,7 +242,7 @@ rows_t place(std::vector<cell_t>& cells)
                             break;
                         }
 
-                        if (rows[s_row][s_cell]         != &(cells[i]       ) &&
+                        if (rows[s_row][s_cell] != &(cells[i]               ) &&
                             dest_x != cells[i].col && dest_y != cells[i].row) {
                             printf("find xy\n");
                             printf("x = %d | y = %d\n", dest_x, dest_y);
@@ -275,7 +272,7 @@ rows_t place(std::vector<cell_t>& cells)
                         for (unsigned int i=0; i<cells.size(); i++) {
                             //if (cells[i].locked) cells[i].locked = false;
                             cells[i].locked = false;
-                        } iter_cnt += 1;
+                        } iteration_count += 1;
                     }
                     //target_point = VACANT;
                     break;
