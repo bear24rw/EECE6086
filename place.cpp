@@ -136,10 +136,10 @@ rows_t place(std::vector<cell_t>& cells)
 
             #ifdef DEBUGGING
             switch(target_point) {
-                case VACANT   : printf("target_point : VACANT\n")   ; break ;
-                case SAME_LOC : printf("target_point : SAME_LOC\n") ; break ;
-                case LOCKED   : printf("target_point : LOCKED\n")   ; break ;
-                case OCCUPIED : printf("target_point : OCCUPIED by cell %d\n", rows[target_pos.y][target_pos.x]->number) ; break ;
+                case VACANT   : printf("[place] target_point : VACANT\n")   ; break ;
+                case SAME_LOC : printf("[place] target_point : SAME_LOC\n") ; break ;
+                case LOCKED   : printf("[place] target_point : LOCKED\n")   ; break ;
+                case OCCUPIED : printf("[place] target_point : OCCUPIED by cell %d\n", rows[target_pos.y][target_pos.x]->number) ; break ;
             }
             #endif
 
