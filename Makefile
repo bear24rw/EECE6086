@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++0x -Wall -g -pg -Ofast -flto
+CXXFLAGS = -std=c++0x -Wall -g -pg -Ofast
 LIBS = -lm
 
 BINARY := main
