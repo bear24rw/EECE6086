@@ -278,11 +278,12 @@ void update_cell_rows(rows_t& rows)
     int current_col = 0;
 
     for (auto &row : rows) {
+        current_col = 0;
         for (auto &cell : row) {
             cell->row = current_row;
             cell->col = current_col;
-            cell->x = cell->col * 6;
-            cell->y = cell->row * 6;
+            cell->position.x = cell->col * 6;
+            cell->position.y = cell->row * 6;
             current_col++;
         }
         current_row++;
