@@ -16,7 +16,6 @@ struct cell_t {
     bool feed_through;
     bool vacant;
     bool locked;
-    bool occupied;
     bool placed;
     int force;
     int total_conn;

@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
         cells[i].number = i;
         cells[i].vacant = false;
         cells[i].locked = false;
-        cells[i].occupied = false;
         cells[i].placed = false;
         cells[i].force = 0;
     }

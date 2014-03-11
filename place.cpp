@@ -51,7 +51,6 @@ rows_t place(std::vector<cell_t>& cells)
                 }
             }
         }
-        cells[i].occupied = true;
         /*
         #ifdef DEBUGGING
         if (cells[i].total_conn != 0) {
@@ -135,12 +134,13 @@ rows_t place(std::vector<cell_t>& cells)
         // and just mark the position of that cell as vacant
         rows[s_row][s_cell]->vacant = true;
         end_ripple = false;
+
         while (end_ripple == false) {
             printf("inner\n");
 
             // zero-force target = sum of distance among all of the cells
             // connected divided by how many connections that specific cell
-            // has.  check for 0 connections so we do not get a divide by zero
+            // has. check for 0 connections so we do not get a divide by zero
             // error
             if (rows[s_row][s_cell]->total_conn != 0) {
                 dest_x = round(rows[s_row][s_cell]->sum_x / rows[s_row][s_cell]->total_conn);
