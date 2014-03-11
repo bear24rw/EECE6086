@@ -4,6 +4,7 @@
 term_t::term_t()
 {
     dest_cell = nullptr;
+    dest_term = nullptr;
     in_correct_channel = false;
     track_num = UNROUTED;
 }

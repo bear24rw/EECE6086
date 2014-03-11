@@ -10,6 +10,8 @@ cell_t::cell_t() : cell_t(false) { }
 
 cell_t::cell_t(bool ft)
 {
+    force = 0;
+    locked = false;
     flip_x = false;
     flip_y = false;
     feed_through = ft;

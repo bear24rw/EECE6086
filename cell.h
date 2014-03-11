@@ -14,9 +14,7 @@ struct cell_t {
     bool flip_x;
     bool flip_y;
     bool feed_through;
-    bool vacant;
     bool locked;
-    bool placed;
     int force;
     int total_conn;
     int x, y;

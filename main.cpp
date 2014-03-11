@@ -50,10 +50,6 @@ int main(int argc, char *argv[])
 
     for (int i=0; i<num_cells; i++) {
         cells[i].number = i;
-        cells[i].vacant = false;
-        cells[i].locked = false;
-        cells[i].placed = false;
-        cells[i].force = 0;
     }
 
     //
@@ -75,6 +71,16 @@ int main(int argc, char *argv[])
 
     printf("Placing cells\n");
     rows_t rows = place(cells);
+
+    printf("----------------------------------\n");
+    for (auto &row : rows) {
+        for (auto &cell : row) {
+            if (cell->feed_through) continue;
+            printf("%3d   ", cell->number);
+        }
+        printf("\n");
+    }
+    printf("----------------------------------\n");
 
     printf("Calculating cell X positions\n");
     calculate_x_values(rows);
