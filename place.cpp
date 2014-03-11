@@ -86,12 +86,11 @@ rows_t place(std::vector<cell_t>& cells)
     bool end_ripple = false;
     int target_point = VACANT;
 
+    printf("[place] ====== ITERATION %d ======\n", iteration_count);
 
     // TODO: make iteration limit: if min_total_force >
     // next_iteration_total_force: min_total_force = next_total_iteration_force
     while (iteration_count < iteration_limit) {
-
-        printf("[place] ====== ITERATION %d ======\n", iteration_count);
 
         // if we run out of seed cells we need to stop
         if (seed_idx >= cells.size())
@@ -206,6 +205,7 @@ rows_t place(std::vector<cell_t>& cells)
                         }
 
                         iteration_count++;
+                        printf("[place] ====== ITERATION %d ======\n", iteration_count);
                     }
 
                     break;
