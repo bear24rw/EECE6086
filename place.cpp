@@ -114,8 +114,7 @@ rows_t place(std::vector<cell_t>& cells)
                 target_pos.x = round(seed_cell->sum_x / seed_cell->total_conn);
                 target_pos.y = round(seed_cell->sum_y / seed_cell->total_conn);
             } else {
-                target_pos.x = 0;
-                target_pos.y = 0;
+                target_pos = seed_pos;
             }
 
             #ifdef DEBUGGING
