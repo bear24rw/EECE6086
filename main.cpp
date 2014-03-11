@@ -93,6 +93,8 @@ int main(int argc, char *argv[])
     printf("Writing svg file\n");
     write_svg(filename, rows, channels);
 
+    printf("Total wirelength: %d\n", total_wire_length(channels));
+
     printf("Done.\n");
 }
 
@@ -189,4 +191,33 @@ void calculate_track_positions(channels_t& channels)
             term->track_y = y;
         }
     }
+}
+
+int total_wire_length(channels_t& channels)
+{
+    int length = 0;
+
+    for (auto &channel : channels) {
+        for (auto &term : channel.terms) {
+            if (term->dest_cell == nullptr) continue;
+
+            if (term->track_num == VERTICAL) {
+                length += abs(term->position.y - term->dest_term->position.y);
+                continue;
+            }
+
+            if (term->on_top() == term->dest_term->on_top()) {
+                length += abs(term->position.x - term->dest_term->position.x)+1;
+                length += abs(term->position.y - term->track_y) * 2;
+                continue;
+            }
+
+            length += abs(term->position.x - term->dest_term->position.x) + 1;
+            length += abs(term->position.y - term->dest_term->position.y);
+        }
+    }
+
+    length = length / 2;
+
+    return length;
 }
