@@ -79,7 +79,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
         cell_t *seed_cell = sorted_cells.top();
         sorted_cells.pop();
 
-        printf("[force] new seed cell: %d\n", seed_cell->number);
+        printf("[force] new seed cell: %d (location %d %d)\n", seed_cell->number, seed_cell->col, seed_cell->row);
 
         seed_pos.x = seed_cell->col;
         seed_pos.y = seed_cell->row;
@@ -116,7 +116,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
             switch(target_point) {
                 case VACANT   : printf("[force] target_point : VACANT\n")   ; break ;
                 case SAME_LOC : printf("[force] target_point : SAME_LOC\n") ; break ;
-                case LOCKED   : printf("[force] target_point : LOCKED\n")   ; break ;
+                case LOCKED   : printf("[force] target_point : LOCKED by cell %d\n", rows[target_pos.y][target_pos.x]->number)   ; break ;
                 case OCCUPIED : printf("[force] target_point : OCCUPIED by cell %d\n", rows[target_pos.y][target_pos.x]->number) ; break ;
             }
             #endif
@@ -167,6 +167,8 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 
                         }
                     }
+
+                    printf("[force] moving %d to vacant spot %d %d instead\n", seed_cell->number, best_pos.x, best_pos.y);
 
                     rows[best_pos.y][best_pos.x] = seed_cell;
                     seed_cell->row = best_pos.y;
