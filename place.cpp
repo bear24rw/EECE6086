@@ -66,7 +66,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
     bool end_ripple = false;
     int target_point = VACANT;
 
-    printf("[place] ====== ITERATION %d ======\n", iteration_count);
+    printf("[force] ====== ITERATION %d ======\n", iteration_count);
 
     // TODO: make iteration limit: if min_total_force >
     // next_iteration_total_force: min_total_force = next_total_iteration_force
@@ -78,6 +78,8 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 
         cell_t *seed_cell = sorted_cells.top();
         sorted_cells.pop();
+
+        printf("[force] new seed cell: %d\n", seed_cell->number);
 
         seed_pos.x = seed_cell->col;
         seed_pos.y = seed_cell->row;
@@ -93,7 +95,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
             target_pos = calculate_target_point(seed_cell);
 
             #ifdef DEBUGGING
-            printf("[place] zero force location for %d: %d %d\n", seed_cell->number, target_pos.x, target_pos.y);
+            printf("[force] zero force location for %d: %d %d\n", seed_cell->number, target_pos.x, target_pos.y);
             #endif
 
             // figure out the status of the target point
@@ -106,16 +108,16 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
             } else if (rows[target_pos.y][target_pos.x] != nullptr) {
                 target_point = OCCUPIED;
             } else {
-                printf("[place] Could not figure out status of target point!\n");
+                printf("[force] Could not figure out status of target point!\n");
                 target_point = -1;
             }
 
             #ifdef DEBUGGING
             switch(target_point) {
-                case VACANT   : printf("[place] target_point : VACANT\n")   ; break ;
-                case SAME_LOC : printf("[place] target_point : SAME_LOC\n") ; break ;
-                case LOCKED   : printf("[place] target_point : LOCKED\n")   ; break ;
-                case OCCUPIED : printf("[place] target_point : OCCUPIED by cell %d\n", rows[target_pos.y][target_pos.x]->number) ; break ;
+                case VACANT   : printf("[force] target_point : VACANT\n")   ; break ;
+                case SAME_LOC : printf("[force] target_point : SAME_LOC\n") ; break ;
+                case LOCKED   : printf("[force] target_point : LOCKED\n")   ; break ;
+                case OCCUPIED : printf("[force] target_point : OCCUPIED by cell %d\n", rows[target_pos.y][target_pos.x]->number) ; break ;
             }
             #endif
 
@@ -181,7 +183,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
                         }
 
                         iteration_count++;
-                        printf("[place] ====== ITERATION %d ======\n", iteration_count);
+                        printf("[force] ====== ITERATION %d ======\n", iteration_count);
                     }
 
                     break;
