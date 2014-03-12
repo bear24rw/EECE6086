@@ -16,8 +16,6 @@ struct cell_t {
     bool feed_through;
     bool locked;
     int force;
-    int total_conn;
-    int sum_x, sum_y;
     int row, col; // the row and col of the cell in the placement grid, before feed throughs are added
     std::vector<term_t> terms;
     cell_t();

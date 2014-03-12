@@ -45,50 +45,14 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 {
     std::priority_queue<cell_t*, std::vector<cell_t*>, force_compare_t> sorted_cells;
 
-    #ifdef DEBUGGING
-    printf("--------------------------------------------\n");
-    printf("             INITIAL PLACEMENT              \n");
-    printf("--------------------------------------------\n");
-    printf(" c1 | c2  |  (x1, y1)  |  (x2, y2)  | force \n");
-    printf("--------------------------------------------\n");
-    #endif
     for (auto &cell : cells) {
         for (auto &term : cell.terms) {
             // dont continue if this term is no connected
             if (term.dest_cell == nullptr) continue;
-            cell.total_conn += 1;
-            cell.sum_x += term.dest_cell->col;
-            cell.sum_y += term.dest_cell->row;
             cell.force += wirelen(cell, *term.dest_cell);
-            #ifdef DEBUGGING
-            printf("%3d | %3d | (%3d, %3d) | (%3d, %3d) | %3d\n",
-                    cell.number, term.dest_cell->number,
-                    cell.col, cell.row,
-                    term.dest_cell->col, term.dest_cell->row,
-                    cell.force);
-            #endif
         }
         sorted_cells.push(&cell);
     }
-
-    // sort in descending order
-    // TODO: figure out a different way to do this, sorting messes up all the pointers
-    //std::sort(cells.begin(), cells.end(), compare_force);
-
-    #ifdef DEBUGGING
-    printf("\n");
-    #endif
-
-    #ifdef DEBUGGING
-    printf("--------------------------------------------\n");
-    printf("               FORCE ON CELL                \n");
-    printf("--------------------------------------------\n");
-    printf(" C# | TC | F  | CNT                          \n");
-    printf("--------------------------------------------\n");
-    for (unsigned int i=0; i<cells.size(); i++) {
-        printf(" %2d | %2d | %2d | %d\n", cells[i].number, cells[i].total_conn, cells[i].force, i);
-    }
-    #endif
 
     int iteration_count = 0;
     int iteration_limit = 100;
@@ -126,12 +90,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
         while (!end_ripple) {
 
             // compute the zero force location
-            if (seed_cell->total_conn > 0) {
-                target_pos.x = round(seed_cell->sum_x / seed_cell->total_conn);
-                target_pos.y = round(seed_cell->sum_y / seed_cell->total_conn);
-            } else {
-                target_pos = seed_pos;
-            }
+            target_pos = calculate_target_point(seed_cell);
 
             #ifdef DEBUGGING
             printf("[place] zero force location for %d: %d %d\n", seed_cell->number, target_pos.x, target_pos.y);
@@ -257,6 +216,32 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 
         }
     }
+}
+
+point_t calculate_target_point(cell_t* cell)
+{
+    // the target point is the average location of
+    // all the cells this cell is connected to
+
+    point_t average(0,0);
+    int connections = 0;
+
+    for (auto &term : cell->terms) {
+        // dont continue if this term is no connected
+        if (term.dest_cell == nullptr) continue;
+        average.x += term.dest_cell->col;
+        average.y += term.dest_cell->row;
+        connections++;
+    }
+
+    if (connections > 0) {
+        average.x = round(average.x / connections);
+        average.y = round(average.x / connections);
+    } else {
+        average = cell->position;
+    }
+
+    return average;
 }
 
 int wirelen(cell_t& a, cell_t& b)

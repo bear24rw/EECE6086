@@ -13,6 +13,7 @@
 
 rows_t place(std::vector<cell_t>& cells);
 void force_directed(std::vector<cell_t>& cells, rows_t& rows);
+point_t calculate_target_point(cell_t* cell);
 int wirelen(cell_t& a, cell_t& b);
 void update_cell_positions(rows_t& rows);
 void try_flips(rows_t& rows);
