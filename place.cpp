@@ -231,6 +231,8 @@ point_t calculate_target_point(cell_t* cell)
     for (auto &term : cell->terms) {
         // dont continue if this term is no connected
         if (term.dest_cell == nullptr) continue;
+        // dont consider ourselves
+        if (term.dest_cell == term.cell) continue;
         average.x += term.dest_cell->col;
         average.y += term.dest_cell->row;
         connections++;
