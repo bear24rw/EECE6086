@@ -94,6 +94,11 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
             // compute the zero force location
             target_pos = calculate_target_point(seed_cell);
 
+            // the rows grid is not a complete square so its possible
+            // that we calculate a position that isn't valid
+            if (target_pos.x >= (signed)rows[target_pos.y].size())
+                target_pos.x = rows[target_pos.y].size()-1;
+
             #ifdef DEBUGGING
             printf("[force] zero force location for %d: %d %d\n", seed_cell->number, target_pos.x, target_pos.y);
             #endif
