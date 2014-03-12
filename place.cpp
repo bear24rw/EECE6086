@@ -236,7 +236,7 @@ point_t calculate_target_point(cell_t* cell)
 
     if (connections > 0) {
         average.x = round((float)average.x / (float)connections);
-        average.y = round((float)average.x / (float)connections);
+        average.y = round((float)average.y / (float)connections);
     } else {
         average.x = cell->col;
         average.y = cell->row;
