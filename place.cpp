@@ -264,6 +264,20 @@ int wirelen(cell_t& a, cell_t& b)
     return dx + dy;
 }
 
+void print_rows(rows_t& rows) {
+    for (auto &row : rows) {
+        printf(">");
+        for (auto &cell : row) {
+            if (cell == nullptr)
+                printf("nil ");
+            else
+                printf("%3d ", cell->number);
+        }
+        printf("\n");
+    }
+}
+
+
 void update_cell_positions(rows_t& rows)
 {
     // after placement we need to update the row and column of each cell
