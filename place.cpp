@@ -147,6 +147,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
                     seed_cell->col = target_pos.x;
 
                     seed_cell->locked = true;
+
                     end_ripple = true;
                     abort_count = 0;
 
@@ -156,6 +157,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
                 case SAME_LOC:
                 {
                     rows[seed_pos.y][seed_pos.x] = seed_cell;
+
                     end_ripple = true;
                     abort_count = 0;
 
@@ -357,15 +359,15 @@ void try_flips(rows_t& rows)
 
             int force = 0;
             int min_force = INT_MAX;
-            bool do_x = false;
-            bool do_y = false;
+            bool old_x = cell->flip_x;
+            bool old_y = cell->flip_y;
+            bool new_x = false;
+            bool new_y = false;
 
             bool flips[4][2] = { {false, false},
                                  {false, true},
                                  {true, false},
                                  {true, true} };
-
-            printf("[flip] trying cell %d\n", cell->number);
 
             for (int f=0; f<4; f++) {
 
@@ -380,23 +382,24 @@ void try_flips(rows_t& rows)
                     force += term.distance(term.dest_term->position);
                 }
 
-                printf("[flip] force for flip %d %d = %d\n", cell->flip_x, cell->flip_y, force);
-
                 if (force < min_force) {
                     min_force = force;
-                    do_x = cell->flip_x;
-                    do_y = cell->flip_y;
+                    new_x = cell->flip_x;
+                    new_y = cell->flip_y;
                 }
 
             }
 
-            printf("[flip] choosing flip %d %d\n", do_x, do_y);
+            cell->flip_x = new_x;
+            cell->flip_y = new_y;
 
-            cell->flip_x = do_x;
-            cell->flip_y = do_y;
+            if (old_x != new_y || old_y != new_y) {
+                printf("[flip] flipped cell %d\n", cell->number);
+            }
 
         }
     }
+
 }
 
 void add_feed_throughs(rows_t& rows)
