@@ -43,15 +43,28 @@ rows_t place(std::vector<cell_t>& cells)
 
 void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 {
+    // sorted cells are the cells with connections that we are going to actually try to place
+    // extra cells are the cells with no connections that we will fill in the empty spots with after
     std::priority_queue<cell_t*, std::vector<cell_t*>, force_compare_t> sorted_cells;
+    std::priority_queue<cell_t*, std::vector<cell_t*>, force_compare_t> extra_cells;
 
+    // calculate the force of each cell and figure out which queue to put it in
     for (auto &cell : cells) {
         for (auto &term : cell.terms) {
-            // dont continue if this term is no connected
+            // dont continue if this term is not connected
             if (term.dest_cell == nullptr) continue;
             cell.force += wirelen(cell, *term.dest_cell);
         }
-        sorted_cells.push(&cell);
+
+        // if there is a force on this cell it is connected to something
+        // if there is no force then it is unconnected so we remove it from
+        // the placement grid for now
+        if (cell.force > 0) {
+            sorted_cells.push(&cell);
+        } else {
+            rows[cell.row][cell.col] = nullptr;
+            extra_cells.push(&cell);
+        }
     }
 
     int iteration_count = 0;
@@ -225,6 +238,17 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 
         }
     }
+
+    // go through the grid and put the extra cells in the empty spots
+    for (int y=0; y<rows.size(); y++) {
+        for (int x=0; x<rows[y].size(); x++) {
+            if (rows[y][x] == nullptr) {
+                rows[y][x] = extra_cells.top();
+                extra_cells.pop();
+            }
+        }
+    }
+
 }
 
 point_t calculate_target_point(cell_t* cell)
