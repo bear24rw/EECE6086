@@ -67,6 +67,8 @@ int main(int argc, char *argv[])
         cells[cell_b].terms[term_b].dest_term = &cells[cell_a].terms[term_a];
         cells[cell_a].terms[term_a].label = net;
         cells[cell_b].terms[term_b].label = net;
+        cells[cell_a].num_connections++;
+        cells[cell_b].num_connections++;
     }
 
     printf("Placing cells\n");

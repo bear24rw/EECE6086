@@ -14,6 +14,7 @@ cell_t::cell_t(bool ft)
     locked = false;
     flip_x = false;
     flip_y = false;
+    num_connections = 0;
     feed_through = ft;
 
     // feed through cells have 2 terminals, normal cells have 4

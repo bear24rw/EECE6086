@@ -17,6 +17,7 @@ struct cell_t {
     bool locked;
     int force;
     int row, col; // the row and col of the cell in the placement grid, before feed throughs are added
+    int num_connections;
     std::vector<term_t> terms;
     cell_t();
     cell_t(bool);

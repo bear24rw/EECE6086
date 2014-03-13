@@ -267,7 +267,10 @@ void write_placement_svg(std::string filename, std::vector<cell_t>& cells)
 
     for (auto &cell : cells) {
 
-        draw_rect(fp, cell.position.x, cell.position.y, 6, 6, std::string("white"), 0.75);
+        if (cell.num_connections == 0)
+            draw_rect(fp, cell.position.x, cell.position.y, 6, 6, std::string("gray"), 0.75);
+        else
+            draw_rect(fp, cell.position.x, cell.position.y, 6, 6, std::string("white"), 0.75);
         draw_text(fp, std::string("C").append(std::to_string(cell.number+1)), cell.position.x + 3, cell.position.y + 3, 12);
 
         for (auto &term : cell.terms) {
