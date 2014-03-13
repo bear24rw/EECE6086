@@ -240,8 +240,8 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
     }
 
     // go through the grid and put the extra cells in the empty spots
-    for (int y=0; y<rows.size(); y++) {
-        for (int x=0; x<rows[y].size(); x++) {
+    for (unsigned int y=0; y<rows.size(); y++) {
+        for (unsigned int x=0; x<rows[y].size(); x++) {
             if (rows[y][x] == nullptr) {
                 rows[y][x] = extra_cells.top();
                 extra_cells.pop();
