@@ -164,46 +164,68 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 
                 case LOCKED:
                 {
-                    // find the closest vacant position to the target point
+                    // find the closest vacant or unlocked position to the target point
 
                     point_t best_pos(0,0);
                     int best_dist = INT_MAX;
+                    bool was_vacant = false;
 
                     for (unsigned int y=0; y<rows.size(); y++) {
                         for (unsigned int x=0; x<rows[y].size(); x++) {
 
-                            // if this position is not vacant keep looking
-                            if (rows[y][x] != nullptr) continue;
+                            // check if this position is vacant or unlocked
+                            if (rows[y][x] == nullptr || (rows[y][x] != nullptr && !rows[y][x]->locked)) {
 
-                            int dist = abs(target_pos.y - y) + abs(target_pos.x - x);
+                                int dist = abs(target_pos.y - y) + abs(target_pos.x - x);
 
-                            if (dist < best_dist) {
-                                best_dist = dist;
-                                best_pos.x = x;
-                                best_pos.y = y;
+                                if (dist < best_dist) {
+                                    best_dist = dist;
+                                    best_pos.x = x;
+                                    best_pos.y = y;
+                                    was_vacant = (rows[y][x] == nullptr);
+                                }
                             }
 
                         }
                     }
 
-                    printf("[force] moving %d to vacant spot %d %d instead\n", seed_cell->number, best_pos.x, best_pos.y);
+                    if (was_vacant) {
+                        printf("[force] moving %d to vacant spot %d %d instead\n", seed_cell->number, best_pos.x, best_pos.y);
 
-                    rows[best_pos.y][best_pos.x] = seed_cell;
-                    seed_cell->row = best_pos.y;
-                    seed_cell->col = best_pos.x;
+                        rows[best_pos.y][best_pos.x] = seed_cell;
+                        seed_cell->row = best_pos.y;
+                        seed_cell->col = best_pos.x;
 
-                    end_ripple = true;
+                        end_ripple = true;
 
-                    abort_count++;
+                        abort_count++;
 
-                    if (abort_count > abort_limit) {
+                        if (abort_count > abort_limit) {
 
-                        for (auto &cell : cells) {
-                            cell.locked = false;
+                            for (auto &cell : cells) {
+                                cell.locked = false;
+                            }
+
+                            iteration_count++;
+                            printf("[force] ====== ITERATION %d ======\n", iteration_count);
                         }
+                    } else {
+                        printf("[force] moving %d to unlocked spot %d %d instead\n", seed_cell->number, best_pos.x, best_pos.y);
 
-                        iteration_count++;
-                        printf("[force] ====== ITERATION %d ======\n", iteration_count);
+                        cell_t *new_seed_cell = rows[best_pos.y][best_pos.x];
+
+                        rows[best_pos.y][best_pos.x] = seed_cell;
+                        seed_cell->row = best_pos.y;
+                        seed_cell->col = best_pos.x;
+
+                        seed_cell->locked = true;
+
+                        seed_cell = new_seed_cell;
+                        seed_pos.x = seed_cell->col;
+                        seed_pos.y = seed_cell->row;
+
+                        end_ripple = false;
+                        abort_count = 0;
                     }
 
                     break;
