@@ -314,8 +314,8 @@ int calculate_force(cell_t* cell)
 
 int wirelen(cell_t& a, cell_t& b)
 {
-    int dx = abs(a.row - b.row);
-    int dy = abs(a.col - b.col);
+    int dx = abs(a.col - b.col);
+    int dy = abs(a.row - b.row);
 
     return dx + dy;
 }
