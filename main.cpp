@@ -50,11 +50,6 @@ int main(int argc, char *argv[])
 
     for (int i=0; i<num_cells; i++) {
         cells[i].number = i;
-        cells[i].vacant = false;
-        cells[i].locked = false;
-        cells[i].occupied = false;
-        cells[i].placed = false;
-        cells[i].force = 0;
     }
 
     //
@@ -72,10 +67,22 @@ int main(int argc, char *argv[])
         cells[cell_b].terms[term_b].dest_term = &cells[cell_a].terms[term_a];
         cells[cell_a].terms[term_a].label = net;
         cells[cell_b].terms[term_b].label = net;
+        cells[cell_a].num_connections++;
+        cells[cell_b].num_connections++;
     }
 
     printf("Placing cells\n");
     rows_t rows = place(cells);
+
+    printf("----------------------------------\n");
+    for (auto &row : rows) {
+        for (auto &cell : row) {
+            if (cell->feed_through) continue;
+            printf("%3d   ", cell->number);
+        }
+        printf("\n");
+    }
+    printf("----------------------------------\n");
 
     printf("Calculating cell X positions\n");
     calculate_x_values(rows);

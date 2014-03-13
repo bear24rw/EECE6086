@@ -14,16 +14,10 @@ struct cell_t {
     bool flip_x;
     bool flip_y;
     bool feed_through;
-    bool vacant;
     bool locked;
-    bool occupied;
-    bool placed;
     int force;
-    int total_conn;
-    int x, y;
-    int sum_x, sum_y;
-    int dest_x, dest_y;
     int row, col; // the row and col of the cell in the placement grid, before feed throughs are added
+    int num_connections;
     std::vector<term_t> terms;
     cell_t();
     cell_t(bool);

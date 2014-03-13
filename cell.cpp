@@ -10,8 +10,11 @@ cell_t::cell_t() : cell_t(false) { }
 
 cell_t::cell_t(bool ft)
 {
+    force = 0;
+    locked = false;
     flip_x = false;
     flip_y = false;
+    num_connections = 0;
     feed_through = ft;
 
     // feed through cells have 2 terminals, normal cells have 4

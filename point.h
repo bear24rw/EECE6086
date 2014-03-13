@@ -20,6 +20,10 @@ struct point_t{
     point_t operator-(const point_t p) {
         return point_t(x-p.x, y-p.y);
     }
+
+    bool operator==(const point_t p) {
+        return (x==p.x) && (y==p.y);
+    }
 };
 
 #endif

@@ -1,9 +1,11 @@
+#include <stdlib.h>
 #include "term.h"
 #include "cell.h"
 
 term_t::term_t()
 {
     dest_cell = nullptr;
+    dest_term = nullptr;
     in_correct_channel = false;
     track_num = UNROUTED;
 }
@@ -39,3 +41,7 @@ bool term_t::on_left(void)
         return cell->flip_y;
 }
 
+int term_t::distance(point_t& p)
+{
+    return abs(position.x-p.x)+abs(position.y-p.y);
+}
