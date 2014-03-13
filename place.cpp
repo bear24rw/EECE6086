@@ -117,12 +117,12 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
             #endif
 
             // figure out the status of the target point
-            if (rows[target_pos.y][target_pos.x] == nullptr) {
+            if (target_pos == seed_pos && rows[target_pos.y][target_pos.x] == nullptr) {
+                target_point = SAME_LOC;
+            } else if (rows[target_pos.y][target_pos.x] == nullptr) {
                 target_point = VACANT;
             } else if (rows[target_pos.y][target_pos.x]->locked) {
                 target_point = LOCKED;
-            } else if (target_pos == seed_pos) {
-                target_point = SAME_LOC;
             } else if (rows[target_pos.y][target_pos.x] != nullptr) {
                 target_point = OCCUPIED;
             } else {
