@@ -50,11 +50,8 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 
     // calculate the force of each cell and figure out which queue to put it in
     for (auto &cell : cells) {
-        for (auto &term : cell.terms) {
-            // dont continue if this term is not connected
-            if (term.dest_cell == nullptr) continue;
-            cell.force += wirelen(cell, *term.dest_cell);
-        }
+
+        cell.force = calculate_force(&cell);
 
         // if there is a force on this cell it is connected to something
         // if there is no force then it is unconnected so we remove it from
@@ -302,6 +299,17 @@ point_t calculate_target_point(cell_t* cell)
     }
 
     return average;
+}
+
+int calculate_force(cell_t* cell)
+{
+    int force = 0;
+    for (auto &term : cell->terms) {
+        // dont continue if this term is not connected
+        if (term.dest_cell == nullptr) continue;
+        force += wirelen(*cell, *term.dest_cell);
+    }
+    return force;
 }
 
 int wirelen(cell_t& a, cell_t& b)
