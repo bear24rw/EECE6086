@@ -239,8 +239,8 @@ void write_placement_svg(std::string filename, std::vector<cell_t>& cells)
 
     // calculate viewport
 
-    int width = 2000;
-    int height = 2000;
+    int width = 1000;
+    int height = 1000;
 
     int view_w = (biggest_x + 2*GRID_BORDER) * PX_PER_GRID;
     int view_h = (biggest_y + 2*GRID_BORDER) * PX_PER_GRID;
