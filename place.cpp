@@ -345,17 +345,22 @@ void update_cell_positions(rows_t& rows)
 
     int current_row = 0;
     int current_col = 0;
+    int current_x = 0;
+    int current_y = 0;
 
     for (auto &row : rows) {
         current_col = 0;
+        current_x = 0;
         for (auto &cell : row) {
             cell->row = current_row;
             cell->col = current_col;
-            cell->position.x = cell->col * 6;
-            cell->position.y = cell->row * 6;
+            cell->position.x = current_x;
+            cell->position.y = current_y;
             current_col++;
+            current_x += cell->feed_through ? 3 : 6;
         }
         current_row++;
+        current_y += 6;
     }
 
     calculate_term_positions(rows);
