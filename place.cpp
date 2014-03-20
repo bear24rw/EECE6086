@@ -69,7 +69,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
     int iteration_limit = 100;
 
     int abort_count = 0;
-    int abort_limit = 10;
+    int abort_limit = 1;
 
     point_t target_pos;
     point_t seed_pos;
