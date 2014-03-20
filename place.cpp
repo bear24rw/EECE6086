@@ -430,6 +430,10 @@ void add_feed_throughs(rows_t& rows)
 
     while (row_idx < rows.size()) {
 
+        // we need to update the column number of each cell to
+        // account for any feed through cells that have bene added
+        update_cell_positions(rows);
+
         row_t row = rows[row_idx];
 
         unsigned int cell_idx = 0;
@@ -588,10 +592,19 @@ void add_feed_throughs(rows_t& rows)
                     cell_t *feed = new cell_t(true);
                     feed->row = src_cell->row + 1;
 
+                    // put the feed through directly above the source
                     auto position = rows[row_idx+1].begin() + cell_idx;
 
                     if (src_term->on_right())
                         position++;
+
+                    // if the feed through cell is on the same row as the
+                    // destination we want to place it right next to it
+                    if (feed->row == dst_cell->row) {
+                        position = rows[row_idx+1].begin() + dst_cell->col;
+                        if (dst_term->on_right())
+                            position++;
+                    }
 
                     if (position > rows[row_idx+1].end())
                         position = rows[row_idx+1].end();
