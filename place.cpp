@@ -23,19 +23,19 @@ rows_t place(std::vector<cell_t>& cells)
 
     update_cell_positions(rows);
 
-    write_placement_svg(std::string("placement_0_start"), cells);
+    write_placement_svg(std::string("placement_0_start"), rows);
 
     force_directed(cells, rows);
 
     // recalculate the current row and col of each cell
     update_cell_positions(rows);
 
-    write_placement_svg(std::string("placement_1_force"), cells);
+    write_placement_svg(std::string("placement_1_force"), rows);
 
     try_flips(rows);
     try_flips(rows);
 
-    write_placement_svg(std::string("placement_2_flip"), cells);
+    write_placement_svg(std::string("placement_2_flip"), rows);
 
     add_feed_throughs(rows);
 

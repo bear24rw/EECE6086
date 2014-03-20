@@ -224,15 +224,17 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
     fclose(fp);
 }
 
-void write_placement_svg(std::string filename, std::vector<cell_t>& cells)
+void write_placement_svg(std::string filename, rows_t& rows)
 {
     // calculate extents
 
     int biggest_x = 0;
     int biggest_y = 0;
-    for (auto &cell : cells) {
-        if (cell.position.x > biggest_x) biggest_x = cell.position.x;
-        if (cell.position.y > biggest_y) biggest_y = cell.position.y;
+    for (auto &row : rows) {
+        for (auto &cell : row) {
+            if (cell->position.x > biggest_x) biggest_x = cell->position.x;
+            if (cell->position.y > biggest_y) biggest_y = cell->position.y;
+        }
     }
     biggest_x += 6;
     biggest_y += 6;
@@ -263,27 +265,27 @@ void write_placement_svg(std::string filename, std::vector<cell_t>& cells)
     for (int i=-GRID_BORDER; i<biggest_y+GRID_BORDER; i++) {
         draw_line(fp, -GRID_BORDER, i, biggest_x+GRID_BORDER, i, std::string("gray"));
     }
-    // draw all the cells
 
-    for (auto &cell : cells) {
+    for (auto &row : rows) {
+        for (auto &cell : row) {
 
-        if (cell.num_connections == 0)
-            draw_rect(fp, cell.position.x, cell.position.y, 6, 6, std::string("gray"), 0.75);
-        else
-            draw_rect(fp, cell.position.x, cell.position.y, 6, 6, std::string("white"), 0.75);
-        draw_text(fp, std::string("C").append(std::to_string(cell.number+1)), cell.position.x + 3, cell.position.y + 3, 12);
+            // draw all the cells
+            if (cell->feed_through) {
+                draw_rect(fp, cell->position.x, cell->position.y, 3, 6, std::string("lightgray"), 0.75);
+                draw_text(fp, std::string("FT").append(std::to_string(cell->number+1)), cell->position.x + 1.5, cell->position.y + 3, 12, std::string("black"), 270);
+            } else {
+                if (cell->num_connections == 0)
+                    draw_rect(fp, cell->position.x, cell->position.y, 6, 6, std::string("gray"), 0.75);
+                else
+                    draw_rect(fp, cell->position.x, cell->position.y, 6, 6, std::string("white"), 0.75);
+                draw_text(fp, std::string("C").append(std::to_string(cell->number+1)), cell->position.x + 3, cell->position.y + 3, 12);
+            }
 
-        for (auto &term : cell.terms) {
-            draw_text(fp, std::to_string(term.number+1), term.position.x + 0.5, term.position.y + 0.5, 6);
-
-        }
-    }
-
-    // draw all the connections
-    for (auto &cell : cells) {
-        for (auto &term : cell.terms) {
-            if (term.dest_term != nullptr)
-                draw_line(fp, term.position.x+0.5, term.position.y+0.5, term.dest_term->position.x+0.5, term.dest_term->position.y+0.5, std::string("red"));
+            // draw all the connections
+            for (auto &term : cell->terms) {
+                if (term.dest_term != nullptr)
+                    draw_line(fp, term.position.x+0.5, term.position.y+0.5, term.dest_term->position.x+0.5, term.dest_term->position.y+0.5, std::string("red"));
+            }
         }
     }
 
