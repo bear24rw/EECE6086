@@ -39,6 +39,10 @@ rows_t place(std::vector<cell_t>& cells)
 
     add_feed_throughs(rows);
 
+    write_placement_svg(std::string("placement_3_feed"), rows);
+
+    try_flips(rows);
+
     return rows;
 }
 
