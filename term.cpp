@@ -27,6 +27,11 @@ bool term_t::on_top(void)
         return cell->flip_x;
 }
 
+bool term_t::on_bot(void)
+{
+    return !on_top();
+}
+
 bool term_t::on_left(void)
 {
     // Returns true if the terminal is currently on the left side of the cell
@@ -39,6 +44,11 @@ bool term_t::on_left(void)
         return !cell->flip_y;
     else
         return cell->flip_y;
+}
+
+bool term_t::on_right(void)
+{
+    return !on_left();
 }
 
 int term_t::distance(point_t& p)

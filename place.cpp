@@ -492,8 +492,8 @@ void add_feed_throughs(rows_t& rows)
 
                */
 
-                if ((src_cell->row + 1 == dst_cell->row && src_term->on_top() && !dst_term->on_top()) ||
-                    (dst_cell->row + 1 == src_cell->row && dst_term->on_top() && !src_term->on_top())) {
+                if ((src_cell->row + 1 == dst_cell->row && src_term->on_top() && dst_term->on_bot()) ||
+                    (dst_cell->row + 1 == src_cell->row && dst_term->on_top() && src_term->on_bot())) {
                     src_term->in_correct_channel = true;
                     dst_term->in_correct_channel = true;
                     continue;
@@ -518,15 +518,15 @@ void add_feed_throughs(rows_t& rows)
 
                */
 
-                if ((!src_term->on_top() && dst_term->on_top() && dst_cell->row == src_cell->row) ||
-                    (!src_term->on_top() && dst_cell->row > src_cell->row)) {
+                if ((src_term->on_bot() && dst_term->on_top() && dst_cell->row == src_cell->row) ||
+                    (src_term->on_bot() && dst_cell->row > src_cell->row)) {
 
                     cell_t *feed = new cell_t(true);
                     feed->row = src_cell->row;
 
                     auto position = rows[row_idx].begin() + cell_idx;
 
-                    if (!src_term->on_left())
+                    if (src_term->on_right())
                         position++;
 
                     if (position > rows[row_idx].end())
@@ -590,7 +590,7 @@ void add_feed_throughs(rows_t& rows)
 
                     auto position = rows[row_idx+1].begin() + cell_idx;
 
-                    if (!src_term->on_left())
+                    if (src_term->on_right())
                         position++;
 
                     if (position > rows[row_idx+1].end())

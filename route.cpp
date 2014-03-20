@@ -146,10 +146,10 @@ void expand(channel_t& channel)
             if (abs(term->position.x - existing_term->position.x) > TRACK_SPACING)
                 continue;
 
-            if (term->on_top() && term->track_num < existing_term->track_num && !existing_term->on_top())
+            if (term->on_top() && term->track_num < existing_term->track_num && existing_term->on_bot())
                 continue;
 
-            if (!term->on_top() && term->track_num > existing_term->track_num && existing_term->on_top())
+            if (term->on_bot() && term->track_num > existing_term->track_num && existing_term->on_top())
                 continue;
 
             // erase the terms from their original track
@@ -246,7 +246,7 @@ bool shrink(channel_t& channel)
                 // if the existing term is on bottom of its cell that means
                 // there is a trace spanning down from the term to the
                 // current track. all the tracks in this area are invalid.
-                if (!existing_term->on_top()) {
+                if (existing_term->on_bot()) {
                     for (unsigned int t=track_num; t<channel.tracks.size(); t++) {
                         open_tracks[t] = 0;
                     }
@@ -315,7 +315,7 @@ bool shrink(channel_t& channel)
 
         // if both terms are on the bottom of the cell we actually want to find the
         // highest track in order to pull the net up closer to the bottom of the cell
-        bool find_highest = !term->on_top() && !term->dest_term->on_top();
+        bool find_highest = term->on_bot() && term->dest_term->on_bot();
 
         for (unsigned int t=0; t<channel.tracks.size(); t++) {
             if (open_tracks[t]) {
