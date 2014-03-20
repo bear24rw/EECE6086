@@ -33,6 +33,7 @@ rows_t place(std::vector<cell_t>& cells)
     write_placement_svg(std::string("placement_1_force"), cells);
 
     try_flips(rows);
+    try_flips(rows);
 
     write_placement_svg(std::string("placement_2_flip"), cells);
 
@@ -365,6 +366,8 @@ void try_flips(rows_t& rows)
     for (auto &row : rows) {
         for (auto &cell : row) {
 
+            printf("[flip] checking cell %d\n", cell->number);
+
             int force = 0;
             int min_force = INT_MAX;
             bool old_x = cell->flip_x;
@@ -388,6 +391,12 @@ void try_flips(rows_t& rows)
                 for (auto &term : cell->terms) {
                     if (term.dest_term == nullptr) continue;
                     force += term.distance(term.dest_term->position);
+                    printf("[flip] cell_%d:%d (%d,%d) to cell_%d:%d (%d,%d) = %d\n",
+                            cell->number, term.number,
+                            term.position.x, term.position.y,
+                            term.dest_cell->number, term.dest_term->number,
+                            term.dest_term->position.x, term.dest_term->position.y,
+                            term.distance(term.dest_term->position));
                 }
 
                 if (force < min_force) {
@@ -395,14 +404,16 @@ void try_flips(rows_t& rows)
                     new_x = cell->flip_x;
                     new_y = cell->flip_y;
                 }
-
+                printf("[flip] force for x: %d y: %d flip = %d\n", cell->flip_x, cell->flip_y, force);
             }
 
             cell->flip_x = new_x;
             cell->flip_y = new_y;
 
+            calculate_term_positions(rows);
+
             if (old_x != new_y || old_y != new_y) {
-                printf("[flip] flipped cell %d\n", cell->number);
+                printf("[flip] flipped cell %d x: %d y: %d\n", cell->number, new_x, new_y);
             }
 
         }
