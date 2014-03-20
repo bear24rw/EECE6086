@@ -160,6 +160,13 @@ void calculate_term_positions(rows_t& rows)
         }
     }
 }
+void calculate_term_positions(cell_t* cell)
+{
+    // calculates the absolute xy position of each term within each cell
+    for (auto &term : cell->terms) {
+        term.position = get_term_position(term);
+    }
+}
 
 point_t get_term_position(term_t& term)
 {

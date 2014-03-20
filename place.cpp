@@ -386,7 +386,7 @@ void try_flips(rows_t& rows)
                 cell->flip_x = flips[f][0];
                 cell->flip_y = flips[f][1];
 
-                calculate_term_positions(rows);
+                calculate_term_positions(cell);
 
                 for (auto &term : cell->terms) {
                     if (term.dest_term == nullptr) continue;
@@ -410,7 +410,7 @@ void try_flips(rows_t& rows)
             cell->flip_x = new_x;
             cell->flip_y = new_y;
 
-            calculate_term_positions(rows);
+            calculate_term_positions(cell);
 
             if (old_x != new_y || old_y != new_y) {
                 printf("[flip] flipped cell %d x: %d y: %d\n", cell->number, new_x, new_y);
