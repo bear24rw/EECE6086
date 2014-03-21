@@ -50,6 +50,14 @@ point_t calculate_grid_size(void)
     double grid_w = ceil(sqrt(num_cells));
     double grid_h = ceil(sqrt(num_cells));
 
+    // sometimes there are extra rows, keep removing them as we can fit all the cells
+    while (grid_w*(grid_h-1) >= num_cells) {
+        printf("[grid] removing extra row\n");
+        grid_h--;
+    }
+
+    printf("[grid] sqrt grid size: %d %d\n", (int)grid_w, (int)grid_h);
+
     double best_w = grid_w;
     double best_h = grid_h;
     double best_squareness = 0;
@@ -74,11 +82,7 @@ point_t calculate_grid_size(void)
     grid_w = best_w;
     grid_h = best_h;
 
-    // sometimes there are extra rows, keep removing them as we can fit all the cells
-    while (grid_w*(grid_h-1) >= num_cells) {
-        printf("[grid] removing extra row\n");
-        grid_h--;
-    }
+    printf("[grid] equation grid size: %d %d\n", (int)grid_w, (int)grid_h);
 
     /*
        try to even up the top most row by reducing the width
@@ -95,7 +99,7 @@ point_t calculate_grid_size(void)
         grid_w--;
     }
 
-    printf("[grid] placement grid size: %d %d\n", (int)grid_w, (int)grid_h);
+    printf("[grid] final grid size: %d %d\n", (int)grid_w, (int)grid_h);
 
     return point_t((int)grid_w, (int)grid_h);
 }
