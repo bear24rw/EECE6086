@@ -15,12 +15,10 @@ rows_t place(std::vector<cell_t>& cells)
 
     // just arrange the cells into a square for now
     for (unsigned int i=0; i<cells.size(); i++) {
-        printf("pushing back %d onto row %d\n", i, i/grid_size.x);
         rows[i/grid_size.x].push_back(&cells[i]);
         cells[i].row = i/grid_size.x;
         cells[i].col = i % grid_size.x;
     }
-    printf("asdf\n");
 
     update_cell_positions(rows);
 
