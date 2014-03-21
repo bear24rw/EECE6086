@@ -9,24 +9,25 @@
 
 rows_t place(std::vector<cell_t>& cells)
 {
-    unsigned int grid_w = ceil(sqrt(cells.size()));
-    unsigned int grid_h = ceil(sqrt(cells.size()));
+    point_t grid_size = calculate_grid_size();
 
-    // sometimes the grid_h rounding makes an extra row
+    // sometimes the grid_size.y rounding makes an extra row
     // remove it if we can still fit all the cells
-    if (grid_w*(grid_h-1) >= cells.size())
-        grid_h--;
+    if (grid_size.x*(grid_size.y-1) >= cells.size())
+        grid_size.y--;
 
     printf("[place] placement grid size %d %d\n", grid_w, grid_h);
 
-    rows_t rows(grid_h);
+    rows_t rows(grid_size.y);
 
     // just arrange the cells into a square for now
     for (unsigned int i=0; i<cells.size(); i++) {
-        rows[i/grid_w].push_back(&cells[i]);
-        cells[i].row = i/grid_w;
-        cells[i].col = i % grid_w;
+        printf("pushing back %d onto row %d\n", i, i/grid_size.x);
+        rows[i/grid_size.x].push_back(&cells[i]);
+        cells[i].row = i/grid_size.x;
+        cells[i].col = i % grid_size.x;
     }
+    printf("asdf\n");
 
     update_cell_positions(rows);
 
@@ -53,6 +54,38 @@ rows_t place(std::vector<cell_t>& cells)
     return rows;
 }
 
+point_t calculate_grid_size(void)
+{
+    double grid_w = ceil(sqrt(num_cells));
+    double grid_h = ceil(sqrt(num_cells));
+
+    double best_w = grid_w;
+    double best_h = grid_h;
+    double best_squareness = 0;
+
+    while (grid_h > 1) {
+        double squareness = -((grid_w*grid_w)*6.42100276912857-1.64830443126981E2)/(num_nets*2.25721357852679-grid_h*num_nets-(grid_w*grid_w)*6.90932867776882+1.72976412967208E2)+2.84580853415461E-1;
+
+        printf("[grid] size: %d %d squareness: %f\n", (int)grid_w, (int)grid_h, squareness);
+
+        if (fabs(1.0-squareness) < fabs(1.0-best_squareness)) {
+            best_w = grid_w;
+            best_h = grid_h;
+            best_squareness = squareness;
+        }
+
+        // remove a row
+        grid_h--;
+
+        // add enough columns to fit all the cells from the row we just removed
+        grid_w += ceil(grid_w/grid_h);
+    }
+
+    printf("Placement grid size: %d %d\n", (int)best_w, (int)best_h);
+
+    return point_t((int)best_w, (int)best_h);
+}
+
 void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 {
     // sorted cells are the cells with connections that we are going to actually try to place
@@ -62,12 +95,15 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 
     // calculate the force of each cell and figure out which queue to put it in
     for (auto &cell : cells) {
+            printf("cell: %p\n", &cell);
 
         cell.force = calculate_force(&cell);
 
         // if there is a force on this cell it is connected to something
         // if there is no force then it is unconnected so we remove it from
         // the placement grid for now
+            printf("force: %d\n", cell.force);
+            printf("number: %d\n", cell.number);
         if (cell.force > 0) {
             sorted_cells.push(&cell);
         } else {

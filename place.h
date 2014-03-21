@@ -12,6 +12,7 @@
 #define OCCUPIED 4
 
 rows_t place(std::vector<cell_t>& cells);
+point_t calculate_grid_size(void);
 void force_directed(std::vector<cell_t>& cells, rows_t& rows);
 point_t calculate_target_point(cell_t* cell);
 int calculate_force(cell_t* cell);

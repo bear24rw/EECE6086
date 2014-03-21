@@ -26,6 +26,9 @@ typedef struct {
 
 typedef std::vector<channel_t> channels_t;
 
+extern int num_nets;
+extern int num_cells;
+
 void calculate_x_values(rows_t& rows);
 void calculate_y_values(rows_t& rows, channels_t& channels);
 void calculate_term_positions(rows_t& rows);

@@ -12,6 +12,9 @@
 #include "magic.h"
 #include "svg.h"
 
+int num_nets;
+int num_cells;
+
 int main(int argc, char *argv[])
 {
 
@@ -33,9 +36,6 @@ int main(int argc, char *argv[])
         printf("Cannot open file.\n");
         return ENOENT;
     }
-
-    int num_nets;
-    int num_cells;
 
     fp >> num_cells;
     fp >> num_nets;
