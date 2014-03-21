@@ -727,6 +727,35 @@ void add_feed_throughs(rows_t& rows)
 
 void move_feed_throughs(rows_t& rows)
 {
+    /*
+       feed throughs could end up like this:
+
+        /-------\
+        |       |
+        |       |
+        |       |
+        \----X--/
+             |
+             ----------------------------
+                                        |
+         /----X--\     /----X--\      /-X-\
+         |       |     |       |      |   |
+         |       |     |       |      |   |
+         |       |     |       |      |   |
+         \-------/     \-------/      \-X-/
+                                        |
+                            -------------
+                            |
+                       /----X--\
+                       |       |
+                       |       |
+                       |       |
+                       \-------/
+
+        we want to try to pull it in so that it is
+        in between the two cells its connected to
+    */
+
     for (unsigned int row_idx = 0; row_idx < rows.size(); row_idx++) {
 
         for (unsigned int cell_idx = 0; cell_idx < rows[row_idx].size(); cell_idx++) {
