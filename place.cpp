@@ -9,8 +9,15 @@
 
 rows_t place(std::vector<cell_t>& cells)
 {
-    int grid_w = ceil(sqrt(cells.size()));
-    int grid_h = ceil(sqrt(cells.size()));
+    unsigned int grid_w = ceil(sqrt(cells.size()));
+    unsigned int grid_h = ceil(sqrt(cells.size()));
+
+    // sometimes the grid_h rounding makes an extra row
+    // remove it if we can still fit all the cells
+    if (grid_w*(grid_h-1) >= cells.size())
+        grid_h--;
+
+    printf("[place] placement grid size %d %d\n", grid_w, grid_h);
 
     rows_t rows(grid_h);
 
