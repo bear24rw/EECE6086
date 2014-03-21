@@ -11,13 +11,6 @@ rows_t place(std::vector<cell_t>& cells)
 {
     point_t grid_size = calculate_grid_size();
 
-    // sometimes the grid_size.y rounding makes an extra row
-    // remove it if we can still fit all the cells
-    if (grid_size.x*(grid_size.y-1) >= cells.size())
-        grid_size.y--;
-
-    printf("[place] placement grid size %d %d\n", grid_w, grid_h);
-
     rows_t rows(grid_size.y);
 
     // just arrange the cells into a square for now
@@ -81,7 +74,12 @@ point_t calculate_grid_size(void)
         grid_w += ceil(grid_w/grid_h);
     }
 
-    printf("Placement grid size: %d %d\n", (int)best_w, (int)best_h);
+    while (best_w*(best_h-1) >= num_cells) {
+        printf("[grid] removing extra row\n");
+        best_h--;
+    }
+
+    printf("[grid] placement grid size: %d %d\n", (int)best_w, (int)best_h);
 
     return point_t((int)best_w, (int)best_h);
 }
