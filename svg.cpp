@@ -69,7 +69,7 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
     // outer 2 channels don't have the +1
     biggest_y -= 2;
 
-    printf("SVG Extents: %d %d\n", biggest_x, biggest_y);
+    printf("SVG Extents: %d %d (%d)\n", biggest_x, biggest_y, biggest_x*biggest_y);
 
     //
     // Calculate viewport
