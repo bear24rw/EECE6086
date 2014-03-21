@@ -7,6 +7,6 @@
 #define GRID_BORDER 5
 
 void write_svg(std::string filename, rows_t& rows, channels_t& channels);
-void write_placement_svg(std::string filename, std::vector<cell_t>& cells);
+void write_placement_svg(std::string filename, rows_t& rows);
 
 #endif

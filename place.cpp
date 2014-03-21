@@ -23,20 +23,25 @@ rows_t place(std::vector<cell_t>& cells)
 
     update_cell_positions(rows);
 
-    write_placement_svg(std::string("placement_0_start"), cells);
+    write_placement_svg(std::string("placement_0_start"), rows);
 
     force_directed(cells, rows);
 
     // recalculate the current row and col of each cell
     update_cell_positions(rows);
 
-    write_placement_svg(std::string("placement_1_force"), cells);
+    write_placement_svg(std::string("placement_1_force"), rows);
 
     try_flips(rows);
+    try_flips(rows);
 
-    write_placement_svg(std::string("placement_2_flip"), cells);
+    write_placement_svg(std::string("placement_2_flip"), rows);
 
     add_feed_throughs(rows);
+
+    write_placement_svg(std::string("placement_3_feed"), rows);
+
+    try_flips(rows);
 
     return rows;
 }
@@ -68,7 +73,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
     int iteration_limit = 100;
 
     int abort_count = 0;
-    int abort_limit = 10;
+    int abort_limit = 1;
 
     point_t target_pos;
     point_t seed_pos;
@@ -344,17 +349,22 @@ void update_cell_positions(rows_t& rows)
 
     int current_row = 0;
     int current_col = 0;
+    int current_x = 0;
+    int current_y = 0;
 
     for (auto &row : rows) {
         current_col = 0;
+        current_x = 0;
         for (auto &cell : row) {
             cell->row = current_row;
             cell->col = current_col;
-            cell->position.x = cell->col * 6;
-            cell->position.y = cell->row * 6;
+            cell->position.x = current_x;
+            cell->position.y = current_y;
             current_col++;
+            current_x += cell->feed_through ? 3 : 6;
         }
         current_row++;
+        current_y += 6;
     }
 
     calculate_term_positions(rows);
@@ -364,6 +374,8 @@ void try_flips(rows_t& rows)
 {
     for (auto &row : rows) {
         for (auto &cell : row) {
+
+            printf("[flip] checking cell %d\n", cell->number);
 
             int force = 0;
             int min_force = INT_MAX;
@@ -383,11 +395,17 @@ void try_flips(rows_t& rows)
                 cell->flip_x = flips[f][0];
                 cell->flip_y = flips[f][1];
 
-                calculate_term_positions(rows);
+                calculate_term_positions(cell);
 
                 for (auto &term : cell->terms) {
                     if (term.dest_term == nullptr) continue;
                     force += term.distance(term.dest_term->position);
+                    printf("[flip] cell_%d:%d (%d,%d) to cell_%d:%d (%d,%d) = %d\n",
+                            cell->number, term.number,
+                            term.position.x, term.position.y,
+                            term.dest_cell->number, term.dest_term->number,
+                            term.dest_term->position.x, term.dest_term->position.y,
+                            term.distance(term.dest_term->position));
                 }
 
                 if (force < min_force) {
@@ -395,14 +413,16 @@ void try_flips(rows_t& rows)
                     new_x = cell->flip_x;
                     new_y = cell->flip_y;
                 }
-
+                printf("[flip] force for x: %d y: %d flip = %d\n", cell->flip_x, cell->flip_y, force);
             }
 
             cell->flip_x = new_x;
             cell->flip_y = new_y;
 
+            calculate_term_positions(cell);
+
             if (old_x != new_y || old_y != new_y) {
-                printf("[flip] flipped cell %d\n", cell->number);
+                printf("[flip] flipped cell %d x: %d y: %d\n", cell->number, new_x, new_y);
             }
 
         }
@@ -418,6 +438,10 @@ void add_feed_throughs(rows_t& rows)
     unsigned int row_idx = 0;
 
     while (row_idx < rows.size()) {
+
+        // we need to update the column number of each cell to
+        // account for any feed through cells that have bene added
+        update_cell_positions(rows);
 
         row_t row = rows[row_idx];
 
@@ -481,8 +505,8 @@ void add_feed_throughs(rows_t& rows)
 
                */
 
-                if ((src_cell->row + 1 == dst_cell->row && src_term->on_top() && !dst_term->on_top()) ||
-                    (dst_cell->row + 1 == src_cell->row && dst_term->on_top() && !src_term->on_top())) {
+                if ((src_cell->row + 1 == dst_cell->row && src_term->on_top() && dst_term->on_bot()) ||
+                    (dst_cell->row + 1 == src_cell->row && dst_term->on_top() && src_term->on_bot())) {
                     src_term->in_correct_channel = true;
                     dst_term->in_correct_channel = true;
                     continue;
@@ -507,15 +531,15 @@ void add_feed_throughs(rows_t& rows)
 
                */
 
-                if ((!src_term->on_top() && dst_term->on_top() && dst_cell->row == src_cell->row) ||
-                    (!src_term->on_top() && dst_cell->row > src_cell->row)) {
+                if ((src_term->on_bot() && dst_term->on_top() && dst_cell->row == src_cell->row) ||
+                    (src_term->on_bot() && dst_cell->row > src_cell->row)) {
 
                     cell_t *feed = new cell_t(true);
                     feed->row = src_cell->row;
 
                     auto position = rows[row_idx].begin() + cell_idx;
 
-                    if (!src_term->on_left())
+                    if (src_term->on_right())
                         position++;
 
                     if (position > rows[row_idx].end())
@@ -577,10 +601,19 @@ void add_feed_throughs(rows_t& rows)
                     cell_t *feed = new cell_t(true);
                     feed->row = src_cell->row + 1;
 
+                    // put the feed through directly above the source
                     auto position = rows[row_idx+1].begin() + cell_idx;
 
-                    if (!src_term->on_left())
+                    if (src_term->on_right())
                         position++;
+
+                    // if the feed through cell is on the same row as the
+                    // destination we want to place it right next to it
+                    if (feed->row == dst_cell->row) {
+                        position = rows[row_idx+1].begin() + dst_cell->col;
+                        if (dst_term->on_right())
+                            position++;
+                    }
 
                     if (position > rows[row_idx+1].end())
                         position = rows[row_idx+1].end();
