@@ -182,7 +182,8 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 
                                 int dist = abs(target_pos.y - y) + abs(target_pos.x - x);
 
-                                if (dist < best_dist) {
+                                if ((dist == best_dist && target_pos.y == y) ||
+                                    (dist < best_dist)) {
                                     best_dist = dist;
                                     best_pos.x = x;
                                     best_pos.y = y;
