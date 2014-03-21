@@ -73,15 +73,33 @@ point_t calculate_grid_size(void)
         // add enough columns to fit all the cells from the row we just removed
         grid_w += ceil(grid_w/grid_h);
     }
+    grid_w = best_w;
+    grid_h = best_h;
 
-    while (best_w*(best_h-1) >= num_cells) {
+    // sometimes there are extra rows, keep removing them as we can fit all the cells
+    while (grid_w*(grid_h-1) >= num_cells) {
         printf("[grid] removing extra row\n");
-        best_h--;
+        grid_h--;
     }
 
-    printf("[grid] placement grid size: %d %d\n", (int)best_w, (int)best_h);
+    /*
+       try to even up the top most row by reducing the width
 
-    return point_t((int)best_w, (int)best_h);
+       XXXX            XXXXXXXX
+       XXXXXXXXXX  ->  XXXXXXXX
+       XXXXXXXXXX      XXXXXXXX
+    */
+
+    while (1) {
+        int empty_spots_on_top = grid_w*grid_h - num_cells;
+        if (empty_spots_on_top == 0) break;
+        if (empty_spots_on_top < grid_h-1) break;
+        grid_w--;
+    }
+
+    printf("[grid] placement grid size: %d %d\n", (int)grid_w, (int)grid_h);
+
+    return point_t((int)grid_w, (int)grid_h);
 }
 
 void force_directed(std::vector<cell_t>& cells, rows_t& rows)
