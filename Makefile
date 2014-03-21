@@ -18,5 +18,11 @@ $(BINARY): $(OBJS)
 clang:
 	clang++ $(CXXFLAGS) $(LIBS) -o $(BINARY) $(SOURCES)
 
+BENCHMARKS = 1 2 3 4 5 6 7 8 9 10
+BENCHMARK_RESULTS = $(patsubst %, benchmarks/%.log, $(BENCHMARKS))
+benchmarks: $(BINARY) $(BENCHMARK_RESULTS)
+benchmarks/%.log: benchmarks/%
+	./main $< > $@.tmp && mv $@.tmp $@
+
 clean:
-	rm -fr $(OBJS) $(BINARY)
+	rm -fr $(OBJS) $(BINARY) benchmarks/*.{log,tmp}
