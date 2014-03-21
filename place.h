@@ -21,6 +21,7 @@ void print_rows(rows_t& rows);
 void update_cell_positions(rows_t& rows);
 void try_flips(rows_t& rows);
 void add_feed_throughs(rows_t& rows);
+void move_feed_throughs(rows_t& rows);
 
 typedef struct {
     bool operator()(cell_t *a, cell_t *b)

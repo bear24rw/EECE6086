@@ -26,7 +26,6 @@ rows_t place(std::vector<cell_t>& cells)
 
     force_directed(cells, rows);
 
-    // recalculate the current row and col of each cell
     update_cell_positions(rows);
 
     write_placement_svg(std::string("placement_1_force"), rows);
@@ -37,10 +36,14 @@ rows_t place(std::vector<cell_t>& cells)
     write_placement_svg(std::string("placement_2_flip"), rows);
 
     add_feed_throughs(rows);
+    try_flips(rows);
 
     write_placement_svg(std::string("placement_3_feed"), rows);
 
+    move_feed_throughs(rows);
     try_flips(rows);
+
+    write_placement_svg(std::string("placement_4_feed_moved"), rows);
 
     return rows;
 }
@@ -719,5 +722,77 @@ void add_feed_throughs(rows_t& rows)
         }
 
         if (!rescan_row) row_idx++;
+    }
+}
+
+void move_feed_throughs(rows_t& rows)
+{
+    for (unsigned int row_idx = 0; row_idx < rows.size(); row_idx++) {
+
+        for (unsigned int cell_idx = 0; cell_idx < rows[row_idx].size(); cell_idx++) {
+
+            row_t row = rows[row_idx];
+            cell_t *cell = row[cell_idx];
+
+            if (!cell->feed_through) continue;
+
+            int f0 = cell->terms[0].position.x;
+            int f1 = cell->terms[1].position.x;
+            int t0 = cell->terms[0].dest_term->position.x;
+            int t1 = cell->terms[1].dest_term->position.x;
+
+            // if the distance from the feed through terminal to its desintation
+            // terminal is less than a cell width just leave it cause its probably
+            // sitting directly next to a cell already
+            if (abs(t0-f0) < 6) continue;
+            if (abs(t1-f1) < 6) continue;
+
+            // if the two nets are going the opposite direction just leave it
+            // we only really want to move a feed through if not horizontally
+            // inbetween the two things its connecting to
+            if ((t0 < f0 && t1 > f1) ||
+                (t0 > f0 && t1 < f1))
+                continue;
+
+            // target position is centered between to the cells we connect to
+            int target_x = round((float)(t0+t1)/2.0);
+
+
+            //
+            // find the cell whose center is closest to the target point
+            //
+
+            // first erase this cell from the list so the indexes are correct
+            rows[row_idx].erase(rows[row_idx].begin() + cell_idx);
+
+            int best_cell_idx = -1;
+            int best_dist = INT_MAX;
+            point_t best_center(-1,-1);
+            for (unsigned int i=0; i<row.size(); i++) {
+                point_t center = row[i]->position;
+                center.x += row[i]->feed_through ? 1 : 3;
+                if (abs(center.x - target_x) < best_dist) {
+                    best_dist = abs(center.x - target_x);
+                    best_cell_idx = i;
+                    best_center = center;
+                }
+            }
+
+            printf("[move_feed] for cell %d (target: %d) the best cell is %d (center: %d) (idx: %d)\n", cell->number, target_x, row[best_cell_idx]->number, best_center.x, best_cell_idx);
+
+            auto position = rows[row_idx].begin() + best_cell_idx;
+
+            // check if the target is on the left side of the cell
+            if (target_x < best_center.x)
+                position--;
+
+            if (position < rows[row_idx].begin())
+                position = rows[row_idx].begin();
+
+            rows[row_idx].insert(position, cell);
+
+            update_cell_positions(rows);
+
+        }
     }
 }
