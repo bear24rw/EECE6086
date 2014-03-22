@@ -1,4 +1,5 @@
 #include "main.h"
+#include "place.h"
 #include "report.h"
 
 void write_report(rows_t& rows, channels_t& channels)
@@ -7,6 +8,13 @@ void write_report(rows_t& rows, channels_t& channels)
     printf("Number of nets: %d\n", num_nets);
     printf("\n");
 
+
+    printf("Placement\n");
+    printf("---------\n");
+
+    point_t grid_size = calculate_grid_size();
+    printf("Initial grid size: %d %d\n", grid_size.x, grid_size.y);
+
     int num_feed_throughs = 0;
     for (auto &row : rows) {
         for (auto &cell : row) {
@@ -14,9 +22,6 @@ void write_report(rows_t& rows, channels_t& channels)
                 num_feed_throughs++;
         }
     }
-
-    printf("Placement\n");
-    printf("---------\n");
     printf("Number of feed through cells: %d\n", num_feed_throughs);
     printf("\n");
 
