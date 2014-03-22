@@ -12,7 +12,8 @@ void assign_terms_to_channels(channels_t& channels, rows_t& rows);
 void assign_terms_to_tracks(channel_t& channel);
 void find_vertical_nets(channel_t& channel);
 void expand(channel_t& channel);
-bool shrink(channel_t& channel);
+bool pull_up_down(channel_t& channel, bool up);
+bool pull_in(channel_t& channel);
 void remove_empty_tracks(channel_t& channel);
 void reset_term_track_numbers(channel_t& channel);
 std::vector<int> get_open_tracks(channel_t& channel, term_t* term);
@@ -47,13 +48,18 @@ channels_t route(rows_t& rows)
         find_vertical_nets(channel);
         expand(channel);
 
-        for (int i=0; i<20; i++) {
-            printf("[route] shrink iteration %d\n", i);
-            if (!shrink(channel)) break;
-            remove_empty_tracks(channel);
-        }
-
+        while (pull_up_down(channel, false)) {}
         remove_empty_tracks(channel);
+
+        pull_in(channel);
+        remove_empty_tracks(channel);
+
+        while (pull_up_down(channel, true)) {}
+        remove_empty_tracks(channel);
+
+        pull_in(channel);
+        remove_empty_tracks(channel);
+
         channel_num++;
     }
 
@@ -179,20 +185,12 @@ void expand(channel_t& channel)
     }
 }
 
-
-bool shrink(channel_t& channel)
+bool pull_up_down(channel_t& channel, bool up)
 {
-    // keep track of which nets we have already fixed so we don't touch them again
-    std::vector<term_t*> moved;
+    bool moved = false;
 
-    // return if any net was moved or not
-    bool net_was_moved = false;
-
-    // attempt to pull each net closer to the cells
-
+    // attempt to pull each net down as low as possible
     for (auto &term : channel.terms) {
-
-        if (std::count(moved.begin(), moved.end(), term) > 0) continue;
 
         if (term->dest_cell == nullptr) continue;
 
@@ -201,7 +199,56 @@ bool shrink(channel_t& channel)
 
         std::vector<int> open_tracks = get_open_tracks(channel, term);
 
-        // if there are no open tracks left we have to just leave it
+        // if there are no open tracks we have to just leave it
+        if (open_tracks.empty())
+            continue;
+
+        int track_num = -1;
+
+        if (up)
+            track_num = open_tracks.front();
+        else
+            track_num = open_tracks.back();
+
+        // if its the same track we are already on just leave it
+        if (track_num == term->track_num)
+            continue;
+
+        // remove them from the original track
+        channel.tracks[term->track_num].erase(term);
+        channel.tracks[term->track_num].erase(term->dest_term);
+
+        // add them to the new one
+        term->track_num = track_num;
+        term->dest_term->track_num = track_num;
+        channel.tracks[track_num].insert(term);
+        channel.tracks[track_num].insert(term->dest_term);
+
+        moved = true;
+    }
+
+    return moved;
+}
+
+bool pull_in(channel_t& channel)
+{
+    bool moved = false;
+
+    // attempt to pull each net down as low as possible
+    for (auto &term : channel.terms) {
+
+        if (term->dest_cell == nullptr) continue;
+
+        if (term->track_num == VERTICAL || term->dest_term->track_num == VERTICAL)
+            continue;
+
+        // if both terminals are not on the same side we can't pull the net in
+        if (term->on_bot() != term->dest_term->on_bot())
+            continue;
+
+        std::vector<int> open_tracks = get_open_tracks(channel, term);
+
+        // if there are no open tracks we have to just leave it
         if (open_tracks.empty())
             continue;
 
@@ -216,9 +263,9 @@ bool shrink(channel_t& channel)
         else
             track_num = open_tracks.front();
 
-        if (track_num == term->track_num) continue;
-
-        //printf("Moving net %d from track %d to track %d\n", term->label, term->track_num, track_num);
+        // if its the same track we are already on just leave it
+        if (track_num == term->track_num)
+            continue;
 
         // remove them from the original track
         channel.tracks[term->track_num].erase(term);
@@ -230,14 +277,10 @@ bool shrink(channel_t& channel)
         channel.tracks[track_num].insert(term);
         channel.tracks[track_num].insert(term->dest_term);
 
-        moved.push_back(term);
-        moved.push_back(term->dest_term);
-
-        net_was_moved = true;
-
+        moved = true;
     }
 
-    return net_was_moved;
+    return moved;
 }
 
 std::vector<int> get_open_tracks(channel_t& channel, term_t* term)
@@ -252,9 +295,11 @@ std::vector<int> get_open_tracks(channel_t& channel, term_t* term)
     // if we are the only net on this track then we really want to try to
     // move it to another track that already has nets on it so remove its
     // current track from the list of possible tracks it can end up
+    /*
     if (channel.tracks[term->track_num].size() == 2) {
         open_tracks[term->track_num] = 0;
     }
+    */
 
     // if there is not enough horizontal space between this terminal
     // and an existing one the track becomes invalid. also, every track
