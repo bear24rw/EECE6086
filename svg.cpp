@@ -53,13 +53,14 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
     // Calculate viewport
     //
 
-    int width = 2000;
-    int height = 2000;
 
     int view_w = (extents.x + 2*GRID_BORDER) * PX_PER_GRID;
     int view_h = (extents.y + 2*GRID_BORDER) * PX_PER_GRID;
     int view_x = -GRID_BORDER * PX_PER_GRID;
     int view_y = -1*view_h + GRID_BORDER * PX_PER_GRID;
+
+    int width = view_w;
+    int height = view_h;
 
     filename.append(".svg");
 
@@ -210,13 +211,13 @@ void write_placement_svg(std::string filename, rows_t& rows)
 
     // calculate viewport
 
-    int width = 1000;
-    int height = 1000;
-
     int view_w = (extents.x + 2*GRID_BORDER) * PX_PER_GRID;
     int view_h = (extents.y + 2*GRID_BORDER) * PX_PER_GRID;
     int view_x = -GRID_BORDER * PX_PER_GRID;
     int view_y = -1*view_h + GRID_BORDER * PX_PER_GRID;
+
+    int width = view_w;
+    int height = view_h;
 
     filename.append(".svg");
 
