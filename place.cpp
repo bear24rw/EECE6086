@@ -6,7 +6,6 @@
 #include "place.h"
 #include "main.h"
 #include "svg.h"
-#define DEBUGGING
 
 rows_t place(std::vector<cell_t>& cells)
 {
@@ -66,11 +65,11 @@ point_t calculate_grid_size(void)
 
     // sometimes there are extra rows, keep removing them as we can fit all the cells
     while (grid_w*(grid_h-1) >= num_cells) {
-        printf("[grid] removing extra row\n");
+        dprintf("[grid] removing extra row\n");
         grid_h--;
     }
 
-    printf("[grid] sqrt grid size: %d %d\n", (int)grid_w, (int)grid_h);
+    dprintf("[grid] sqrt grid size: %d %d\n", (int)grid_w, (int)grid_h);
 
     double best_w = grid_w;
     double best_h = grid_h;
@@ -79,7 +78,7 @@ point_t calculate_grid_size(void)
     while (grid_h > 1) {
         double squareness = -((grid_w*grid_w)*6.42100276912857-1.64830443126981E2)/(num_nets*2.25721357852679-grid_h*num_nets-(grid_w*grid_w)*6.90932867776882+1.72976412967208E2)+2.84580853415461E-1;
 
-        printf("[grid] size: %d %d squareness: %f\n", (int)grid_w, (int)grid_h, squareness);
+        dprintf("[grid] size: %d %d squareness: %f\n", (int)grid_w, (int)grid_h, squareness);
 
         if (fabs(1.0-squareness) < fabs(1.0-best_squareness)) {
             best_w = grid_w;
@@ -98,11 +97,11 @@ point_t calculate_grid_size(void)
 
     // sometimes there are extra rows, keep removing them as we can fit all the cells
     while (grid_w*(grid_h-1) >= num_cells) {
-        printf("[grid] removing extra row\n");
+        dprintf("[grid] removing extra row\n");
         grid_h--;
     }
 
-    printf("[grid] equation grid size: %d %d\n", (int)grid_w, (int)grid_h);
+    dprintf("[grid] equation grid size: %d %d\n", (int)grid_w, (int)grid_h);
 
     /*
        try to even up the top most row by reducing the width
@@ -119,7 +118,7 @@ point_t calculate_grid_size(void)
         grid_w--;
     }
 
-    printf("[grid] final grid size: %d %d\n", (int)grid_w, (int)grid_h);
+    dprintf("[grid] final grid size: %d %d\n", (int)grid_w, (int)grid_h);
 
     return point_t((int)grid_w, (int)grid_h);
 }
@@ -133,15 +132,15 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 
     // calculate the force of each cell and figure out which queue to put it in
     for (auto &cell : cells) {
-            printf("cell: %p\n", &cell);
+            dprintf("cell: %p\n", &cell);
 
         cell.force = calculate_force(&cell);
 
         // if there is a force on this cell it is connected to something
         // if there is no force then it is unconnected so we remove it from
         // the placement grid for now
-            printf("force: %d\n", cell.force);
-            printf("number: %d\n", cell.number);
+            dprintf("force: %d\n", cell.force);
+            dprintf("number: %d\n", cell.number);
         if (cell.force > 0) {
             sorted_cells.push(&cell);
         } else {
@@ -162,7 +161,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
     bool end_ripple = false;
     int target_point = VACANT;
 
-    printf("[force] ====== ITERATION %d ======\n", iteration_count);
+    dprintf("[force] ====== ITERATION %d ======\n", iteration_count);
 
     // TODO: make iteration limit: if min_total_force >
     // next_iteration_total_force: min_total_force = next_total_iteration_force
@@ -175,7 +174,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
         cell_t *seed_cell = sorted_cells.top();
         sorted_cells.pop();
 
-        printf("[force] new seed cell: %d (location %d %d)\n", seed_cell->number, seed_cell->col, seed_cell->row);
+        dprintf("[force] new seed cell: %d (location %d %d)\n", seed_cell->number, seed_cell->col, seed_cell->row);
 
         seed_pos.x = seed_cell->col;
         seed_pos.y = seed_cell->row;
@@ -195,9 +194,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
             if (target_pos.x >= (signed)rows[target_pos.y].size())
                 target_pos.x = rows[target_pos.y].size()-1;
 
-            #ifdef DEBUGGING
-            printf("[force] zero force location for %d: %d %d\n", seed_cell->number, target_pos.x, target_pos.y);
-            #endif
+            dprintf("[force] zero force location for %d: %d %d\n", seed_cell->number, target_pos.x, target_pos.y);
 
             // figure out the status of the target point
             if (target_pos == seed_pos && rows[target_pos.y][target_pos.x] == nullptr) {
@@ -213,14 +210,12 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
                 target_point = -1;
             }
 
-            #ifdef DEBUGGING
             switch(target_point) {
-                case VACANT   : printf("[force] target_point : VACANT\n")   ; break ;
-                case SAME_LOC : printf("[force] target_point : SAME_LOC\n") ; break ;
-                case LOCKED   : printf("[force] target_point : LOCKED by cell %d\n", rows[target_pos.y][target_pos.x]->number)   ; break ;
-                case OCCUPIED : printf("[force] target_point : OCCUPIED by cell %d\n", rows[target_pos.y][target_pos.x]->number) ; break ;
+                case VACANT   : dprintf("[force] target_point : VACANT\n")   ; break ;
+                case SAME_LOC : dprintf("[force] target_point : SAME_LOC\n") ; break ;
+                case LOCKED   : dprintf("[force] target_point : LOCKED by cell %d\n", rows[target_pos.y][target_pos.x]->number)   ; break ;
+                case OCCUPIED : dprintf("[force] target_point : OCCUPIED by cell %d\n", rows[target_pos.y][target_pos.x]->number) ; break ;
             }
-            #endif
 
             switch (target_point) {
                 case VACANT:
@@ -276,7 +271,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
                     }
 
                     if (was_vacant) {
-                        printf("[force] moving %d to vacant spot %d %d instead\n", seed_cell->number, best_pos.x, best_pos.y);
+                        dprintf("[force] moving %d to vacant spot %d %d instead\n", seed_cell->number, best_pos.x, best_pos.y);
 
                         rows[best_pos.y][best_pos.x] = seed_cell;
                         seed_cell->row = best_pos.y;
@@ -293,10 +288,10 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
                             }
 
                             iteration_count++;
-                            printf("[force] ====== ITERATION %d ======\n", iteration_count);
+                            dprintf("[force] ====== ITERATION %d ======\n", iteration_count);
                         }
                     } else {
-                        printf("[force] moving %d to unlocked spot %d %d instead\n", seed_cell->number, best_pos.x, best_pos.y);
+                        dprintf("[force] moving %d to unlocked spot %d %d instead\n", seed_cell->number, best_pos.x, best_pos.y);
 
                         cell_t *new_seed_cell = rows[best_pos.y][best_pos.x];
 
@@ -339,7 +334,7 @@ void force_directed(std::vector<cell_t>& cells, rows_t& rows)
 
                 default:
                 {
-                    printf("none of cases\n");
+                    printf("[force] switch case defaulted!\n");
                     break;
                 }
             }
@@ -409,14 +404,14 @@ int wirelen(cell_t& a, cell_t& b)
 
 void print_rows(rows_t& rows) {
     for (auto &row : rows) {
-        printf(">");
+        dprintf(">");
         for (auto &cell : row) {
             if (cell == nullptr)
-                printf("nil ");
+                dprintf("nil ");
             else
-                printf("%3d ", cell->number);
+                dprintf("%3d ", cell->number);
         }
-        printf("\n");
+        dprintf("\n");
     }
 }
 
@@ -457,7 +452,7 @@ void try_flips(rows_t& rows)
     for (auto &row : rows) {
         for (auto &cell : row) {
 
-            printf("[flip] checking cell %d\n", cell->number);
+            dprintf("[flip] checking cell %d\n", cell->number);
 
             int force = 0;
             int min_force = INT_MAX;
@@ -482,7 +477,7 @@ void try_flips(rows_t& rows)
                 for (auto &term : cell->terms) {
                     if (term.dest_term == nullptr) continue;
                     force += term.distance(term.dest_term->position);
-                    printf("[flip] cell_%d:%d (%d,%d) to cell_%d:%d (%d,%d) = %d\n",
+                    dprintf("[flip] cell_%d:%d (%d,%d) to cell_%d:%d (%d,%d) = %d\n",
                             cell->number, term.number,
                             term.position.x, term.position.y,
                             term.dest_cell->number, term.dest_term->number,
@@ -495,7 +490,7 @@ void try_flips(rows_t& rows)
                     new_x = cell->flip_x;
                     new_y = cell->flip_y;
                 }
-                printf("[flip] force for x: %d y: %d flip = %d\n", cell->flip_x, cell->flip_y, force);
+                dprintf("[flip] force for x: %d y: %d flip = %d\n", cell->flip_x, cell->flip_y, force);
             }
 
             cell->flip_x = new_x;
@@ -504,7 +499,7 @@ void try_flips(rows_t& rows)
             calculate_term_positions(cell);
 
             if (old_x != new_y || old_y != new_y) {
-                printf("[flip] flipped cell %d x: %d y: %d\n", cell->number, new_x, new_y);
+                dprintf("[flip] flipped cell %d x: %d y: %d\n", cell->number, new_x, new_y);
             }
 
         }
@@ -826,7 +821,7 @@ void move_feed_throughs(rows_t& rows)
                 }
             }
 
-            printf("[move_feed] for feed_through %d (target: %d) the best cell is %d (center: %d) (idx: %d)\n", cell->number, target_x, row[best_cell_idx]->number, best_center.x, best_cell_idx);
+            dprintf("[move_feed] for feed_through %d (target: %d) the best cell is %d (center: %d) (idx: %d)\n", cell->number, target_x, row[best_cell_idx]->number, best_center.x, best_cell_idx);
 
             auto position = rows[row_idx].begin() + best_cell_idx;
 
@@ -897,7 +892,7 @@ void move_feed_throughs(rows_t& rows)
             // first erase this cell from the list so the indexes are correct
             rows[row_idx].erase(rows[row_idx].begin() + cell_idx);
 
-            printf("[move_feed] moving feed_through %d to other side\n", cell->number);
+            dprintf("[move_feed] moving feed_through %d to other side\n", cell->number);
 
             auto position = rows[row_idx].begin() + cell_idx;
 
@@ -965,7 +960,7 @@ void even_up_row_lengths(rows_t& rows)
             }
         }
 
-        printf("[even] shortest row: %d\n", shortest_row);
+        dprintf("[even] shortest row: %d\n", shortest_row);
 
         cell_t *cell = unconnected.front(); unconnected.pop();
 
@@ -1009,7 +1004,7 @@ bool pull_cells_together(rows_t& rows)
 
             if (current_dist <= 1) continue;
 
-            printf("[pull_together] checking cell %d (dist to target: %d)\n", cell->number, current_dist);
+            dprintf("[pull_together] checking cell %d (dist to target: %d)\n", cell->number, current_dist);
 
             // find closest dummy cell to it
             int best_dist = current_dist;
@@ -1018,7 +1013,7 @@ bool pull_cells_together(rows_t& rows)
                 if (dummy_cell->num_connections > 0) continue;
                 int dummy_dist = abs(dummy_cell->col - target.x);
                 if (dummy_dist < best_dist) {
-                    printf("[pull_together] switching with cell %d (new dist: %d)\n", dummy_cell->number, dummy_dist);
+                    dprintf("[pull_together] switching with cell %d (new dist: %d)\n", dummy_cell->number, dummy_dist);
                     best_dist = dummy_dist;
                     cell_t *best_cell = dummy_cell;
                     dummy_cell = cell;

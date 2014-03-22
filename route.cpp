@@ -211,7 +211,7 @@ bool fix_overlaps(channel_t& channel, rows_t& rows)
         // if there are open tracks that means there isn't an overlap
         if (!open_tracks.empty()) continue;
 
-        printf("[overlap] net %d has an overlap\n", term->label);
+        dprintf("[overlap] net %d has an overlap\n", term->label);
 
         // we need to find which cell is more to the right since
         // we fix the issue by moving it more to the right

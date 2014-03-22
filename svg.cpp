@@ -47,7 +47,7 @@ void write_svg(rows_t& rows, channels_t& channels)
 
     point_t extents = bounding_box(rows, &channels);
 
-    printf("SVG Extents: %d %d (%d)\n", extents.x, extents.y, extents.x*extents.y);
+    dprintf("SVG Extents: %d %d (%d)\n", extents.x, extents.y, extents.x*extents.y);
 
     //
     // Calculate viewport

@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
 
     if (argc < 2) {
-        printf("Usage: ./main inputfile\n");
+        dprintf("Usage: ./main inputfile\n");
         return EINVAL;
     }
 
@@ -35,14 +35,14 @@ int main(int argc, char *argv[])
     std::ifstream fp(filename);
 
     if(fp.fail()) {
-        printf("Cannot open file.\n");
+        dprintf("Cannot open file.\n");
         return ENOENT;
     }
 
     fp >> num_cells;
     fp >> num_nets;
 
-    printf("Found %d cells and %d nets\n", num_cells, num_nets);
+    dprintf("Found %d cells and %d nets\n", num_cells, num_nets);
 
     //
     // Generate all cells
@@ -73,43 +73,43 @@ int main(int argc, char *argv[])
         cells[cell_b].num_connections++;
     }
 
-    printf("Placing cells\n");
+    dprintf("Placing cells\n");
     rows_t rows = place(cells);
 
-    printf("----------------------------------\n");
+    dprintf("----------------------------------\n");
     for (auto &row : rows) {
         for (auto &cell : row) {
             if (cell->feed_through) continue;
-            printf("%3d   ", cell->number);
+            dprintf("%3d   ", cell->number);
         }
-        printf("\n");
+        dprintf("\n");
     }
-    printf("----------------------------------\n");
+    dprintf("----------------------------------\n");
 
-    printf("Calculating cell X positions\n");
+    dprintf("Calculating cell X positions\n");
     calculate_x_values(rows);
 
     calculate_term_positions(rows);
 
-    printf("Routing cells\n");
+    dprintf("Routing cells\n");
     channels_t channels = route(rows);
 
-    printf("Calculating cell Y positions\n");
+    dprintf("Calculating cell Y positions\n");
     calculate_y_values(rows, channels);
 
     calculate_term_positions(rows);
 
     calculate_track_positions(channels);
 
-    printf("Writing magic file\n");
+    dprintf("Writing magic file\n");
     write_magic(rows, channels);
 
-    printf("Writing svg file\n");
+    dprintf("Writing svg file\n");
     write_svg(rows, channels);
 
-    printf("Total wirelength: %d\n", total_wire_length(channels));
+    dprintf("Total wirelength: %d\n", total_wire_length(channels));
 
-    printf("Done.\n");
+    dprintf("Done.\n");
 }
 
 void calculate_x_values(rows_t& rows)

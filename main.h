@@ -6,16 +6,16 @@
 #include "cell.h"
 #include "term.h"
 
+//#define DEBUG
+
 #define TRACK_WIDTH   1
 #define TRACK_SPACING 1
 #define CELL_SPACING  1
 #define CELL_HEIGHT   6
 #define CELL_WIDTH    6
 
-
 typedef std::vector<cell_t*> row_t;
 typedef std::vector<row_t> rows_t;
-
 
 typedef std::unordered_set<term_t*> track_t;
 
@@ -39,5 +39,11 @@ void calculate_track_positions(channels_t& channels);
 int total_wire_length(channels_t& channels);
 point_t get_term_position(term_t& term);
 point_t bounding_box(rows_t& rows, channels_t* channels = nullptr);
+
+#ifdef DEBUG
+#define dprintf(...) printf(__VA_ARGS__)
+#else
+#define dprintf(...) do{}while(0)
+#endif
 
 #endif
