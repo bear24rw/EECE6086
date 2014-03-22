@@ -92,6 +92,12 @@ point_t calculate_grid_size(void)
     grid_w = best_w;
     grid_h = best_h;
 
+    // sometimes there are extra rows, keep removing them as we can fit all the cells
+    while (grid_w*(grid_h-1) >= num_cells) {
+        printf("[grid] removing extra row\n");
+        grid_h--;
+    }
+
     printf("[grid] equation grid size: %d %d\n", (int)grid_w, (int)grid_h);
 
     /*
