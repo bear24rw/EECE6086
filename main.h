@@ -36,5 +36,6 @@ void calculate_term_positions(cell_t* cell);
 void calculate_track_positions(channels_t& channels);
 int total_wire_length(channels_t& channels);
 point_t get_term_position(term_t& term);
+point_t bounding_box(rows_t& rows, channels_t* channels = nullptr);
 
 #endif

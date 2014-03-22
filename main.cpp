@@ -240,3 +240,40 @@ int total_wire_length(channels_t& channels)
 
     return length;
 }
+
+point_t bounding_box(rows_t& rows, channels_t* channels)
+{
+    point_t biggest(0,0);
+
+    // Y dimension
+
+    biggest.y = rows.size() * 6;
+
+    if (channels != nullptr) {
+        for (auto &channel : *channels) {
+            biggest.y += channel.tracks.size() * 2 + 1;
+        }
+        // outer 2 channels don't have the +1
+        biggest.y -= 2;
+    }
+
+    // X dimension
+
+    for (auto &row : rows) {
+
+        int current_x = 0;
+
+        for (auto &cell : row) {
+            if (cell == nullptr) {
+                current_x += 6;
+            } else {
+                current_x = cell->position.x;
+                current_x += cell->feed_through ? 3 : 6;
+            }
+        }
+
+        if (current_x > biggest.x) biggest.x = current_x;
+    }
+
+    return biggest;
+}

@@ -45,31 +45,9 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
     // Figure out the bounding box
     //
 
-    // X Extents
+    point_t extents = bounding_box(rows, &channels);
 
-    int biggest_x = 0;
-    int current_x = 0;
-
-    for (auto &row : rows) {
-        for (auto &cell : row) {
-            current_x = cell->position.x;
-            current_x += cell->feed_through ? 3 : 6;
-            if (current_x > biggest_x)
-                biggest_x = current_x;
-        }
-    }
-
-    // Y Extents
-
-    int biggest_y = rows.size() * 6;
-
-    for (auto &channel : channels) {
-        biggest_y += channel.tracks.size() * 2 + 1;
-    }
-    // outer 2 channels don't have the +1
-    biggest_y -= 2;
-
-    printf("SVG Extents: %d %d (%d)\n", biggest_x, biggest_y, biggest_x*biggest_y);
+    printf("SVG Extents: %d %d (%d)\n", extents.x, extents.y, extents.x*extents.y);
 
     //
     // Calculate viewport
@@ -78,8 +56,8 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
     int width = 2000;
     int height = 2000;
 
-    int view_w = (biggest_x + 2*GRID_BORDER) * PX_PER_GRID;
-    int view_h = (biggest_y + 2*GRID_BORDER) * PX_PER_GRID;
+    int view_w = (extents.x + 2*GRID_BORDER) * PX_PER_GRID;
+    int view_h = (extents.y + 2*GRID_BORDER) * PX_PER_GRID;
     int view_x = -GRID_BORDER * PX_PER_GRID;
     int view_y = -1*view_h + GRID_BORDER * PX_PER_GRID;
 
@@ -97,11 +75,11 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
     // Draw a grid
     //
 
-    for (int i=-GRID_BORDER; i<biggest_x+GRID_BORDER; i++) {
-        draw_line(fp, i, -GRID_BORDER, i, biggest_y+GRID_BORDER, std::string("gray"));
+    for (int i=-GRID_BORDER; i<extents.x+GRID_BORDER; i++) {
+        draw_line(fp, i, -GRID_BORDER, i, extents.y+GRID_BORDER, std::string("gray"));
     }
-    for (int i=-GRID_BORDER; i<biggest_y+GRID_BORDER; i++) {
-        draw_line(fp, -GRID_BORDER, i, biggest_x+GRID_BORDER, i, std::string("gray"));
+    for (int i=-GRID_BORDER; i<extents.y+GRID_BORDER; i++) {
+        draw_line(fp, -GRID_BORDER, i, extents.x+GRID_BORDER, i, std::string("gray"));
     }
 
 
@@ -228,24 +206,15 @@ void write_placement_svg(std::string filename, rows_t& rows)
 {
     // calculate extents
 
-    int biggest_x = 0;
-    int biggest_y = 0;
-    for (auto &row : rows) {
-        for (auto &cell : row) {
-            if (cell->position.x > biggest_x) biggest_x = cell->position.x;
-            if (cell->position.y > biggest_y) biggest_y = cell->position.y;
-        }
-    }
-    biggest_x += 6;
-    biggest_y += 6;
+    point_t extents = bounding_box(rows);
 
     // calculate viewport
 
     int width = 1000;
     int height = 1000;
 
-    int view_w = (biggest_x + 2*GRID_BORDER) * PX_PER_GRID;
-    int view_h = (biggest_y + 2*GRID_BORDER) * PX_PER_GRID;
+    int view_w = (extents.x + 2*GRID_BORDER) * PX_PER_GRID;
+    int view_h = (extents.y + 2*GRID_BORDER) * PX_PER_GRID;
     int view_x = -GRID_BORDER * PX_PER_GRID;
     int view_y = -1*view_h + GRID_BORDER * PX_PER_GRID;
 
@@ -259,11 +228,11 @@ void write_placement_svg(std::string filename, rows_t& rows)
 
     // draw a grid
 
-    for (int i=-GRID_BORDER; i<biggest_x+GRID_BORDER; i++) {
-        draw_line(fp, i, -GRID_BORDER, i, biggest_y+GRID_BORDER, std::string("gray"));
+    for (int i=-GRID_BORDER; i<extents.x+GRID_BORDER; i++) {
+        draw_line(fp, i, -GRID_BORDER, i, extents.y+GRID_BORDER, std::string("gray"));
     }
-    for (int i=-GRID_BORDER; i<biggest_y+GRID_BORDER; i++) {
-        draw_line(fp, -GRID_BORDER, i, biggest_x+GRID_BORDER, i, std::string("gray"));
+    for (int i=-GRID_BORDER; i<extents.y+GRID_BORDER; i++) {
+        draw_line(fp, -GRID_BORDER, i, extents.x+GRID_BORDER, i, std::string("gray"));
     }
 
     // draw all the cells
