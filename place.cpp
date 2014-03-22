@@ -47,12 +47,14 @@ rows_t place(std::vector<cell_t>& cells)
     write_placement_svg(std::string("placement_4_feed_even"), rows);
 
     while (pull_cells_together(rows)) {}
-
     try_flips(rows);
+
+    write_placement_svg(std::string("placement_5_pull"), rows);
+
     move_feed_throughs(rows);
     try_flips(rows);
 
-    write_placement_svg(std::string("placement_5_feed_moved"), rows);
+    write_placement_svg(std::string("placement_6_feed_moved"), rows);
 
     return rows;
 }
