@@ -46,6 +46,8 @@ rows_t place(std::vector<cell_t>& cells)
 
     write_placement_svg(std::string("placement_4_feed_even"), rows);
 
+    while (pull_cells_together(rows)) {}
+
     try_flips(rows);
     move_feed_throughs(rows);
     try_flips(rows);
@@ -985,4 +987,46 @@ void even_up_row_lengths(rows_t& rows)
 
         update_cell_positions(rows);
     }
+}
+
+bool pull_cells_together(rows_t& rows)
+{
+    // calculate the zero force location for each cell in the row
+    // and then see if there is a dummy cell that will get it closer
+
+    bool moved = false;
+
+    for (auto &row : rows) {
+        for (auto &cell : row) {
+
+            // get target point
+            point_t target = calculate_target_point(cell);
+
+            // calculate the current distance
+            int current_dist = abs(cell->col - target.x);
+
+            if (current_dist <= 1) continue;
+
+            printf("[pull_together] checking cell %d (dist to target: %d)\n", cell->number, current_dist);
+
+            // find closest dummy cell to it
+            int best_dist = current_dist;
+
+            for (auto &dummy_cell : row) {
+                if (dummy_cell->num_connections > 0) continue;
+                int dummy_dist = abs(dummy_cell->col - target.x);
+                if (dummy_dist < best_dist) {
+                    printf("[pull_together] switching with cell %d (new dist: %d)\n", dummy_cell->number, dummy_dist);
+                    best_dist = dummy_dist;
+                    cell_t *best_cell = dummy_cell;
+                    dummy_cell = cell;
+                    cell = best_cell;;
+                    update_cell_positions(rows);
+                    moved = true;
+                }
+            }
+        }
+    }
+
+    return moved;
 }
