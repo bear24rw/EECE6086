@@ -851,7 +851,6 @@ void move_feed_throughs(rows_t& rows)
         we want to move the feed through to the other side of the cell
     */
 
-    /*
     for (unsigned int row_idx = 0; row_idx < rows.size(); row_idx++) {
 
         for (unsigned int cell_idx = 0; cell_idx < rows[row_idx].size(); cell_idx++) {
@@ -906,7 +905,6 @@ void move_feed_throughs(rows_t& rows)
 
         }
     }
-    */
 }
 
 void even_up_row_lengths(rows_t& rows)
