@@ -21,6 +21,8 @@ rows_t place(std::vector<cell_t>& cells)
         cells[i].col = i % grid_size.x;
     }
 
+    even_up_row_lengths(rows);
+
     update_cell_positions(rows);
 
     write_placement_svg(std::string("placement_0_start"), rows);
