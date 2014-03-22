@@ -12,6 +12,7 @@ void assign_terms_to_channels(channels_t& channels, rows_t& rows);
 void assign_terms_to_tracks(channel_t& channel);
 void find_vertical_nets(channel_t& channel);
 void expand(channel_t& channel);
+void fix_overlaps(channel_t& channel, rows_t& rows);
 bool pull_up_down(channel_t& channel, bool up);
 bool pull_in(channel_t& channel);
 void remove_empty_tracks(channel_t& channel);
@@ -47,6 +48,7 @@ channels_t route(rows_t& rows)
         assign_terms_to_tracks(channel);
         find_vertical_nets(channel);
         expand(channel);
+        fix_overlaps(channel, rows);
 
         while (pull_up_down(channel, false)) {}
         remove_empty_tracks(channel);
@@ -184,6 +186,48 @@ void expand(channel_t& channel)
 
     }
 }
+
+void fix_overlaps(channel_t& channel, rows_t& rows)
+{
+    for (auto &term : channel.terms) {
+
+        if (term->dest_cell == nullptr) continue;
+
+        if (term->track_num == VERTICAL || term->dest_term->track_num == VERTICAL)
+            continue;
+
+        std::vector<int> open_tracks = get_open_tracks(channel, term);
+
+        // if there are open tracks that means there isn't an overlap
+        if (!open_tracks.empty()) continue;
+
+        printf("[error] net %d has an overlap\n", term->label);
+
+        // we need to find which cell is more to the right since
+        // we fix the issue by moving it more to the right
+        cell_t *find_cell;
+        if (term->dest_term->position.x > term->position.x) {
+            find_cell = term->dest_cell;
+        } else {
+            find_cell = term->cell;
+        }
+
+        // loop through the row that the cell is on and start moving
+        // each cell to the right after we find the cell we are looking for
+        // add 2 because the nets could be directly on top of each other
+        // or side by side. its easier to just add 2 to handle both cases
+        // then try to figure out if we need to add 1 or 2
+        bool move = false;
+        for (auto &cell : rows[find_cell->row]) {
+            if (cell == find_cell) move = true;
+            if (move) cell->position.x += 2;
+            calculate_term_positions(cell);
+        }
+
+    }
+
+}
+
 
 bool pull_up_down(channel_t& channel, bool up)
 {
