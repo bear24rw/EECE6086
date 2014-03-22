@@ -22,6 +22,7 @@ void update_cell_positions(rows_t& rows);
 void try_flips(rows_t& rows);
 void add_feed_throughs(rows_t& rows);
 void move_feed_throughs(rows_t& rows);
+void even_up_row_lengths(rows_t& rows);
 
 typedef struct {
     bool operator()(cell_t *a, cell_t *b)

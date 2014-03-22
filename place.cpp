@@ -36,14 +36,18 @@ rows_t place(std::vector<cell_t>& cells)
     write_placement_svg(std::string("placement_2_flip"), rows);
 
     add_feed_throughs(rows);
-    try_flips(rows);
 
     write_placement_svg(std::string("placement_3_feed"), rows);
 
+    even_up_row_lengths(rows);
+
+    write_placement_svg(std::string("placement_4_feed_even"), rows);
+
+    try_flips(rows);
     move_feed_throughs(rows);
     try_flips(rows);
 
-    write_placement_svg(std::string("placement_4_feed_moved"), rows);
+    write_placement_svg(std::string("placement_5_feed_moved"), rows);
 
     return rows;
 }
@@ -823,5 +827,51 @@ void move_feed_throughs(rows_t& rows)
             update_cell_positions(rows);
 
         }
+    }
+}
+
+void even_up_row_lengths(rows_t& rows)
+{
+    // go through all the unconnected cells and keep adding them to the shortest row
+
+    update_cell_positions(rows);
+
+    std::queue<cell_t*> unconnected;
+
+    for (auto &row : rows) {
+        for (auto &cell : row) {
+            if (calculate_force(cell) == 0)
+                unconnected.push(cell);
+        }
+    }
+
+    while (!unconnected.empty()) {
+
+        // find shortest row
+        int shortest_len = INT_MAX;
+        int shortest_row = -1;
+
+        for (unsigned int row = 0; row < rows.size(); row++) {
+            int length = 0;
+            for (auto &cell : rows[row]) {
+                length += cell->feed_through ? 3 : 6;
+            }
+            if (length < shortest_len) {
+                shortest_len = length;
+                shortest_row = row;
+            }
+        }
+
+        printf("[even] shortest row: %d\n", shortest_row);
+
+        cell_t *cell = unconnected.front(); unconnected.pop();
+
+        // erase the unconnected cell from its old row
+        rows[cell->row].erase(rows[cell->row].begin() + cell->col);
+
+        // add it to the shortest row
+        rows[shortest_row].push_back(cell);
+
+        update_cell_positions(rows);
     }
 }
