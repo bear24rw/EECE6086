@@ -71,12 +71,22 @@ point_t calculate_grid_size(void)
 
     dprintf("[grid] sqrt grid size: %d %d\n", (int)grid_w, (int)grid_h);
 
+    /*
+        keep adjusting the grid size and recalculating the estimated squareness
+        the following function was evolved by the program Eureka fitting the equation:
+        squareness = f(num_nets, num_cells, grid_w, grid_h)
+        against a dataset of manually set grid_w and grid_h values
+        the output from Erueka was translated into C by the following matlab function:
+        ccode(sym('squareness = 0.341290981390719 + 2.41123889653172/grid_h + grid_h*0.619504321450544^grid_w + 0.302812966834494*num_cells/grid_h^2 - 0.000162428552015961*num_nets - 0.302812966834494*num_cells*0.619504321450544^grid_w'))
+    */
+
     double best_w = grid_w;
     double best_h = grid_h;
     double best_squareness = 0;
 
     while (grid_h > 1) {
-        double squareness = -((grid_w*grid_w)*6.42100276912857-1.64830443126981E2)/(num_nets*2.25721357852679-grid_h*num_nets-(grid_w*grid_w)*6.90932867776882+1.72976412967208E2)+2.84580853415461E-1;
+
+        double squareness = num_nets*-1.62428552015961E-4+1.0/(grid_h*grid_h)*num_cells*3.02812966834494E-1+2.41123889653172/grid_h+pow(6.19504321450544E-1,grid_w)*grid_h-pow(6.19504321450544E-1,grid_w)*num_cells*3.02812966834494E-1+3.41290981390719E-1;
 
         dprintf("[grid] size: %d %d squareness: %f\n", (int)grid_w, (int)grid_h, squareness);
 
@@ -92,6 +102,7 @@ point_t calculate_grid_size(void)
         // add enough columns to fit all the cells from the row we just removed
         grid_w += ceil(grid_w/grid_h);
     }
+
     grid_w = best_w;
     grid_h = best_h;
 
