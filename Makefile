@@ -44,3 +44,13 @@ pngs: $(BENCHMARKS_PNG)
 benchmarks/%.png: benchmarks/%.svg
 	convert -trim $< $@
 
+#
+# JPG
+#
+
+BENCHMARKS_JPG = $(patsubst benchmarks/%.png, benchmarks/%.jpg, $(wildcard benchmarks/*.png))
+
+jpgs: $(BENCHMARKS_JPG)
+
+benchmarks/%.jpg: benchmarks/%.png
+	convert -quality 50 $< $@
