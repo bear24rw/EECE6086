@@ -6,24 +6,31 @@
 #include <fstream>
 #include <algorithm>
 #include <string>
+#include <ctime>
 #include "main.h"
 #include "place.h"
 #include "route.h"
 #include "magic.h"
 #include "svg.h"
+#include "report.h"
 
 int num_nets;
 int num_cells;
 
 std::string filename;
 
+clock_t start_time;
+clock_t place_time;
+clock_t route_time;
+clock_t end_time;
+
 int main(int argc, char *argv[])
 {
+    start_time = std::clock();
 
     //
     // Get number of cells and nets
     //
-
 
     if (argc < 2) {
         dprintf("Usage: ./main inputfile\n");
@@ -73,43 +80,43 @@ int main(int argc, char *argv[])
         cells[cell_b].num_connections++;
     }
 
-    dprintf("Placing cells\n");
+    //
+    // Place
+    //
+
     rows_t rows = place(cells);
 
-    dprintf("----------------------------------\n");
-    for (auto &row : rows) {
-        for (auto &cell : row) {
-            if (cell->feed_through) continue;
-            dprintf("%3d   ", cell->number);
-        }
-        dprintf("\n");
-    }
-    dprintf("----------------------------------\n");
-
-    dprintf("Calculating cell X positions\n");
     calculate_x_values(rows);
 
     calculate_term_positions(rows);
 
-    dprintf("Routing cells\n");
+    place_time = std::clock();
+
+    //
+    // Route
+    //
+
     channels_t channels = route(rows);
 
-    dprintf("Calculating cell Y positions\n");
     calculate_y_values(rows, channels);
 
     calculate_term_positions(rows);
 
     calculate_track_positions(channels);
 
-    dprintf("Writing magic file\n");
+    route_time = std::clock();
+
+    //
+    // Output files and reports
+    //
+
     write_magic(rows, channels);
 
-    dprintf("Writing svg file\n");
     write_svg(rows, channels);
 
-    dprintf("Total wirelength: %d\n", total_wire_length(channels));
+    end_time = std::clock();
 
-    dprintf("Done.\n");
+    write_report(rows, channels);
 }
 
 void calculate_x_values(rows_t& rows)

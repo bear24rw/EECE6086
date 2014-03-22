@@ -31,6 +31,11 @@ extern int num_cells;
 
 extern std::string filename;
 
+extern clock_t start_time;
+extern clock_t place_time;
+extern clock_t route_time;
+extern clock_t end_time;
+
 void calculate_x_values(rows_t& rows);
 void calculate_y_values(rows_t& rows, channels_t& channels);
 void calculate_term_positions(rows_t& rows);
