@@ -12,7 +12,7 @@ void assign_terms_to_channels(channels_t& channels, rows_t& rows);
 void assign_terms_to_tracks(channel_t& channel);
 void find_vertical_nets(channel_t& channel);
 void expand(channel_t& channel);
-void fix_overlaps(channel_t& channel, rows_t& rows);
+bool fix_overlaps(channel_t& channel, rows_t& rows);
 bool pull_up_down(channel_t& channel, bool up);
 bool pull_in(channel_t& channel);
 void remove_empty_tracks(channel_t& channel);
@@ -42,13 +42,23 @@ channels_t route(rows_t& rows)
 
     assign_terms_to_channels(channels, rows);
 
-    int channel_num = 1;
     for (auto &channel : channels) {
-        printf("[route] ====== CHANNEL %d/%zu ======\n", channel_num, channels.size());
         assign_terms_to_tracks(channel);
-        find_vertical_nets(channel);
         expand(channel);
-        fix_overlaps(channel, rows);
+        remove_empty_tracks(channel);
+    }
+
+    bool not_fixed = true;
+    while (not_fixed) {
+        for (auto &channel : channels) {
+            not_fixed = fix_overlaps(channel, rows);
+            expand(channel);
+            remove_empty_tracks(channel);
+        }
+    }
+
+    for (auto &channel : channels) {
+        find_vertical_nets(channel);
 
         while (pull_up_down(channel, false)) {}
         remove_empty_tracks(channel);
@@ -61,8 +71,6 @@ channels_t route(rows_t& rows)
 
         pull_in(channel);
         remove_empty_tracks(channel);
-
-        channel_num++;
     }
 
     return channels;
@@ -187,8 +195,10 @@ void expand(channel_t& channel)
     }
 }
 
-void fix_overlaps(channel_t& channel, rows_t& rows)
+bool fix_overlaps(channel_t& channel, rows_t& rows)
 {
+    bool moved = false;
+
     for (auto &term : channel.terms) {
 
         if (term->dest_cell == nullptr) continue;
@@ -224,8 +234,10 @@ void fix_overlaps(channel_t& channel, rows_t& rows)
             calculate_term_positions(cell);
         }
 
+        moved = true;
     }
 
+    return moved;
 }
 
 
