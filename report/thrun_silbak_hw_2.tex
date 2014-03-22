@@ -1,0 +1,130 @@
+\documentclass[10pt]{article}
+
+\usepackage{fancyhdr}
+\usepackage[includeheadfoot,left=1in, right=0.5in, top=0.5in, bottom=0.5in]{geometry}
+\usepackage{lastpage}
+\usepackage{extramarks}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{tikz}
+\usepackage{color}
+\usepackage{float}
+\usepackage{url}
+\usepackage{subfigure}
+\usepackage{varwidth}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage[compact,small]{titlesec}
+\usepackage{microtype}
+\usepackage{verbatim}
+\usepackage{booktabs}
+\usepackage{indentfirst}
+\usepackage{pbox}
+\usepackage{dcolumn}
+\usepackage{pgffor}
+
+\parskip = 0.5\baselineskip
+\setlength{\belowcaptionskip}{-\baselineskip}
+
+\captionsetup{font=scriptsize}
+\captionsetup{labelfont=bf}
+
+\pagestyle{fancy}
+\rhead{Max Thrun | Samir Silbak}
+\lhead{EECE6086 - HW 2}
+\rfoot{Page\ \thepage\ of \protect\pageref{LastPage}}
+\cfoot{}
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+% make verbatim text small
+\makeatletter
+\g@addto@macro\@verbatim\small
+\makeatother
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+\definecolor{sh_comment}{rgb}{0.12, 0.38, 0.18 } %adjusted, in Eclipse: {0.25, 0.42, 0.30 } = #3F6A4D
+\definecolor{sh_keyword}{rgb}{0.37, 0.08, 0.25}  % #5F1441
+\definecolor{sh_string}{rgb}{0.06, 0.10, 0.98} % #101AF9
+
+\lstset{
+    language=c++,
+    xleftmargin=.25in,
+    xrightmargin=.25in,
+    numbers=left,
+    numberstyle=\tiny,
+    frame=tb,
+    showstringspaces=false,
+    captionpos=b,
+    stringstyle=\color{sh_string},
+    keywordstyle = \color{sh_keyword}\bfseries,
+    commentstyle=\color{sh_comment}\itshape,
+    basicstyle=\footnotesize\sffamily,
+    %numbersep=-5pt,
+    belowskip=\baselineskip,
+    aboveskip=\baselineskip
+}
+
+\let\oldtabular\tabular
+\renewcommand{\tabular}{\footnotesize\oldtabular}
+
+\newcommand{\placementimage}[2]{
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{#1}
+        \caption{#2}
+    \end{figure}
+}
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{EECE6086 - HW 2}}\\
+    \vspace{4in}
+}
+\author{\textbf{Max Thrun | Samir Silbak}}
+
+\begin{document}
+\maketitle
+\newpage
+\section{Objective}
+
+\section{Implementation Details}
+
+\newpage
+\section{Usage}
+
+
+\newpage
+\section{Results}
+
+\foreach \i in {1,...,10} {
+    \newpage
+    \subsection{Benchmark \i placement steps}
+    \placementimage{../benchmarks/8_placement_0_start.jpg}{Initial placement}
+    \placementimage{../benchmarks/8_placement_1_force.jpg}{Force directed placement}
+    \placementimage{../benchmarks/8_placement_2_flip.jpg}{Flip cells}
+    \placementimage{../benchmarks/8_placement_3_feed.jpg}{Add feed throughs}
+    \placementimage{../benchmarks/8_placement_4_feed_even.jpg}{Even out the row length}
+    \placementimage{../benchmarks/8_placement_5_pull.jpg}{Pull cells in the rows closer together}
+    \placementimage{../benchmarks/8_placement_6_feed_moved.jpg}{Move feed throughs to optimal location}
+
+    \newpage
+    \subsection{Benchmark \i routed}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{../benchmarks/\i.jpg}
+        \caption{Final \i benchmark}
+    \end{figure}
+}
+
+\newpage
+\section{Performance Trends}
+
+
+
+
+\end{document}
