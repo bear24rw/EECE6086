@@ -42,7 +42,7 @@
 
 % make verbatim text small
 \makeatletter
-\g@addto@macro\@verbatim\small
+\g@addto@macro\@verbatim\tiny
 \makeatother
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
@@ -104,21 +104,25 @@
 \foreach \i in {1,...,10} {
     \newpage
     \subsection{Benchmark \i\thinspace - Placement Steps}
-    \placementimage{../benchmarks/\i_placement_0_start.jpg}      {[Benchmark \i] [Step 1/7] Initial placement}
-    \placementimage{../benchmarks/\i_placement_1_force.jpg}      {[Benchmark \i] [Step 2/7] Force directed placement}
-    \placementimage{../benchmarks/\i_placement_2_flip.jpg}       {[Benchmark \i] [Step 3/7] Flip cells}
-    \placementimage{../benchmarks/\i_placement_3_feed.jpg}       {[Benchmark \i] [Step 4/7] Add feed throughs}
-    \placementimage{../benchmarks/\i_placement_4_feed_even.jpg}  {[Benchmark \i] [Step 5/7] Even out the row length}
-    \placementimage{../benchmarks/\i_placement_5_pull.jpg}       {[Benchmark \i] [Step 6/7] Pull cells in the rows closer together}
-    \placementimage{../benchmarks/\i_placement_6_feed_moved.jpg} {[Benchmark \i] [Step 7/7] Move feed throughs to optimal location}
+    \placementimage{../benchmarks/\i_placement_0_start.jpg}      {Benchmark \i\thinspace - Step 1/7 - Initial placement}
+    \placementimage{../benchmarks/\i_placement_1_force.jpg}      {Benchmark \i\thinspace - Step 2/7 - Force directed placement}
+    \placementimage{../benchmarks/\i_placement_2_flip.jpg}       {Benchmark \i\thinspace - Step 3/7 - Flip cells}
+    \placementimage{../benchmarks/\i_placement_3_feed.jpg}       {Benchmark \i\thinspace - Step 4/7 - Add feed throughs}
+    \placementimage{../benchmarks/\i_placement_4_feed_even.jpg}  {Benchmark \i\thinspace - Step 5/7 - Even out the row length}
+    \placementimage{../benchmarks/\i_placement_5_pull.jpg}       {Benchmark \i\thinspace - Step 6/7 - Pull cells in the rows closer together}
+    \placementimage{../benchmarks/\i_placement_6_feed_moved.jpg} {Benchmark \i\thinspace - Step 7/7 - Move feed throughs to optimal location}
 
     \newpage
     \subsection{Benchmark \i\thinspace - Final Routing}
     \begin{figure}[H]
         \centering
-        \includegraphics[width=\linewidth]{../benchmarks/\i.jpg}
-        \caption{[Benchmark \i] Final routing}
+        \includegraphics[width=\linewidth, height=4.5in, keepaspectratio]{../benchmarks/\i.jpg}
+        \caption{Benchmark \i\thinspace - Final routing}
     \end{figure}
+
+    %\newpage
+    %\subsection{Benchmark \i\thinspace - Log}
+    \lstinputlisting[caption=Benchmark \i\thinspace - Log]{../benchmarks/\i.log}
 }
 
 \newpage
