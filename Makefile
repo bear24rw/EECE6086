@@ -19,7 +19,7 @@ clang:
 	clang++ $(CXXFLAGS) $(LIBS) -o $(BINARY) $(SOURCES)
 
 clean:
-	rm -fr $(OBJS) $(BINARY) benchmarks/*.{log,tmp,mag,svg,png}
+	rm -fr $(OBJS) $(BINARY) benchmarks/*.{log,tmp,mag,svg,png,jpg}
 
 #
 # BENCHMARKS
