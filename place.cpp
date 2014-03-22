@@ -918,7 +918,7 @@ void even_up_row_lengths(rows_t& rows)
     std::queue<cell_t*> unconnected;
 
     for (auto &row : rows) {
-        for (int i=0; i<row.size(); i++) {
+        for (unsigned int i=0; i<row.size(); i++) {
             if (calculate_force(row[i]) == 0) {
                 unconnected.push(row[i]);
                 row.erase(row.begin()+row[i]->col);
