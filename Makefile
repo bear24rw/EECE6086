@@ -18,19 +18,29 @@ $(BINARY): $(OBJS)
 clang:
 	clang++ $(CXXFLAGS) $(LIBS) -o $(BINARY) $(SOURCES)
 
+clean:
+	rm -fr $(OBJS) $(BINARY) benchmarks/*.{log,tmp,mag,svg,png}
+
+#
+# BENCHMARKS
+#
+
 BENCHMARKS = 1 2 3 4 5 6 7 8 9 10
 BENCHMARKS_LOG = $(patsubst %, benchmarks/%.log, $(BENCHMARKS))
-BENCHMARKS_PNG = $(patsubst %, benchmarks/%.png, $(BENCHMARKS))
 
 benchmarks: $(BENCHMARKS_LOG)
 
 benchmarks/%.log: benchmarks/% $(BINARY)
 	./main $< > $@.tmp && mv $@.tmp $@
 
+#
+# PNG
+#
+
+BENCHMARKS_PNG = $(patsubst benchmarks/%.svg, benchmarks/%.png, $(wildcard benchmarks/*.svg))
+
 pngs: $(BENCHMARKS_PNG)
 
-benchmarks/%.png: benchmarks/%.log
-	convert -trim $(patsubst %.log, %.svg, $<) $@
+benchmarks/%.png: benchmarks/%.svg
+	convert -trim $< $@
 
-clean:
-	rm -fr $(OBJS) $(BINARY) benchmarks/*.{log,tmp,mag,svg,png}
