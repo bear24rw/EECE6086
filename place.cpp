@@ -25,36 +25,36 @@ rows_t place(std::vector<cell_t>& cells)
 
     update_cell_positions(rows);
 
-    write_placement_svg(std::string("placement_0_start"), rows);
+    write_placement_svg(std::string("_placement_0_start"), rows);
 
     force_directed(cells, rows);
 
     update_cell_positions(rows);
 
-    write_placement_svg(std::string("placement_1_force"), rows);
+    write_placement_svg(std::string("_placement_1_force"), rows);
 
     try_flips(rows);
     try_flips(rows);
 
-    write_placement_svg(std::string("placement_2_flip"), rows);
+    write_placement_svg(std::string("_placement_2_flip"), rows);
 
     add_feed_throughs(rows);
 
-    write_placement_svg(std::string("placement_3_feed"), rows);
+    write_placement_svg(std::string("_placement_3_feed"), rows);
 
     even_up_row_lengths(rows);
 
-    write_placement_svg(std::string("placement_4_feed_even"), rows);
+    write_placement_svg(std::string("_placement_4_feed_even"), rows);
 
     while (pull_cells_together(rows)) {}
     try_flips(rows);
 
-    write_placement_svg(std::string("placement_5_pull"), rows);
+    write_placement_svg(std::string("_placement_5_pull"), rows);
 
     move_feed_throughs(rows);
     try_flips(rows);
 
-    write_placement_svg(std::string("placement_6_feed_moved"), rows);
+    write_placement_svg(std::string("_placement_6_feed_moved"), rows);
 
     return rows;
 }

@@ -38,7 +38,7 @@ void draw_via(FILE *fp, int x, int y)
     draw_line(fp, x+1, y, x, y+1);
 }
 
-void write_svg(std::string filename, rows_t& rows, channels_t& channels)
+void write_svg(rows_t& rows, channels_t& channels)
 {
 
     //
@@ -62,9 +62,10 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
     int width = view_w;
     int height = view_h;
 
-    filename.append(".svg");
+    std::string svg_filename = filename;
+    svg_filename.append(".svg");
 
-    FILE *fp = fopen(filename.c_str(), "w");
+    FILE *fp = fopen(svg_filename.c_str(), "w");
 
     fprintf(fp, "<?xml version='1.0' encoding='utf-8' ?>\n");
     fprintf(fp, "<svg baseProfile='full' width='%dpx' height='%dpx' version='1.1' viewBox='%d %d %d %d' preserveAspectRatio='xMinYMin meet' xmlns='http://www.w3.org/2000/svg' xmlns:ev='http://www.w3.org/2001/xml-events' xmlns:xlink='http://www.w3.org/1999/xlink'>\n", width, height, view_x, view_y, view_w, view_h);
@@ -203,7 +204,7 @@ void write_svg(std::string filename, rows_t& rows, channels_t& channels)
     fclose(fp);
 }
 
-void write_placement_svg(std::string filename, rows_t& rows)
+void write_placement_svg(std::string label, rows_t& rows)
 {
     // calculate extents
 
@@ -219,9 +220,11 @@ void write_placement_svg(std::string filename, rows_t& rows)
     int width = view_w;
     int height = view_h;
 
-    filename.append(".svg");
+    std::string svg_filename = filename;
+    svg_filename.append(label);
+    svg_filename.append(".svg");
 
-    FILE *fp = fopen(filename.c_str(), "w");
+    FILE *fp = fopen(svg_filename.c_str(), "w");
 
     fprintf(fp, "<?xml version='1.0' encoding='utf-8' ?>\n");
     fprintf(fp, "<svg baseProfile='full' width='%dpx' height='%dpx' version='1.1' viewBox='%d %d %d %d' preserveAspectRatio='xMinYMin meet' xmlns='http://www.w3.org/2000/svg' xmlns:ev='http://www.w3.org/2001/xml-events' xmlns:xlink='http://www.w3.org/1999/xlink'>\n", width, height, view_x, view_y, view_w, view_h);

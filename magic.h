@@ -5,6 +5,6 @@
 #include <string>
 #include "main.h"
 
-void write_magic(std::string filename, rows_t& rows, channels_t& channels);
+void write_magic(rows_t& rows, channels_t& channels);
 
 #endif

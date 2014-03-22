@@ -15,6 +15,8 @@
 int num_nets;
 int num_cells;
 
+std::string filename;
+
 int main(int argc, char *argv[])
 {
 
@@ -28,7 +30,7 @@ int main(int argc, char *argv[])
         return EINVAL;
     }
 
-    std::string filename = argv[1];
+    filename = argv[1];
 
     std::ifstream fp(filename);
 
@@ -100,10 +102,10 @@ int main(int argc, char *argv[])
     calculate_track_positions(channels);
 
     printf("Writing magic file\n");
-    write_magic(filename, rows, channels);
+    write_magic(rows, channels);
 
     printf("Writing svg file\n");
-    write_svg(filename, rows, channels);
+    write_svg(rows, channels);
 
     printf("Total wirelength: %d\n", total_wire_length(channels));
 

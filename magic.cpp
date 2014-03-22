@@ -5,7 +5,7 @@
 #include "main.h"
 #include "magic.h"
 
-void write_magic(std::string filename, rows_t& rows, channels_t& channels)
+void write_magic(rows_t& rows, channels_t& channels)
 {
     // transform matrices
     // xy flip [-1, 0, x, 0, -1, y]
@@ -13,9 +13,10 @@ void write_magic(std::string filename, rows_t& rows, channels_t& channels)
     // y  flip [-1, 0, x, 0,  1, y]
     // no flip [ 1, 0, x, 0,  1, y]
 
-    filename.append(".mag");
+    std::string mag_filename = filename;
+    mag_filename.append(".mag");
 
-    FILE *fp = fopen(filename.c_str(), "w");
+    FILE *fp = fopen(mag_filename.c_str(), "w");
 
     fprintf(fp, "magic\n");
     fprintf(fp, "tech scmos\n");
