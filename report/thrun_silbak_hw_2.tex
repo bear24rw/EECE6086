@@ -80,6 +80,8 @@
     \end{figure}
 }
 
+\newcommand{\specialcell}[2][c]{\textbf{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}}
+
 \title{
     \vspace{2in}
     \textmd{\textbf{EECE6086 - HW 2}}\\
@@ -93,6 +95,45 @@
 \section{Objective}
 
 \section{Implementation Details}
+
+\subsection{Keeping It Square}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{./square_f.png}
+    \caption{Squareness Equation}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{./square_eq.png}
+    \caption{Squareness Equation}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|ccc|ccc|c}
+        \toprule
+        & \multicolumn{3}{c}{\specialcell{Without Equation}} & \multicolumn{3}{|c|}{\specialcell{With Equation}} & \\
+        \textbf{Benchmark} &
+        \specialcell{Grid\\Width} & \specialcell{Grid\\Height} & \specialcell{Squareness} &
+        \specialcell{Grid\\Width} & \specialcell{Grid\\Height} & \specialcell{Squareness} &
+        \specialcell{Percent\\Improvement} \\
+        \midrule
+         1  & \phantom{0}7 & \phantom{0}7 & 0.7245 & \phantom{0}9 & \phantom{0}5 & 1.0789 &           19.66 \% \\
+         2  &           10 & \phantom{0}9 & 0.7365 &           12 & \phantom{0}8 & 0.9845 &           24.80 \% \\
+         3  &           14 &           13 & 0.6767 &           18 &           10 & 1.0914 &           23.18 \% \\
+         4  &           19 &           19 & 0.7029 &           28 &           13 & 1.2579 & \phantom{0}3.92 \% \\
+         5  &           27 &           27 & 0.6125 &           45 &           16 & 1.2060 &           18.16 \% \\
+         6  &           32 &           32 & 0.6060 &           56 &           18 & 1.1735 &           22.05 \% \\
+         7  &           23 &           22 & 0.6452 &           39 &           13 & 0.9823 &           33.71 \% \\
+         8  &           30 &           30 & 0.6306 &           50 &           18 & 1.3123 & \phantom{0}5.70 \% \\
+         9  &           29 &           28 & 0.6343 &           45 &           18 & 1.4323 &           -6.67 \% \\
+         10 &           25 &           24 & 0.6715 &           36 &           17 & 1.2772 & \phantom{0}5.13 \% \\
+        \bottomrule
+    \end{tabular}
+    \caption{Improvement from using squareness estimate equation}
+\end{table}
 
 \newpage
 \section{Usage}
@@ -128,7 +169,86 @@
 \newpage
 \section{Performance Trends}
 
+\newpage
+\section{Appendix}
 
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cccccc}
+        \toprule
+        \textbf{Benchmark} & \textbf{Num Cells} & \textbf{Num Nets} & \textbf{Grid Width} & \textbf{Grid Height} & \textbf{Squareness}\\
+        \midrule
+
+        1  & 45   & 45   & 7  & 7  & 0.72449 \\
+        2  & 90   & 90   & 10 & 9  & 0.736486 \\
+        3  & 180  & 180  & 14 & 13 & 0.676724 \\
+        4  & 360  & 360  & 19 & 19 & 0.702857 \\
+        5  & 720  & 720  & 27 & 27 & 0.612457 \\
+        6  & 1000 & 1000 & 32 & 32 & 0.605988 \\
+        7  & 500  & 1000 & 23 & 22 & 0.645203 \\
+        8  & 900  & 720  & 30 & 30 & 0.630648 \\
+        9  & 800  & 360  & 29 & 28 & 0.634349 \\
+        10 & 600  & 180  & 25 & 24 & 0.67148 \\
+           &      &      &    &    & \\
+        1  & 45   & 45   & 8  & 6  & 0.820225 \\
+        2  & 90   & 90   & 27 & 8  & 0.984496 \\
+        3  & 180  & 180  & 12 & 12 & 0.755981 \\
+        4  & 360  & 360  & 15 & 18 & 0.740413 \\
+        5  & 720  & 720  & 20 & 26 & 0.595577 \\
+        6  & 1000 & 1000 & 28 & 31 & 0.561298 \\
+        7  & 500  & 1000 & 33 & 21 & 0.614935 \\
+        8  & 900  & 720  & 24 & 29 & 0.637652 \\
+        9  & 800  & 360  & 32 & 27 & 0.685294 \\
+        10 & 600  & 180  & 30 & 23 & 0.75 \\
+           &      &      &    &    & \\
+        1  & 45   & 45   & 9  & 5  & 1.078947 \\
+        2  & 90   & 90   & 13 & 7  & 1.20339 \\
+        3  & 180  & 180  & 17 & 11 & 0.921875 \\
+        4  & 360  & 360  & 22 & 17 & 0.833333 \\
+        5  & 720  & 720  & 29 & 25 & 0.681979 \\
+        6  & 1000 & 1000 & 34 & 30 & 0.583232 \\
+        7  & 500  & 1000 & 25 & 20 & 0.646465 \\
+        8  & 900  & 720  & 33 & 28 & 0.672032 \\
+        9  & 800  & 360  & 31 & 26 & 0.731629 \\
+        10 & 600  & 180  & 28 & 22 & 0.773946 \\
+           &      &      &    &    & \\
+        1  & 45   & 45   & 12 & 4  & 1.779661 \\
+        2  & 90   & 90   & 15 & 6  & 1.623762 \\
+        3  & 180  & 180  & 18 & 10 & 1.091429 \\
+        4  & 360  & 360  & 23 & 16 & 0.84127 \\
+        5  & 720  & 720  & 30 & 24 & 0.742911 \\
+        6  & 1000 & 1000 & 35 & 29 & 0.624372 \\
+        7  & 500  & 1000 & 27 & 19 & 0.692828 \\
+        8  & 900  & 720  & 34 & 27 & 0.711864 \\
+        9  & 800  & 360  & 32 & 25 & 0.790323 \\
+        10 & 600  & 180  & 29 & 21 & 0.869748 \\
+           &      &      &    &    & \\
+        1  & 45   & 45   & 15 & 3  & 2.923077 \\
+        2  & 90   & 90   & 18 & 5  & 1.864583 \\
+        3  & 180  & 180  & 20 & 9  & 1.322368 \\
+        4  & 360  & 360  & 24 & 15 & 0.920382 \\
+        5  & 720  & 720  & 32 & 23 & 0.75098 \\
+        6  & 1000 & 1000 & 36 & 28 & 0.699068 \\
+        7  & 500  & 1000 & 28 & 18 & 0.715323 \\
+        8  & 900  & 720  & 35 & 26 & 0.694501 \\
+        9  & 800  & 360  & 34 & 24 & 0.810289 \\
+        10 & 600  & 180  & 30 & 20 & 0.991111 \\
+           &      &      &    &    & \\
+        1  & 45   & 45   & 23 & 2  & 4.945946 \\
+        2  & 90   & 90   & 23 & 4  & 2.626667 \\
+        3  & 180  & 180  & 23 & 8  & 1.391608 \\
+        4  & 360  & 360  & 26 & 14 & 0.986532 \\
+        5  & 720  & 720  & 33 & 22 & 0.848671 \\
+        6  & 1000 & 1000 & 38 & 27 & 0.674667 \\
+        7  & 500  & 1000 & 30 & 17 & 0.763196 \\
+        8  & 900  & 720  & 36 & 25 & 0.832599 \\
+        9  & 800  & 360  & 35 & 23 & 0.883333 \\
+        10 & 600  & 180  & 32 & 19 & 1.074074 \\
+
+        \bottomrule
+    \end{tabular}
+    \caption{Squareness Trial Data}
+\end{table}
 
 
 \end{document}
