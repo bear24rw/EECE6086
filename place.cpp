@@ -918,15 +918,23 @@ void even_up_row_lengths(rows_t& rows)
     std::queue<cell_t*> unconnected;
 
     for (auto &row : rows) {
-        for (auto &cell : row) {
-            if (calculate_force(cell) == 0)
-                unconnected.push(cell);
+        for (int i=0; i<row.size(); i++) {
+            if (calculate_force(row[i]) == 0) {
+                unconnected.push(row[i]);
+                row.erase(row.begin()+row[i]->col);
+                update_cell_positions(rows);
+                i--;
+            }
         }
     }
 
     // keep track of what position we are currently inserting at for each row
     int *position = new int[rows.size()];
     memset(position, 0, sizeof(int)*rows.size());
+
+    // keep track of what side we are inserting on
+    int *side = new int[rows.size()];
+    memset(side, 0, sizeof(int)*rows.size());
 
     while (!unconnected.empty()) {
 
@@ -949,19 +957,23 @@ void even_up_row_lengths(rows_t& rows)
 
         cell_t *cell = unconnected.front(); unconnected.pop();
 
-        // erase the unconnected cell from its old row
-        rows[cell->row].erase(rows[cell->row].begin() + cell->col);
-
         // calculate the insertion position
-        auto pos = rows[shortest_row].begin()+position[shortest_row];
+        auto pos = rows[shortest_row].begin() + position[shortest_row];
+
+        if (side[shortest_row])
+            pos = rows[shortest_row].end() - position[shortest_row];
+
         if (pos > rows[shortest_row].end())
             pos = rows[shortest_row].end();
+        if (pos < rows[shortest_row].begin())
+            pos = rows[shortest_row].begin();
 
         // insert it to the shortest row
         rows[shortest_row].insert(pos, cell);
 
-        // insert every other cell
-        position[shortest_row]+=2;
+        position[shortest_row]+=1;
+
+        side[shortest_row] = !side[shortest_row];
 
         update_cell_positions(rows);
     }
