@@ -812,7 +812,7 @@ void move_feed_throughs(rows_t& rows)
                 }
             }
 
-            printf("[move_feed] for cell %d (target: %d) the best cell is %d (center: %d) (idx: %d)\n", cell->number, target_x, row[best_cell_idx]->number, best_center.x, best_cell_idx);
+            printf("[move_feed] for feed_through %d (target: %d) the best cell is %d (center: %d) (idx: %d)\n", cell->number, target_x, row[best_cell_idx]->number, best_center.x, best_cell_idx);
 
             auto position = rows[row_idx].begin() + best_cell_idx;
 
@@ -829,6 +829,84 @@ void move_feed_throughs(rows_t& rows)
 
         }
     }
+
+    /*
+       feed throughs could end up like this:
+
+           -----------
+           |         |
+         /-0-\    /--1----\
+         |   |    |       |
+         |   |    |       |
+         |   |    |       |
+         \-1-/    \-------/
+           |
+           ------------------------ |
+                               /----2--\
+                               |       |
+                               |       |
+                               |       |
+                               \-------/
+
+        we want to move the feed through to the other side of the cell
+    */
+
+    /*
+    for (unsigned int row_idx = 0; row_idx < rows.size(); row_idx++) {
+
+        for (unsigned int cell_idx = 0; cell_idx < rows[row_idx].size(); cell_idx++) {
+
+            row_t row = rows[row_idx];
+            cell_t *cell = row[cell_idx];
+
+            if (!cell->feed_through) continue;
+
+            // make sure we're in the same row with one of the destination cells
+            if ((cell->row != cell->terms[0].dest_cell->row) &&
+                (cell->row != cell->terms[1].dest_cell->row))
+                continue;
+
+            int f0 = cell->terms[0].position.x;
+            int f1 = cell->terms[1].position.x;
+            int d0 = cell->terms[0].dest_term->position.x;
+            int d1 = cell->terms[1].dest_term->position.x;
+
+            // if both nets dont even span across the cell dont bother moving
+            if (abs(d0-f0) < 8 && abs(d1-f1) < 8) continue;
+
+            // check if both destination terms are on the left or right of the feed through
+            bool on_left  = (d0 > f0) && (d1 > f1);
+            bool on_right = (d0 < f0) && (d1 < f1);
+
+            // if the feed through is in the middle just leave it
+            if (on_left == on_right) continue;
+
+            // first erase this cell from the list so the indexes are correct
+            rows[row_idx].erase(rows[row_idx].begin() + cell_idx);
+
+            printf("[move_feed] moving feed_through %d to other side\n", cell->number);
+
+            auto position = rows[row_idx].begin() + cell_idx;
+
+            // check if the target is on the left side of the cell
+            if (on_left)
+                position++;
+            else
+                position--;
+
+            if (position > rows[row_idx].end())
+                position = rows[row_idx].end();
+
+            if (position < rows[row_idx].begin())
+                position = rows[row_idx].begin();
+
+            rows[row_idx].insert(position, cell);
+
+            update_cell_positions(rows);
+
+        }
+    }
+    */
 }
 
 void even_up_row_lengths(rows_t& rows)
