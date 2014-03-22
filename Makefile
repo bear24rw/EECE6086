@@ -22,13 +22,15 @@ BENCHMARKS = 1 2 3 4 5 6 7 8 9 10
 BENCHMARKS_LOG = $(patsubst %, benchmarks/%.log, $(BENCHMARKS))
 BENCHMARKS_PNG = $(patsubst %, benchmarks/%.png, $(BENCHMARKS))
 
-benchmarks: $(BINARY) $(BENCHMARK_LOG) $(BENCHMARKS_PNG)
+benchmarks: $(BENCHMARKS_LOG)
 
-benchmarks/%.log: benchmarks/%
+benchmarks/%.log: benchmarks/% $(BINARY)
 	./main $< > $@.tmp && mv $@.tmp $@
+
+pngs: $(BENCHMARKS_PNG)
 
 benchmarks/%.png: benchmarks/%.log
 	convert -trim $(patsubst %.log, %.svg, $<) $@
 
 clean:
-	rm -fr $(OBJS) $(BINARY) benchmarks/*.{log,tmp,svg,png}
+	rm -fr $(OBJS) $(BINARY) benchmarks/*.{log,tmp,mag,svg,png}
