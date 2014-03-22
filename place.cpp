@@ -2,6 +2,7 @@
 #include <string>
 #include <queue>
 #include <climits>
+#include <string.h>
 #include "place.h"
 #include "main.h"
 #include "svg.h"
@@ -845,6 +846,10 @@ void even_up_row_lengths(rows_t& rows)
         }
     }
 
+    // keep track of what position we are currently inserting at for each row
+    int *position = new int[rows.size()];
+    memset(position, 0, sizeof(int)*rows.size());
+
     while (!unconnected.empty()) {
 
         // find shortest row
@@ -869,8 +874,16 @@ void even_up_row_lengths(rows_t& rows)
         // erase the unconnected cell from its old row
         rows[cell->row].erase(rows[cell->row].begin() + cell->col);
 
-        // add it to the shortest row
-        rows[shortest_row].push_back(cell);
+        // calculate the insertion position
+        auto pos = rows[shortest_row].begin()+position[shortest_row];
+        if (pos > rows[shortest_row].end())
+            pos = rows[shortest_row].end();
+
+        // insert it to the shortest row
+        rows[shortest_row].insert(pos, cell);
+
+        // insert every other cell
+        position[shortest_row]+=2;
 
         update_cell_positions(rows);
     }
