@@ -613,6 +613,7 @@ void add_feed_throughs(rows_t& rows)
                     (src_term->on_bot() && dst_cell->row > src_cell->row)) {
 
                     cell_t *feed = new cell_t(true);
+                    feed->num_connections = 2;
                     feed->row = src_cell->row;
 
                     auto position = rows[row_idx].begin() + cell_idx;
@@ -677,6 +678,7 @@ void add_feed_throughs(rows_t& rows)
                 if (src_term->on_top() && dst_cell->row > src_cell->row) {
 
                     cell_t *feed = new cell_t(true);
+                    feed->num_connections = 2;
                     feed->row = src_cell->row + 1;
 
                     // put the feed through directly above the source
