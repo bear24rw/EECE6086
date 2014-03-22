@@ -112,7 +112,8 @@ point_t calculate_grid_size(void)
     */
 
     while (1) {
-        int empty_spots_on_top = grid_w*grid_h - num_cells;
+        // - 1 because when we grid_w-- we lose a spot
+        int empty_spots_on_top = grid_w*grid_h - num_cells - 1;
         if (empty_spots_on_top == 0) break;
         if (empty_spots_on_top < grid_h-1) break;
         grid_w--;
