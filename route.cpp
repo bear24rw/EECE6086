@@ -15,6 +15,7 @@ void expand(channel_t& channel);
 bool shrink(channel_t& channel);
 void remove_empty_tracks(channel_t& channel);
 void reset_term_track_numbers(channel_t& channel);
+std::vector<int> get_open_tracks(channel_t& channel, term_t* term);
 
 channels_t route(rows_t& rows)
 {
@@ -198,137 +199,22 @@ bool shrink(channel_t& channel)
         if (term->track_num == VERTICAL || term->dest_term->track_num == VERTICAL)
             continue;
 
-        int *open_tracks = new int[channel.tracks.size()];
-
-        // assume all tracks are intially open
-        memset(open_tracks, 1, channel.tracks.size() * sizeof(int));
-
-        // if we are the only net on this track then we really want to try to
-        // move it to another track that already has nets on it so remove its
-        // current track from the list of possible tracks it can end up
-        if (channel.tracks[term->track_num].size() == 2) {
-            open_tracks[term->track_num] = 0;
-        }
-
-        // if there is not enough horizontal space between this terminal
-        // and an existing one the track becomes invalid. also, every track
-        // between the terminal itself and the track its going to is
-        // invalid.  this image illustrates the problem we are solving (net
-        // 4 should not be allowed to cross net 2):
-        // http://i.imgur.com/zPGh1AP.png
-        int track_num = -1;
-        for (auto &track : channel.tracks) {
-
-            track_num++;
-
-            // don't consider the track we are already on
-            if (term->track_num == track_num) continue;
-
-            for (auto &existing_term : track) {
-
-                // don't consider our destination
-                if (term->dest_term == existing_term) continue;
-
-                // if there is enough horizontal spacing between these terms skip it
-                if ((abs(term->position.x - existing_term->position.x) > TRACK_SPACING) &&
-                    (abs(term->dest_term->position.x - existing_term->position.x) > TRACK_SPACING))
-                    continue;
-
-                // if the existing term is on top of its cell that means
-                // there is a trace spanning up from the term to the
-                // current track. all the tracks in this area are invalid.
-                if (existing_term->on_top()) {
-                    for (int t=0; t<=track_num; t++) {
-                        open_tracks[t] = 0;
-                    }
-                }
-
-                // if the existing term is on bottom of its cell that means
-                // there is a trace spanning down from the term to the
-                // current track. all the tracks in this area are invalid.
-                if (existing_term->on_bot()) {
-                    for (unsigned int t=track_num; t<channel.tracks.size(); t++) {
-                        open_tracks[t] = 0;
-                    }
-                }
-            }
-        }
-
-
-        /*
-           check to make sure that we dont directly overlap an existing net in each track
-           there are 4 possible overlap conditions. if any of them occur the track is invalid
-
-
-               1A--------------1B
-           2A-----------2B
-
-
-           1A--------------1B
-                   2A-----------2B
-
-
-           1A--------------1B
-               2A----2B
-
-
-               1A--------------1B
-           2A---------------------------2B
-        */
-
-        track_num = -1;
-        for (auto &track : channel.tracks) {
-
-            track_num++;
-
-            // don't consider the track we are already on
-            if (term->track_num == track_num) continue;
-
-            for (auto &existing_term : track) {
-
-                // don't consider our destination
-                if (term->dest_term == existing_term) continue;
-
-                bool fits = true;
-                int x1_a = std::min(term->position.x, term->dest_term->position.x);
-                int x1_b = std::max(term->position.x, term->dest_term->position.x);
-                int x2_a = std::min(existing_term->position.x, existing_term->dest_term->position.x);
-                int x2_b = std::max(existing_term->position.x, existing_term->dest_term->position.x);
-                if (x2_a >= x1_a-TRACK_SPACING && x2_a <= x1_b+TRACK_SPACING) { fits = false; }
-                if (x2_b >= x1_a-TRACK_SPACING && x2_b <= x1_b+TRACK_SPACING) { fits = false; }
-                if (x2_a >= x1_a-TRACK_SPACING && x2_b <= x1_b+TRACK_SPACING) { fits = false; }
-                if (x2_a <= x1_a-TRACK_SPACING && x2_b >= x1_b+TRACK_SPACING) { fits = false; }
-                if (!fits){
-                    open_tracks[track_num] = 0;
-                }
-            }
-        }
+        std::vector<int> open_tracks = get_open_tracks(channel, term);
 
         // if there are no open tracks left we have to just leave it
-        bool none_open = true;
-        for (unsigned int t=0; t<channel.tracks.size(); t++) {
-            if (open_tracks[t]) none_open = false;
-        }
-        if (none_open) {
+        if (open_tracks.empty())
             continue;
-        }
 
         // if both terms are on the bottom of the cell we actually want to find the
         // highest track in order to pull the net up closer to the bottom of the cell
         bool find_highest = term->on_bot() && term->dest_term->on_bot();
 
-        for (unsigned int t=0; t<channel.tracks.size(); t++) {
-            if (open_tracks[t]) {
-                track_num = t;
-                if (!find_highest) break;
-            }
-        }
+        int track_num = -1;
 
-        // if we were looking for the highest and we didn't improve just leave it
-        //if (find_highest && track_num <= term->track_num) continue;
-
-        // if we were looking for the lowest and we didn't improve just leave it
-        //if (track_num >= term->track_num) continue;
+        if (find_highest)
+            track_num = open_tracks.back();
+        else
+            track_num = open_tracks.front();
 
         if (track_num == term->track_num) continue;
 
@@ -352,6 +238,126 @@ bool shrink(channel_t& channel)
     }
 
     return net_was_moved;
+}
+
+std::vector<int> get_open_tracks(channel_t& channel, term_t* term)
+{
+    // return a list of open tracks that this terminals net can fit
+
+    int *open_tracks = new int[channel.tracks.size()];
+
+    // assume all tracks are intially open
+    memset(open_tracks, 1, channel.tracks.size() * sizeof(int));
+
+    // if we are the only net on this track then we really want to try to
+    // move it to another track that already has nets on it so remove its
+    // current track from the list of possible tracks it can end up
+    if (channel.tracks[term->track_num].size() == 2) {
+        open_tracks[term->track_num] = 0;
+    }
+
+    // if there is not enough horizontal space between this terminal
+    // and an existing one the track becomes invalid. also, every track
+    // between the terminal itself and the track its going to is
+    // invalid.  this image illustrates the problem we are solving (net
+    // 4 should not be allowed to cross net 2):
+    // http://i.imgur.com/zPGh1AP.png
+    int track_num = -1;
+    for (auto &track : channel.tracks) {
+
+        track_num++;
+
+        // don't consider the track we are already on
+        if (term->track_num == track_num) continue;
+
+        for (auto &existing_term : track) {
+
+            // don't consider our destination
+            if (term->dest_term == existing_term) continue;
+
+            // if there is enough horizontal spacing between these terms skip it
+            if ((abs(term->position.x - existing_term->position.x) > TRACK_SPACING) &&
+                (abs(term->dest_term->position.x - existing_term->position.x) > TRACK_SPACING))
+                continue;
+
+            // if the existing term is on top of its cell that means
+            // there is a trace spanning up from the term to the
+            // current track. all the tracks in this area are invalid.
+            if (existing_term->on_top()) {
+                for (int t=0; t<=track_num; t++) {
+                    open_tracks[t] = 0;
+                }
+            }
+
+            // if the existing term is on bottom of its cell that means
+            // there is a trace spanning down from the term to the
+            // current track. all the tracks in this area are invalid.
+            if (existing_term->on_bot()) {
+                for (unsigned int t=track_num; t<channel.tracks.size(); t++) {
+                    open_tracks[t] = 0;
+                }
+            }
+        }
+    }
+
+
+    /*
+       check to make sure that we dont directly overlap an existing net in each track
+       there are 4 possible overlap conditions. if any of them occur the track is invalid
+
+
+           1A--------------1B
+       2A-----------2B
+
+
+       1A--------------1B
+               2A-----------2B
+
+
+       1A--------------1B
+           2A----2B
+
+
+           1A--------------1B
+       2A---------------------------2B
+    */
+
+    track_num = -1;
+    for (auto &track : channel.tracks) {
+
+        track_num++;
+
+        // don't consider the track we are already on
+        if (term->track_num == track_num) continue;
+
+        for (auto &existing_term : track) {
+
+            // don't consider our destination
+            if (term->dest_term == existing_term) continue;
+
+            bool fits = true;
+            int x1_a = std::min(term->position.x, term->dest_term->position.x);
+            int x1_b = std::max(term->position.x, term->dest_term->position.x);
+            int x2_a = std::min(existing_term->position.x, existing_term->dest_term->position.x);
+            int x2_b = std::max(existing_term->position.x, existing_term->dest_term->position.x);
+            if (x2_a >= x1_a-TRACK_SPACING && x2_a <= x1_b+TRACK_SPACING) { fits = false; }
+            if (x2_b >= x1_a-TRACK_SPACING && x2_b <= x1_b+TRACK_SPACING) { fits = false; }
+            if (x2_a >= x1_a-TRACK_SPACING && x2_b <= x1_b+TRACK_SPACING) { fits = false; }
+            if (x2_a <= x1_a-TRACK_SPACING && x2_b >= x1_b+TRACK_SPACING) { fits = false; }
+            if (!fits){
+                open_tracks[track_num] = 0;
+            }
+        }
+    }
+
+    std::vector<int> open;
+    for (unsigned int t=0; t<channel.tracks.size(); t++) {
+        if (open_tracks[t]) open.push_back(t);
+    }
+
+    delete [] open_tracks;
+
+    return open;
 }
 
 void remove_empty_tracks(channel_t& channel)
