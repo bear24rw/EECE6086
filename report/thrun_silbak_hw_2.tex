@@ -217,6 +217,29 @@
 
         \subsubsection{Flipping Cells}
 
+        The force directed algorithm does not take into account the positions
+        of the terminals on each cell, it assumes all connections go to the
+        center of the cell. This results in a lot of connections that
+        unnecessarily span vertically across a row. To fix these we simply go
+        through each cell and try all possible flip orientations and see which
+        one reduces the wirelength the most. This approach is not ideal as it
+        does not take into consideration chains of cells that all may need to
+        be flipped. An approach similar to KL where we walk down the connection
+        tree trying flips and only actually flipping as many as what improves
+        the total wirelength would be interesting. Unfortunately we did not
+        have time to explore this.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth, height=4in, keepaspectratio]{../benchmarks/10_placement_1_force.jpg}
+            \caption{Original}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth, height=4in, keepaspectratio]{../benchmarks/10_placement_2_flip.jpg}
+            \caption{Flipped}
+        \end{figure}
+
         \subsubsection{Adding Feed Throughs}
 
         \subsubsection{Evening Row Lengths}
