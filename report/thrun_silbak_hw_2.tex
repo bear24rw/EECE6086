@@ -182,10 +182,11 @@ area possible.
         overall complexity. Our algorithm follows the one in the book exactly
         with the exception of what happens when the target cell is locked. In
         the original algorithm you search for a vacant spot to place the seed
-        cell, we expand that to also include unlocked spots. If we choose an
-        unlocked spot the that cell we are replacing becomes the new seed cell.
-        We found through experimentation that this achieves less complex
-        placements. The gray cells are those with no connections.
+        cell if the target cell is locked, we expand that to also include
+        unlocked spots. If we choose an unlocked spot the that cell we are
+        replacing becomes the new seed cell.  We found through experimentation
+        that this achieves less complex placements. The gray cells are those
+        with no connections.
 
         \begin{figure}[H]
             \centering
