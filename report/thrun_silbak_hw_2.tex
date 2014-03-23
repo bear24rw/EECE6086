@@ -272,8 +272,8 @@
         to fix this we add all unconnected cells to a queue and then go through
         them adding them to which ever row is currently the shortest.
         Additionally we alternate placing them on either side and we also skip
-        every other cell.  The area behind this is that since we just messed up
-        a lot of the force directed work by removing all the unconnected cells
+        every other cell.  The reason behind this is that since we just messed up
+        a lot of the force directed work, by removing all the unconnected cells,
         we will have to re-force direct them within their rows. Spacing them
         out will allow them to more easily move around and have a higher chance
         of finding a vacant spot close to their target.
@@ -290,6 +290,23 @@
         \end{figure}
 
         \subsubsection{Pulling Cells Closer}
+
+        After evening out the row lengths we are left with a lot of space
+        between connected cells. In order to fix this we run a simplified force
+        directed algorithm which goes through each cell, calculates its zero
+        force location on the x axis, and then finds the closest unconnected
+        cell to that location and swaps its position with it.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth, height=4in, keepaspectratio]{../benchmarks/10_placement_4_feed_even.jpg}
+            \caption{Original}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth, height=4in, keepaspectratio]{../benchmarks/10_placement_5_pull.jpg}
+            \caption{Cells pulled closer}
+        \end{figure}
 
         \subsubsection{Moving Feed Throughs}
 
