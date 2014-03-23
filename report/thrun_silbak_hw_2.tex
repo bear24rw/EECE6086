@@ -180,7 +180,7 @@
         the original algorithm you search for a vacant spot to place the seed
         cell, we expand that to also include unlocked spots. If we choose an
         unlocked spot the that cell we are replacing becomes the new seed cell.
-        We found though experimentation that this achieves less complex
+        We found through experimentation that this achieves less complex
         placements. The gray cells are those with no connections.
 
         \begin{figure}[H]
@@ -331,7 +331,102 @@
         \end{figure}
 
 
+\newpage
 \subsection{Routing}
+
+    \subsubsection{Assigning nets to track}
+
+        Routing begins be first assigning each net to its own track.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{./route_0_crop.png}
+            \caption{Each net has its own track}
+        \end{figure}
+
+    \subsubsection{Expand the tracks}
+
+        Each net is checked to see if it conflicts with another net. Some
+        conflict configurations can be solved by adding another track to the
+        channel (expanding the channel). The solved conflict is circled in red.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{./route_1_crop.png}
+            \caption{Conflict is solved by expanding the channel}
+        \end{figure}
+
+    \subsubsection{Fixing overlaps}
+
+        Some conflicts are true overlaps that cannot be solved no matter what
+        net ordering you try. The only way to solve these conflicts is to move
+        the cells in the rows over. The image on the left shows an overlap
+        between nets 11 and 29. The only way to solve this is to move cell C36
+        over to the right, which is shown in the image on the right.
+
+        \begin{figure}[H]
+            \centering
+            \begin{minipage}{.5\textwidth}
+                \centering
+                \includegraphics[width=0.75\linewidth]{./route_1_overlap.png}
+                \caption{Overlapping nets}
+            \end{minipage}%
+            \begin{minipage}{.5\textwidth}
+                \centering
+                \includegraphics[width=0.75\linewidth]{./route_2_crop.png}
+                \caption{Conflict is solved by moving cells over}
+            \end{minipage}
+        \end{figure}
+
+    \subsubsection{Finding Vertical Nets}
+
+        For terminals that line up directly with their destination we can use a
+        purely vertical net that doesn't take up a track. The image on the left
+        shows a small horizontal segment that is currently occupying a track.
+        We simply mark this net as purely vertical and remove it from any track
+        related operations.
+
+        \begin{figure}[H]
+            \centering
+            \begin{minipage}{.5\textwidth}
+                \centering
+                \includegraphics[height=3in]{./route_2_vertical.png}
+                \caption{Vertical net taking up a track}
+            \end{minipage}%
+            \begin{minipage}{.5\textwidth}
+                \centering
+                \includegraphics[height=3in]{./route_3_crop.png}
+                \caption{Unnecessary horizontal segment removed}
+            \end{minipage}
+        \end{figure}
+
+    \subsubsection{Pulling Nets Up}
+
+        We next want to try to shrink the channel so the first step is to pull
+        all the nets either up or down. The image below shows the result of this
+        after all tracks with no more nets on it have been removed.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{./route_4_crop.png}
+            \caption{All nets pulled up and empty tracks removed}
+        \end{figure}
+
+    \subsubsection{Pulling Nets In}
+
+        For nets whos terminals are on the same side of the channel we want to
+        bring that net back to that side (pull it in to the side the terminals are
+        on). The image below shows the result of doing that.
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\linewidth]{./route_5_crop.png}
+                \caption{Nets pulled in closest to the cells the connect to}
+            \end{figure}
+
+        In our actual implementation we pull the cells up, then in, then down,
+        then in again. This routine seems to be able to achieve fairly high
+        channel density.
 
 \newpage
 \section{Usage}
