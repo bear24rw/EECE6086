@@ -142,7 +142,7 @@
         results in the best squareness until the height is 0.
 
         The table below shows the resulting squareness of the original method
-        (just making a perfectly square layout) versus using the equation. We
+        (just making a perfectly square grid) versus using the equation. We
         can see that by using the equation we achieved a much more square
         layout for all but benchmark 9. This could be a result of not having
         enough data points to fit a better curve with.
@@ -172,7 +172,48 @@
             \caption{Improvement from using squareness estimate equation}
         \end{table}
 
+        \newpage
         \subsubsection{Force Directed Placement}
+
+        We use a force directed placement algorithm in order to reduce the
+        overall complexity. Our algorithm follows the one in the book exactly
+        with the exception of what happens when the target cell is locked.  In
+        the original algorithm you search for a vacant spot to place the seed
+        cell, we expand that to also include unlocked spots. If we choose an
+        unlocked spot the that cell we are replacing becomes the new seed cell.
+        We found though experiementation that this achieves less complex
+        placements.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth, height=2in, keepaspectratio]{../benchmarks/10_placement_0_start.jpg}
+            \caption{Original}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth, height=2in, keepaspectratio]{../benchmarks/10_placement_1_force.jpg}
+            \caption{Force Directed}
+        \end{figure}
+
+        In order to figure out the best abort limit we recorded the layout area
+        for each benchmark for various limits. We found the abort limit that
+        achived the minimum area and used that minimum area to normalize the
+        areas of the others as a percent increase. We found that an abort limit
+        of 1 gives us the lowest average percent increase in area across all
+        the benchmarks.
+
+        \begin{figure}[H]
+            \centering
+            \begin{minipage}{.5\textwidth}
+                \centering
+                \includegraphics[width=0.98\linewidth]{./abort_limit.png}
+            \end{minipage}%
+            \begin{minipage}{.5\textwidth}
+                \centering
+                \includegraphics[width=0.98\linewidth]{./abort_limit_stacked.png}
+            \end{minipage}
+            \caption{Percent increase in layout area versus abort limit}
+        \end{figure}
 
         \subsubsection{Flipping Cells}
 
