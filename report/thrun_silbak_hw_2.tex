@@ -106,7 +106,7 @@
         \texttt{squareness = width / height}.  The closer this value is to 1
         the `more square' the layout is.  The main issue with achieving this is
         that we do not know up front how tall our layout will end up since the
-        channels between the cells are variable and the width and hight of the grid
+        channels between the cells are variable and the width and height of the grid
         directly effect them.
 
         In order to figure out what width and height we should make our grid we need
@@ -126,7 +126,7 @@
         benchmark and recorded the resulting squareness. This data can be found
         in the Appendix section at the end of the report. We then used the
         program Eureqa to evolve an equation that fit our data. After running
-        Eureka for 15 minutes we had an equation that fit our data with an $
+        Eureqa for 15 minutes we had an equation that fit our data with an $
         R^{2} =  0.9965 $.
 
         \begin{figure}[H]
@@ -145,7 +145,7 @@
         (just making a perfectly square grid) versus using the equation. We
         can see that by using the equation we achieved a much more square
         layout for all but benchmark 9. This could be a result of not having
-        enough data points to fit a better curve with.
+        enough data points to fit a better curve width.
 
         \begin{table}[H]
             \centering
@@ -177,11 +177,11 @@
 
         We use a force directed placement algorithm in order to reduce the
         overall complexity. Our algorithm follows the one in the book exactly
-        with the exception of what happens when the target cell is locked.  In
+        with the exception of what happens when the target cell is locked. In
         the original algorithm you search for a vacant spot to place the seed
         cell, we expand that to also include unlocked spots. If we choose an
         unlocked spot the that cell we are replacing becomes the new seed cell.
-        We found though experiementation that this achieves less complex
+        We found though experimentation that this achieves less complex
         placements. The gray cells are those with no connections.
 
         \begin{figure}[H]
@@ -197,7 +197,7 @@
 
         In order to figure out the best abort limit we recorded the layout area
         for each benchmark for various limits. We found the abort limit that
-        achived the minimum area and used that minimum area to normalize the
+        achieved the minimum area and used that minimum area to normalize the
         areas of the others as a percent increase. We found that an abort limit
         of 1 gives us the lowest average percent increase in area across all
         the benchmarks.
@@ -240,19 +240,19 @@
             \caption{Flipped}
         \end{figure}
 
-        \subsubsection{Adding Feed Throughs}
+        \subsubsection{Adding Feed-Through Cells}
 
         In order to channel route we cannot have connections that span rows. To
         fix this we add feed through cells (shown in light gray) in order to
-        transfer the nets between rows. The process of adding feed throughs
+        transfer the nets between rows. The process of adding feed-through cells
         starts at the bottom row. It goes through each terminal of each cell
         and detects if the terminal is in the same channel as its destination
-        terminal. If its not, it figures out if it needs to add a feed through
+        terminal. If it's not, it figures out if it needs to add a feed-through
         to the current row (say the terminal is at the bottom of the cell and
         it needs to connect to somewhere above it) or if it needs to add the
         feed through to the next row up (if the terminal is at the top of the
-        cell but it connects to the top of the cell above it). If a feed
-        through cell is added the whole row is rescanned since we might need to
+        cell but it connects to the top of the cell above it). If a feed-through
+        cell is added the whole row is rescanned since we might need to
         add yet another feed through cell for the feed through we just placed.
 
         \begin{figure}[H]
@@ -268,12 +268,12 @@
 
         \subsubsection{Evening Row Lengths}
 
-        After adding the feed throughs the row lengths become uneven. In order
+        After adding the feed-through cells the row lengths become uneven. In order
         to fix this we add all unconnected cells to a queue and then go through
         them adding them to which ever row is currently the shortest.
         Additionally we alternate placing them on either side and we also skip
-        every other cell.  The area behind this is that since we just messed up
-        a lot of the force directed work by removing all the unconnected cells
+        every other cell. The reason behind this is that since we just messed up
+        a lot of the force directed work, by removing all the unconnected cells,
         we will have to re-force direct them within their rows. Spacing them
         out will allow them to more easily move around and have a higher chance
         of finding a vacant spot close to their target.
@@ -291,7 +291,7 @@
 
         \subsubsection{Pulling Cells Closer}
 
-        \subsubsection{Moving Feed Throughs}
+        \subsubsection{Moving Feed-Through Cells}
 
 
 \subsection{Routing}
