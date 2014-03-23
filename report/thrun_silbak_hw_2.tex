@@ -183,9 +183,9 @@ area possible.
         with the exception of what happens when the target cell is locked. In
         the original algorithm you search for a vacant spot to place the seed
         cell if the target cell is locked, we expand that to also include
-        unlocked spots. If we choose an unlocked spot the that cell we are
+        unlocked spots. If we choose an unlocked spot then that cell we are
         replacing becomes the new seed cell.  We found through experimentation
-        that this achieves less complex placements. The gray cells are those
+        that this achieves less complex placements. The gray cells are cells
         with no connections.
 
         \begin{figure}[H]
@@ -229,7 +229,7 @@ area possible.
         one reduces the wirelength the most. This approach is not ideal as it
         does not take into consideration chains of cells that all may need to
         be flipped. An approach similar to KL where we walk down the connection
-        tree trying flips and only actually flipping as many as what improves
+        tree trying flips and only actually flip as many as what improves
         the total wirelength would be interesting. Unfortunately we did not
         have time to explore this.
 
@@ -277,8 +277,8 @@ area possible.
         through them adding them to which ever row is currently the shortest.
         Additionally we alternate placing them on either side and we also skip
         every other cell. The reason behind this is that since we just messed
-        up a lot of the force directed work, by removing all the unconnected
-        cells, we will have to re-force direct them within their rows. Spacing
+        up a lot of the force directed work by removing all the unconnected
+        cells we will have to re-force direct them within their rows. Spacing
         them out will allow them to more easily move around and have a higher
         chance of finding a vacant spot close to their target.
 
@@ -341,7 +341,7 @@ area possible.
 
     \subsubsection{Assigning nets to track}
 
-        Routing begins be first assigning each net to its own track.
+        Routing begins by first assigning each net to its own track.
 
         \begin{figure}[H]
             \centering
@@ -388,8 +388,8 @@ area possible.
         For terminals that line up directly with their destination we can use a
         purely vertical net that doesn't take up a track. The image on the left
         shows a small horizontal segment that is currently occupying a track.
-        We simply mark this net as purely vertical and remove it from any track
-        related operations.
+        We simply mark this net as purely vertical and remove it from any
+        future track related operations.
 
         \begin{figure}[H]
             \centering
@@ -408,8 +408,9 @@ area possible.
     \subsubsection{Pulling Nets Up}
 
         We next want to try to shrink the channel so the first step is to pull
-        all the nets either up or down. The image below shows the result of this
-        after all tracks with no more nets on it have been removed.
+        all the nets either up or down. The image below shows the result of
+        pulling all the nets up and then removing tracks which not longer have
+        any nets on it.
 
         \begin{figure}[H]
             \centering
@@ -419,15 +420,15 @@ area possible.
 
     \subsubsection{Pulling Nets In}
 
-        For nets whos terminals are on the same side of the channel we want to
-        bring that net back to that side (pull it in to the side the terminals are
-        on). The image below shows the result of doing that.
+        For nets whos terminals are both on the same side of the channel we
+        want to bring that net back to that side (pull it in to the side the
+        terminals are on). The image below shows the result of doing that.
 
-            \begin{figure}[H]
-                \centering
-                \includegraphics[width=\linewidth]{./route_5_crop.png}
-                \caption{Nets pulled in closest to the cells the connect to}
-            \end{figure}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{./route_5_crop.png}
+            \caption{Nets pulled in closest to the cells the connect to}
+        \end{figure}
 
         In our actual implementation we pull the cells up, then in, then down,
         then in again. This routine seems to be able to achieve fairly high
