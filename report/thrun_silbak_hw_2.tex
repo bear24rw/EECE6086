@@ -8,8 +8,6 @@
 \usepackage{graphicx}
 \usepackage{listings}
 \usepackage{courier}
-\usepackage{tikz}
-\usepackage{color}
 \usepackage{float}
 \usepackage{url}
 \usepackage{subfigure}
@@ -22,9 +20,10 @@
 \usepackage{verbatim}
 \usepackage{booktabs}
 \usepackage{indentfirst}
-\usepackage{pbox}
-\usepackage{dcolumn}
 \usepackage{pgffor}
+\usepackage[table]{xcolor}
+
+\rowcolors{2}{gray!25}{white}
 
 \parskip = 0.5\baselineskip
 \setlength{\belowcaptionskip}{-\baselineskip}
@@ -319,6 +318,30 @@
 
 \newpage
 \section{Results}
+
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{ccccccccc}
+            \toprule
+            \textbf{Benchmark} &
+            \specialcell{Box X} & \specialcell{Box Y} & \specialcell{Box Area} &
+            \specialcell{\# FTs} & \specialcell{Wirelength} & \specialcell{\# Vias} &
+            \specialcell{Execution Time} & \specialcell{Memory Usage}\\
+            \midrule
+            \phantom{0}1 & \phantom{00}82 & \phantom{00}76 & \phantom{000}6232 & \phantom{00}17 & \phantom{00}1093 & \phantom{0}112 & 0.009873s & \phantom{0}296 kB \\
+            \phantom{0}2 & \phantom{0}127 & \phantom{0}129 & \phantom{00}16383 & \phantom{00}50 & \phantom{00}2547 & \phantom{0}270 & 0.021806s & \phantom{0}340 kB \\
+            \phantom{0}3 & \phantom{0}191 & \phantom{0}175 & \phantom{00}33425 & \phantom{0}112 & \phantom{00}6114 & \phantom{0}562 & 0.044696s & \phantom{0}424 kB \\
+            \phantom{0}4 & \phantom{0}317 & \phantom{0}252 & \phantom{00}79884 & \phantom{0}213 & \phantom{0}14108 & \phantom{}1126 & 0.111609s & \phantom{0}588 kB \\
+            \phantom{0}5 & \phantom{0}486 & \phantom{0}403 & \phantom{0}195858 & \phantom{0}464 & \phantom{0}41469 & \phantom{}2336 & 0.384445s & \phantom{0}916 kB \\
+            \phantom{0}6 & \phantom{0}602 & \phantom{0}513 & \phantom{0}308826 & \phantom{0}685 & \phantom{0}70536 & \phantom{}3322 & 0.670760s & \phantom{}1204 kB \\
+            \phantom{0}7 & \phantom{}1110 & \phantom{}1130 & \phantom{}1254300 & \phantom{}1738 & \phantom{}443767 & \phantom{}5448 & 1.581445s & \phantom{}1512 kB \\
+            \phantom{0}8 & \phantom{0}437 & \phantom{0}333 & \phantom{0}145521 & \phantom{0}297 & \phantom{0}22907 & \phantom{}1994 & 0.360278s & \phantom{0}912 kB \\
+            \phantom{0}9 & \phantom{0}328 & \phantom{0}229 & \phantom{00}75112 & \phantom{00}69 & \phantom{00}6097 & \phantom{0}842 & 0.206668s & \phantom{0}664 kB \\
+            \phantom{}10 & \phantom{0}258 & \phantom{0}202 & \phantom{00}52116 & \phantom{00}35 & \phantom{00}2881 & \phantom{0}404 & 0.157362s & \phantom{0}544 kB \\
+            \bottomrule
+        \end{tabular}
+        \caption{Result Summary}
+    \end{table}
 
 \foreach \i in {1,...,10} {
     \newpage
