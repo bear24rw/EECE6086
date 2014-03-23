@@ -268,6 +268,27 @@
 
         \subsubsection{Evening Row Lengths}
 
+        After adding the feed throughs the row lengths become uneven. In order
+        to fix this we add all unconnected cells to a queue and then go through
+        them adding them to which ever row is currently the shortest.
+        Additionally we alternate placing them on either side and we also skip
+        every other cell.  The area behind this is that since we just messed up
+        a lot of the force directed work by removing all the unconnected cells
+        we will have to re-force direct them within their rows. Spacing them
+        out will allow them to more easily move around and have a higher chance
+        of finding a vacant spot close to their target.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth, height=4in, keepaspectratio]{../benchmarks/10_placement_3_feed.jpg}
+            \caption{Original}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth, height=4in, keepaspectratio]{../benchmarks/10_placement_4_feed_even.jpg}
+            \caption{Even length rows}
+        \end{figure}
+
         \subsubsection{Pulling Cells Closer}
 
         \subsubsection{Moving Feed Throughs}
