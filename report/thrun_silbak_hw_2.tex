@@ -307,7 +307,28 @@
             \caption{Cells pulled closer}
         \end{figure}
 
+        \newpage
         \subsubsection{Moving Feed-Through Cells}
+
+        Sometimes, because it can not be know at the time of placement, the
+        feed through cells end up on the far side of the cell as shown in the
+        before picture. We make an effect to detect these and move them closer.
+        We always want the feed through cell to horizontally between the two
+        terminals it is connected to.
+
+        \begin{figure}[H]
+            \centering
+            \begin{minipage}{.5\textwidth}
+                \centering
+                \includegraphics[width=0.98\linewidth]{./move_ft_before.png}
+                \caption{Before}
+            \end{minipage}%
+            \begin{minipage}{.5\textwidth}
+                \centering
+                \includegraphics[width=0.98\linewidth]{./move_ft_after.png}
+                \caption{After}
+            \end{minipage}
+        \end{figure}
 
 
 \subsection{Routing}
