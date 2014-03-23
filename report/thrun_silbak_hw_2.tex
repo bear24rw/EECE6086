@@ -182,7 +182,7 @@
         cell, we expand that to also include unlocked spots. If we choose an
         unlocked spot the that cell we are replacing becomes the new seed cell.
         We found though experiementation that this achieves less complex
-        placements.
+        placements. The gray cells are those with no connections.
 
         \begin{figure}[H]
             \centering
@@ -241,6 +241,30 @@
         \end{figure}
 
         \subsubsection{Adding Feed Throughs}
+
+        In order to channel route we cannot have connections that span rows. To
+        fix this we add feed through cells (shown in light gray) in order to
+        transfer the nets between rows. The process of adding feed throughs
+        starts at the bottom row. It goes through each terminal of each cell
+        and detects if the terminal is in the same channel as its destination
+        terminal. If its not, it figures out if it needs to add a feed through
+        to the current row (say the terminal is at the bottom of the cell and
+        it needs to connect to somewhere above it) or if it needs to add the
+        feed through to the next row up (if the terminal is at the top of the
+        cell but it connects to the top of the cell above it). If a feed
+        through cell is added the whole row is rescanned since we might need to
+        add yet another feed through cell for the feed through we just placed.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth, height=4in, keepaspectratio]{../benchmarks/10_placement_2_flip.jpg}
+            \caption{Original}
+        \end{figure}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth, height=4in, keepaspectratio]{../benchmarks/10_placement_3_feed.jpg}
+            \caption{With feed throughs}
+        \end{figure}
 
         \subsubsection{Evening Row Lengths}
 
