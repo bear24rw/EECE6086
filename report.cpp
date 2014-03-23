@@ -1,3 +1,6 @@
+#include <iostream>
+#include <fstream>
+#include <unistd.h>
 #include "main.h"
 #include "place.h"
 #include "report.h"
@@ -65,5 +68,19 @@ void write_report(rows_t& rows, channels_t& channels)
     printf("Place time: %fs\n", double(place_time - start_time) / CLOCKS_PER_SEC);
     printf("Route time: %fs\n", double(route_time - place_time) / CLOCKS_PER_SEC);
     printf("Total time: %fs\n", double(end_time   - start_time) / CLOCKS_PER_SEC);
+    printf("\n");
+
+    // http://stackoverflow.com/a/12675172/253650
+
+    int tSize = 0, resident = 0, share = 0;
+    std::ifstream buffer("/proc/self/statm");
+    buffer >> tSize >> resident >> share;
+    buffer.close();
+
+    long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
+    double rss = resident * page_size_kb;
+    double shared_mem = share * page_size_kb;
+
+    printf("Memory used: %f kB\n", rss-shared_mem);
 
 }
