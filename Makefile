@@ -53,4 +53,4 @@ BENCHMARKS_JPG = $(patsubst benchmarks/%.png, benchmarks/%.jpg, $(wildcard bench
 jpgs: $(BENCHMARKS_JPG)
 
 benchmarks/%.jpg: benchmarks/%.png
-	convert -quality 50 $< $@
+	convert -resize 2048x2048 $< $@
