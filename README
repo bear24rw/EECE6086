@@ -1,0 +1,17 @@
+USAGE
+=====
+$ make
+$ ./main netlistfile
+
+OUTPUTS
+=======
+Log     - printed to stdout
+Magic   - .mag file is named `netlistfile.mag`
+SVG     - .svg file is named `netlistfile.svg`
+
+SVG file can be viewed in your web browser.
+
+
+Max Thrun
+Samir Silbak
+March 2014
