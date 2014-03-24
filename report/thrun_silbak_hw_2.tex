@@ -105,8 +105,8 @@ area possible.
 
         One of the main goals of this project is to have a final layout that is
         as close to a perfect square as possible. We call this the
-        \texttt{squareness} of our layout which is the ratio of width to height
-        \texttt{squareness = width / height}.  The closer this value is to 1
+        \texttt{squareness} of our layout which is the ratio of width to height (
+        \texttt{squareness = width / height}).  The closer this value is to 1
         the `more square' the layout is.  The main issue with achieving this is
         that we do not know up front how tall our layout will end up since the
         channels between the cells are variable and the width and height of the grid
@@ -156,8 +156,8 @@ area possible.
                 \toprule
                 & \multicolumn{3}{c}{\specialcell{Without Equation}} & \multicolumn{3}{|c|}{\specialcell{With Equation}} & \\
                 \textbf{Benchmark} &
-                \specialcell{Grid\\Width} & \specialcell{Grid\\Height} & \specialcell{Squareness} &
-                \specialcell{Grid\\Width} & \specialcell{Grid\\Height} & \specialcell{Squareness} &
+                \specialcell{Grid\\Width} & \specialcell{Grid\\Height} & \specialcell{Layout\\Squareness} &
+                \specialcell{Grid\\Width} & \specialcell{Grid\\Height} & \specialcell{Layout\\Squareness} &
                 \specialcell{Percent\\Improvement} \\
                 \midrule
                  1  & \phantom{0}7 & \phantom{0}7 & 0.7245 & \phantom{0}9 & \phantom{0}5 & 1.0789 &           19.66 \% \\
@@ -247,17 +247,17 @@ area possible.
         \subsubsection{Adding Feed-Through Cells}
 
         In order to channel route we cannot have connections that span rows. To
-        fix this we add feed through cells (shown in light gray) in order to
+        fix this we add feed-through cells (shown in light gray) in order to
         transfer the nets between rows. The process of adding feed-through cells
         starts at the bottom row. It goes through each terminal of each cell
         and detects if the terminal is in the same channel as its destination
         terminal. If it's not, it figures out if it needs to add a feed-through
         to the current row (say the terminal is at the bottom of the cell and
         it needs to connect to somewhere above it) or if it needs to add the
-        feed through to the next row up (if the terminal is at the top of the
+        feed-through to the next row up (if the terminal is at the top of the
         cell but it connects to the top of the cell above it). If a feed-through
         cell is added the whole row is rescanned since we might need to
-        add yet another feed through cell for the feed through we just placed.
+        add yet another feed-through cell for the feed-through we just placed.
 
         \begin{figure}[H]
             \centering
@@ -267,7 +267,7 @@ area possible.
         \begin{figure}[H]
             \centering
             \includegraphics[width=\linewidth, height=4in, keepaspectratio]{../benchmarks/10_placement_3_feed.jpg}
-            \caption{With feed throughs}
+            \caption{With feed-throughs}
         \end{figure}
 
         \subsubsection{Evening Row Lengths}
@@ -275,7 +275,7 @@ area possible.
         After adding the feed-through cells the row lengths become uneven. In
         order to fix this we add all unconnected cells to a queue and then go
         through them adding them to which ever row is currently the shortest.
-        Additionally we alternate placing them on either side and we also skip
+        Additionally, we alternate placing them on either side and we also skip
         every other cell. The reason behind this is that since we just messed
         up a lot of the force directed work by removing all the unconnected
         cells we will have to re-force direct them within their rows. Spacing
@@ -316,21 +316,23 @@ area possible.
         \subsubsection{Moving Feed-Through Cells}
 
         Sometimes, because it can not be know at the time of placement, the
-        feed through cells end up on the far side of the cell as shown in the
-        before picture. We make an effect to detect these and move them closer.
-        We always want the feed through cell to horizontally between the two
-        terminals it is connected to.
+        feed-through cells end up on the far side of the cell as shown in the
+        `before' picture. We make an effect to detect these and move them
+        closer.  We always want the feed-through cell to horizontally between
+        the two terminals it is connected to. (This is done before routing
+        begins, the example images below show the circuit post routing as it
+        better illustrates the situation)
 
         \begin{figure}[H]
             \centering
             \begin{minipage}{.5\textwidth}
                 \centering
-                \includegraphics[width=0.98\linewidth]{./move_ft_before.png}
+                \includegraphics[width=0.7\linewidth]{./move_ft_before.png}
                 \caption{Before}
             \end{minipage}%
             \begin{minipage}{.5\textwidth}
                 \centering
-                \includegraphics[width=0.98\linewidth]{./move_ft_after.png}
+                \includegraphics[width=0.7\linewidth]{./move_ft_after.png}
                 \caption{After}
             \end{minipage}
         \end{figure}
@@ -341,7 +343,8 @@ area possible.
 
     \subsubsection{Assigning nets to track}
 
-        Routing begins by first assigning each net to its own track.
+        Routing begins by first assigning each net to its own track. Net
+        collisions are not considered at this point.
 
         \begin{figure}[H]
             \centering
@@ -353,7 +356,9 @@ area possible.
 
         Each net is checked to see if it conflicts with another net. Some
         conflict configurations can be solved by adding another track to the
-        channel (expanding the channel). The solved conflict is circled in red.
+        channel (expanding the channel). The image below shows the same circuit
+        at the previous image but with the conflict now solved and circled in
+        red.
 
         \begin{figure}[H]
             \centering
@@ -408,9 +413,11 @@ area possible.
     \subsubsection{Pulling Nets Up}
 
         We next want to try to shrink the channel so the first step is to pull
-        all the nets either up or down. The image below shows the result of
-        pulling all the nets up and then removing tracks which not longer have
-        any nets on it.
+        all the nets either up or down. Nets are pulled up as far as possible
+        without causing a conflict.  We do not consider any specific ordering
+        about which nets we pull up first although it can effect the final
+        configuration. The image below shows the result of pulling all the nets
+        up and then removing tracks which not longer have any nets on it.
 
         \begin{figure}[H]
             \centering
@@ -437,9 +444,34 @@ area possible.
 \newpage
 \section{Usage}
 
+Building is accomplished via a \texttt{Makefile} which generates an executable
+names \texttt{main}.  Additional build opions are shown below.
 
-\newpage
+\begin{lstlisting}[language=bash]
+$ make              # regular build
+$ make clang        # builds using clang++ instead of g++
+$ make debug        # enable debug printfs
+$ make clean        # removes all binaries, object files, and benchmark results
+$ make benchmarks   # runs all the benchmarks in the 'benchmark' directory
+$ make pngs         # converts all the benchmark .svg files to .png
+$ make jpgs         # converts all the .png files to reduced resolution .jpg files
+\end{lstlisting}
+
+The program accepts a single argument which is a file containing the netlist
+formatted as specified in the assignment. All log and debug output is printed
+to \texttt{stdout} and the output .mag and .svg files are named the same as the
+input file.
+
+\begin{lstlisting}[language=bash]
+$ ./main benchmark/1 > benchmark/1.log
+$ ls benchmark/1.*
+benchmarks/1.log  benchmarks/1.mag benchmarks/1.svg
+\end{lstlisting}
+
 \section{Results}
+
+    The results of all the benchmark netlists are tabulated below. The
+    wirelength is the length post routing.
 
     \begin{table}[H]
         \centering
@@ -471,10 +503,10 @@ area possible.
     \placementimage{../benchmarks/\i_placement_0_start.jpg}      {Benchmark \i\thinspace - Step 1/7 - Initial placement}
     \placementimage{../benchmarks/\i_placement_1_force.jpg}      {Benchmark \i\thinspace - Step 2/7 - Force directed placement}
     \placementimage{../benchmarks/\i_placement_2_flip.jpg}       {Benchmark \i\thinspace - Step 3/7 - Flip cells}
-    \placementimage{../benchmarks/\i_placement_3_feed.jpg}       {Benchmark \i\thinspace - Step 4/7 - Add feed throughs}
+    \placementimage{../benchmarks/\i_placement_3_feed.jpg}       {Benchmark \i\thinspace - Step 4/7 - Add feed-throughs}
     \placementimage{../benchmarks/\i_placement_4_feed_even.jpg}  {Benchmark \i\thinspace - Step 5/7 - Even out the row length}
     \placementimage{../benchmarks/\i_placement_5_pull.jpg}       {Benchmark \i\thinspace - Step 6/7 - Pull cells in the rows closer together}
-    \placementimage{../benchmarks/\i_placement_6_feed_moved.jpg} {Benchmark \i\thinspace - Step 7/7 - Move feed throughs to optimal location}
+    \placementimage{../benchmarks/\i_placement_6_feed_moved.jpg} {Benchmark \i\thinspace - Step 7/7 - Move feed-throughs to optimal location}
 
     \newpage
     \subsection{Benchmark \i\thinspace - Final Routing}
@@ -498,7 +530,33 @@ area possible.
 }
 
 \newpage
-\section{Performance Trends}
+\section{Retrospective}
+
+Overall, we are pretty satisfied with both the execution speed and quality of
+our results. All of our execution times with the exception of benchmark 7 are
+under half a second. We also feel that our memory usage is minimal as we only
+store one vector of actual cell objects and all other data structures just
+contain pointers back to the original objects. We also make heavy use of pass
+by reference to avoid needlessly copying big data structures into functions.
+
+In terms of placement and routing quality there is always room for improvement.
+It's easy to visually look at almost any result and see ways that it could be
+improved but how to translate these improvements into algorithms is not always
+so obvious. We believe, however, that we were are able to handle a lot of
+specific cases (like moving the feed-throughs to the other side of the cell)
+which in the end resulted in superior layouts.  For the force directed
+placement algorithm it is hard to tell if the results you get are truly the
+best, especially when the circuit is so large you cannot visually comprehend
+it. We feel like we did our best analyzing it empirically and tuned is to best
+suit our benchmark files. One of the main problems with the force directed
+algorithm is that it tends to pull all the cells into the center of the layout.
+We tried to fix this by redistributing the unconnected cells evenly through the
+layout and then re-force directing the rows but it is still not always ideal.
+One interesting method to pursue would be using a combination of min-cut /
+quadratic placement and then force directing the sub divisions (or vice versa).
+If we were to min cut horizontally we might be able to reduce some nets that
+currently span multiple rows.
+
 
 \newpage
 \section{Appendix}

@@ -15,6 +15,9 @@ $(BINARY): $(OBJS)
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
+debug:
+	$(CXX) $(CXXFLAGS) $(LIBS) -o $(BINARY) $(SOURCES) -DDEBUG
+
 clang:
 	clang++ $(CXXFLAGS) $(LIBS) -o $(BINARY) $(SOURCES)
 
