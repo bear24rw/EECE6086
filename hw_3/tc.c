@@ -84,7 +84,7 @@ int main(int argc,char **argv)
     printf("Number of missing covers: %d\n", num_missing);
 
     gettimeofday(&stop, NULL);
-    printf("Took %dus\n", stop.tv_usec - start.tv_usec);
+    printf("Took %ldus\n", stop.tv_usec - start.tv_usec);
 
     return 0;
 }
