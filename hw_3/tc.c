@@ -13,7 +13,7 @@ char *flags;
 
 void print_binary(int number)
 {
-    for (int i = num_bits-1; i >= 0; i--) {
+    for (int i = num_bits - 1; i >= 0; i--) {
         if (number & (1 << i))
             printf("1");
         else
@@ -30,7 +30,7 @@ void do_vector(char *vector)
     memcpy(local_vector, vector, num_bits);
 
     char has_dash = 0;
-    for (int bit=0; bit<num_bits; bit++) {
+    for (int bit = 0; bit < num_bits; bit++) {
         if (vector[bit] == '-') {
             local_vector[bit] = '0';
             do_vector(local_vector);
@@ -43,9 +43,9 @@ void do_vector(char *vector)
 
     if (!has_dash) {
         unsigned int flag_pos = 0;
-        for (int bit=0; bit<num_bits; bit++)
+        for (int bit = 0; bit < num_bits; bit++)
             if (local_vector[bit] == '1')
-                flag_pos |= (1 << (num_bits-bit-1));
+                flag_pos |= (1 << (num_bits - bit - 1));
         if (flags[flag_pos] == 0) {
             flags[flag_pos] = 1;
             num_flags_set++;
@@ -55,7 +55,7 @@ void do_vector(char *vector)
     free(local_vector);
 }
 
-int main(int argc,char **argv)
+int main(int argc, char **argv)
 {
     struct timeval stop, start;
     gettimeofday(&start, NULL);
@@ -71,19 +71,19 @@ int main(int argc,char **argv)
     fscanf(fp, "%d", &num_bits);
     fscanf(fp, "%d", &num_cubes);
 
-    num_flags = 2<<(num_bits-1);
+    num_flags = 2 << (num_bits - 1);
     flags = (char *)malloc(num_flags);
     memset(flags, 0, num_flags);
 
-    char *all_dash = (char *)malloc(num_bits+1);
+    char *all_dash = (char *)malloc(num_bits + 1);
     memset(all_dash, '-', num_bits);
-    all_dash[num_bits+1] = '\0';
+    all_dash[num_bits + 1] = '\0';
 
-    char *vector = (char *)malloc(num_bits+1);
+    char *vector = (char *)malloc(num_bits + 1);
 
-    for (unsigned int cube=0; cube<num_cubes; cube++) {
+    for (unsigned int cube = 0; cube < num_cubes; cube++) {
         fscanf(fp, "%s", vector);
-        vector[num_bits+1] = '\0';
+        vector[num_bits + 1] = '\0';
         if (strcmp(vector, all_dash) == 0) {
             printf("All cases covered\n");
             return 0;
@@ -92,7 +92,7 @@ int main(int argc,char **argv)
     }
 
     int num_missing = 0;
-    for (unsigned int i=0; i<num_flags; i++) {
+    for (unsigned int i = 0; i < num_flags; i++) {
         if (flags[i] == 0) {
             if (print_missing) print_binary(i);
             num_missing++;
