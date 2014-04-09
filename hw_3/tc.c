@@ -36,6 +36,16 @@ void replace_under_with_dash(char *vector)
         if (vector[i] == '_') vector[i] = '-';
 }
 
+inline char all_dash(char *vector)
+{
+    for (int i=0; i<num_bits; i++) {
+        if (vector[i] == '1') return 0;
+        if (vector[i] == '0') return 0;
+    }
+
+    return 1;
+}
+
 void do_vector(char *vector)
 {
     if (num_flags_set == num_flags) return;
@@ -89,17 +99,12 @@ int main(int argc, char **argv)
     flags = (char *)malloc(num_flags>>3);
     memset(flags, 0, num_flags>>3);
 
-    char *all_dash = (char *)malloc(num_bits + 1);
-    memset(all_dash, '-', num_bits);
-    all_dash[num_bits + 1] = '\0';
-
-    char *vector = (char *)malloc(num_bits + 1);
+    char *vector = (char *)malloc(num_bits);
 
     for (unsigned int cube = 0; cube < num_cubes; cube++) {
         fscanf(fp, "%s", vector);
         replace_under_with_dash(vector);
-        vector[num_bits + 1] = '\0';
-        if (strcmp(vector, all_dash) == 0) {
+        if (all_dash(vector)) {
             printf("All cases covered\n");
             return 0;
         }
