@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
+#include <getopt.h>
 
 unsigned int num_bits = 0;
 unsigned int num_cubes = 0;
@@ -9,6 +10,17 @@ unsigned int num_flags = 0;
 unsigned int num_flags_set = 0;
 
 char *flags;
+
+void print_binary(int number)
+{
+    for (int i = num_bits-1; i >= 0; i--) {
+        if (number & (1 << i))
+            printf("1");
+        else
+            printf("0");
+    }
+    printf("\n");
+}
 
 void do_vector(char *vector)
 {
@@ -48,6 +60,8 @@ int main(int argc,char **argv)
     struct timeval stop, start;
     gettimeofday(&start, NULL);
 
+    char print_missing = getopt(argc, argv, "c") == 'c';
+
     FILE *fp = fopen(argv[1], "r");
     if (fp == NULL) {
         printf("Could not open file!\n");
@@ -79,7 +93,10 @@ int main(int argc,char **argv)
 
     int num_missing = 0;
     for (unsigned int i=0; i<num_flags; i++) {
-        if (flags[i] == 0) num_missing++;
+        if (flags[i] == 0) {
+            if (print_missing) print_binary(i);
+            num_missing++;
+        }
     }
     printf("Number of missing covers: %d\n", num_missing);
 
