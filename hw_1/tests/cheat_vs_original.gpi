@@ -1,0 +1,23 @@
+reset
+set terminal pngcairo enhanced font "Vera,20" size 1024, 768
+set output "cheat_vs_original.png"
+
+set xlabel "Number of nets"
+set ylabel "Percent increase in cutsize"
+unset key
+
+plot '< sort -n cheat_vs_original.csv' u 1:(($3/$1-$2/$1)*100) w lines
+
+set output "cheat_vs_original_hist.png"
+
+set xlabel "Percent increase in cutsize"
+set ylabel "Number of trials"
+
+binwidth=1
+bin(x,width)=width*floor(x/width) + binwidth/2.0
+
+set boxwidth binwidth
+set style fill solid border -1
+#set style fill transparent solid 0.8 border
+
+plot 'cheat_vs_original.csv' u (bin(($3/$1-$2/$1)*100,binwidth)):(1.0) smooth freq with boxes
