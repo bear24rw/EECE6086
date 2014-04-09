@@ -22,6 +22,12 @@ void print_binary(int number)
     printf("\n");
 }
 
+void replace_under_with_dash(char *vector)
+{
+    for (int i=0; i<num_bits; i++)
+        if (vector[i] == '_') vector[i] = '-';
+}
+
 void do_vector(char *vector)
 {
     if (num_flags_set == num_flags) return;
@@ -83,6 +89,7 @@ int main(int argc, char **argv)
 
     for (unsigned int cube = 0; cube < num_cubes; cube++) {
         fscanf(fp, "%s", vector);
+        replace_under_with_dash(vector);
         vector[num_bits + 1] = '\0';
         if (strcmp(vector, all_dash) == 0) {
             printf("All cases covered\n");
