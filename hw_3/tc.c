@@ -11,6 +11,14 @@ unsigned int num_flags_set = 0;
 
 char *flags;
 
+inline void set_flag(unsigned int i) {
+    flags[i>>3] |= (1 << (i&7));
+}
+
+inline char get_flag(unsigned int i) {
+    return flags[i>>3] & (1 << (i&7));
+}
+
 void print_binary(int number)
 {
     for (int i = num_bits - 1; i >= 0; i--) {
@@ -52,8 +60,8 @@ void do_vector(char *vector)
         for (int bit = 0; bit < num_bits; bit++)
             if (local_vector[bit] == '1')
                 flag_pos |= (1 << (num_bits - bit - 1));
-        if (flags[flag_pos] == 0) {
-            flags[flag_pos] = 1;
+        if (get_flag(flag_pos) == 0) {
+            set_flag(flag_pos);
             num_flags_set++;
         }
     }
@@ -78,8 +86,8 @@ int main(int argc, char **argv)
     fscanf(fp, "%d", &num_cubes);
 
     num_flags = 2 << (num_bits - 1);
-    flags = (char *)malloc(num_flags);
-    memset(flags, 0, num_flags);
+    flags = (char *)malloc(num_flags>>3);
+    memset(flags, 0, num_flags>>3);
 
     char *all_dash = (char *)malloc(num_bits + 1);
     memset(all_dash, '-', num_bits);
@@ -100,7 +108,7 @@ int main(int argc, char **argv)
 
     int num_missing = 0;
     for (unsigned int i = 0; i < num_flags; i++) {
-        if (flags[i] == 0) {
+        if (get_flag(i) == 0) {
             if (print_missing) print_binary(i);
             num_missing++;
         }
