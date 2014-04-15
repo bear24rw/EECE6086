@@ -4,48 +4,59 @@
 #include <sys/time.h>
 #include <getopt.h>
 #include <limits.h>
-//#include "main.h"
 
-int num_vars;
-int num_cubes;
+typedef struct {
+    char **cubes;
+    int cols;
+    int rows;
+} matrix_t;
 
-//clock_t start_time;
-//clock_t place_time;
-//clock_t route_time;
-//clock_t end_time;
-
-void replace_under_with_dash(char *vector)
-{
-    for (int i=0; i<num_vars; i++)
-        if (vector[i] == '_') vector[i] = '-';
+void free_matrix(matrix_t *matrix) {
+    for (int i=0; i < matrix->rows; i++)
+        free(matrix->cubes[i]);
+    free(matrix->cubes);
+    free(matrix);
 }
 
-inline char all_dash(char *vector)
+void replace_under_with_dash(char *cube, int num_cols)
 {
-    for (int i=0; i<num_vars; i++) {
-        if (vector[i] == '1') return 0;
-        if (vector[i] == '0') return 0;
+    for (int i=0; i<num_cols; i++)
+        if (cube[i] == '_') cube[i] = '-';
+}
+
+inline char all_dash(matrix_t *matrix)
+{
+    char has_all_dash = 0;
+
+    for (int i=0; i < matrix->rows; i++) {
+
+        has_all_dash = 1;
+        for (int j=0; j < matrix->cols; j++) {
+            if (matrix->cubes[i][j] == '1') has_all_dash = 0;
+            if (matrix->cubes[i][j] == '0') has_all_dash = 0;
+        }
+        if (has_all_dash) break;
     }
 
-    return 1;
+    return has_all_dash;
 }
 
-int find_most_binate(char **vector)
+int find_most_binate(matrix_t *matrix)
 {
     int comp_form = 0;
     int true_form = 0;
     int min_column = 0;
     int min_difference = INT_MAX;
 
-    for (int j=0; j<num_vars; j++) {
+    for (int j=0; j<matrix->cols; j++) {
 
         true_form = 0;
         comp_form = 0;
 
         // total up the number of 1s and 0s in this column
-        for (int i=0; i<num_cubes && vector[i] != NULL; i++) {
-            if (vector[i][j] == '1') true_form++;
-            if (vector[i][j] == '0') comp_form++;
+        for (int i=0; i<matrix->rows; i++) {
+            if (matrix->cubes[i][j] == '1') true_form++;
+            if (matrix->cubes[i][j] == '0') comp_form++;
         }
 
         if (true_form == 0 || comp_form == 0)
@@ -61,35 +72,127 @@ int find_most_binate(char **vector)
     return min_column;
 }
 
-char **co_factor(char **vector, int column, char pc)
+matrix_t *co_factor(matrix_t *matrix, int column, char pc)
 {
-    char **temp_vector = (char **)malloc(num_cubes*sizeof(char*));
+    matrix_t *temp_matrix = (matrix_t *)malloc(sizeof(matrix_t));
 
-    for (int i=0; i<num_cubes; i++) {
-        temp_vector[i] = (char *)malloc(num_vars);
+    temp_matrix->rows = matrix->rows;
+    temp_matrix->cols = matrix->cols;
+    temp_matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
+
+    for (int i=0; i<matrix->rows; i++) {
+        temp_matrix->cubes[i] = (char *)malloc(matrix->cols);
     }
 
     int row = 0;
 
-    for (int i=0; i<num_cubes && vector[i] != NULL; i++) {
+    for (int i=0; i<matrix->rows; i++) {
 
-        if (vector[i][column] != pc && vector[i][column] != '-') continue;
+        if (matrix->cubes[i][column] != pc && matrix->cubes[i][column] != '-') continue;
 
-        memcpy(temp_vector[row], vector[i], num_vars*sizeof(char));
+        memcpy(temp_matrix->cubes[row], matrix->cubes[i], matrix->cols);
 
-        temp_vector[row][column] = '-';
+        temp_matrix->cubes[row][column] = '-';
 
         row++;
     }
 
-    //printf("co_factor rows: %d column: %d pc: %c\n", row, column, pc);
-    temp_vector[row] = NULL;
+    temp_matrix->rows = row;
 
-    return temp_vector;
+    return temp_matrix;
+}
+
+matrix_t *unate_reduction(matrix_t *matrix)
+{
+    matrix_t *temp_matrix = (matrix_t *)malloc(sizeof(matrix_t));
+
+    temp_matrix->rows = matrix->rows;
+    temp_matrix->cols = matrix->cols;
+    temp_matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
+
+    for (int i=0; i<matrix->rows; i++) {
+        temp_matrix->cubes[i] = (char *)malloc(matrix->cols);
+    }
+
+    //
+    // Find the unate columns
+    //
+
+    char unate_columns[matrix->cols];
+
+    int comp_form = 0;
+    int true_form = 0;
+
+    for (int j=0; j<matrix->cols; j++) {
+
+        true_form = 0;
+        comp_form = 0;
+
+        // total up the number of 1s and 0s in this column
+        for (int i=0; i<matrix->rows; i++) {
+            if (matrix->cubes[i][j] == '1') true_form++;
+            if (matrix->cubes[i][j] == '0') comp_form++;
+        }
+
+        if ((true_form == 0 && comp_form >= 0) ||
+            (comp_form == 0 && true_form >= 0)) {
+            unate_columns[j] = 1;
+        } else {
+            unate_columns[j] = 0;
+        }
+    }
+
+    //
+    // Figure out what rows to keep
+    //
+
+    char keep_rows[matrix->rows];
+
+    for (int i=0; i<matrix->rows; i++) {
+
+        // assume all unate columns have dash unless proven otherwise
+        char all_dash = 1;
+
+        // check that all unate columns in this row are '-'
+        for (int j=0; j<matrix->cols; j++) {
+            if (!unate_columns[j]) continue;
+            if (matrix->cubes[i][j] != '-')
+                all_dash = 0;
+        }
+
+        if (all_dash)
+            keep_rows[i] = 1;
+        else
+            keep_rows[i] = 0;
+    }
+
+    //
+    //
+    //
+
+    int row = 0;
+    int col = 0;
+    for (int i=0; i<matrix->rows; i++) {
+        if (!keep_rows[i]) continue;
+
+        col = 0;
+        for (int j=0; j<matrix->cols; j++) {
+            if (unate_columns[j]) continue;
+            temp_matrix->cubes[row][col] = matrix->cubes[i][j];
+            col++;
+        }
+
+        row++;
+    }
+
+    temp_matrix->rows = row;
+    temp_matrix->cols = col;
+
+    return temp_matrix;
 }
 
 //http://cc.ee.ntu.edu.tw/~jhjiang/instruction/courses/fall10-lsv/lec03-2_2p.pdf
-int check_tautology(char **vector)
+int check_tautology(matrix_t *matrix)
 {
     /*
      positive cofactor (x = 1):
@@ -104,28 +207,34 @@ int check_tautology(char **vector)
     */
 
     // check to see if we have run out of cubes
-    if (vector[0] == NULL) return 0;
+    if (matrix->rows == 0) return 0;
 
     // check to see if cube consists of all dashes, if so then we have a
     // tautology
-    for (int i=0; i<num_cubes && vector[i] != NULL; i++) {
-        if (all_dash(vector[i])) {
-            return 1;
-        }
-    }
+    if (all_dash(matrix)) return 1;
+
+    if (matrix->rows == 1 && !all_dash(matrix))
+        return 0;
+
+    matrix_t *reduced_matrix = unate_reduction(matrix);
 
     // pick most binate variable to check for tautology
-    int binate_var = find_most_binate(vector);
+    int binate_var = find_most_binate(reduced_matrix);
 
-    char **C0 = co_factor(vector, binate_var, '0');
+    matrix_t *C0 = co_factor(reduced_matrix, binate_var, '0');
     if (!check_tautology(C0)){
+        //free_matrix(C0);
         return 0;
     }
 
-    char **C1 = co_factor(vector, binate_var, '1');
+    matrix_t *C1 = co_factor(reduced_matrix, binate_var, '1');
     if (!check_tautology(C1)){
+        //free_matrix(C1);
         return 0;
     }
+
+    //free_matrix(reduced_matrix);
+    //free_matrix(matrix);
 
     return 1;
 }
@@ -147,27 +256,25 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    fscanf(fp, "%d", &num_vars);
-    fscanf(fp, "%d", &num_cubes);
+    matrix_t matrix;
 
-    printf("Found %d variables and %d cubes\n", num_vars, num_cubes);
+    fscanf(fp, "%d", &matrix.cols);
+    fscanf(fp, "%d", &matrix.rows);
 
-    char **vector = (char **)malloc(num_cubes*sizeof(char*));
+    printf("Found %d variables and %d cubes\n", matrix.cols, matrix.rows);
 
-    for (int i=0; i<num_cubes; i++) {
-        vector[i] = (char *)malloc(num_vars);
+    matrix.cubes = (char **)malloc(matrix.rows*sizeof(char*));
+
+    for (int i=0; i<matrix.rows; i++) {
+        matrix.cubes[i] = (char *)malloc(matrix.cols);
     }
 
-    for (int i=0; i<num_cubes; i++) {
-        fscanf(fp, "%s", vector[i]);
-        replace_under_with_dash(vector[i]);
-        if (all_dash(vector[i])) {
-            printf("Function is a tautololgy\n");
-            return 0;
-        }
+    for (int i=0; i<matrix.rows; i++) {
+        fscanf(fp, "%s", matrix.cubes[i]);
+        replace_under_with_dash(matrix.cubes[i], matrix.cols);
     }
 
-    if (check_tautology(vector)) {
+    if (check_tautology(&matrix)) {
         printf("Function is a tautololgy\n");
     } else {
         printf("Function is NOT a tautololgy\n");
