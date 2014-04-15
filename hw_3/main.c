@@ -9,10 +9,12 @@ typedef struct {
     char **cubes;
     int cols;
     int rows;
+    int alloc_cols;
+    int alloc_rows;
 } matrix_t;
 
 void free_matrix(matrix_t *matrix) {
-    for (int i=0; i < matrix->rows; i++)
+    for (int i=0; i < matrix->alloc_rows; i++)
         free(matrix->cubes[i]);
     free(matrix->cubes);
     free(matrix);
@@ -78,6 +80,7 @@ matrix_t *co_factor(matrix_t *matrix, int column, char pc)
 
     temp_matrix->rows = matrix->rows;
     temp_matrix->cols = matrix->cols;
+    temp_matrix->alloc_rows = matrix->rows;
     temp_matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
 
     for (int i=0; i<matrix->rows; i++) {
@@ -108,6 +111,7 @@ matrix_t *unate_reduction(matrix_t *matrix)
 
     temp_matrix->rows = matrix->rows;
     temp_matrix->cols = matrix->cols;
+    temp_matrix->alloc_rows = matrix->rows;
     temp_matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
 
     for (int i=0; i<matrix->rows; i++) {
@@ -223,18 +227,21 @@ int check_tautology(matrix_t *matrix)
 
     matrix_t *C0 = co_factor(reduced_matrix, binate_var, '0');
     if (!check_tautology(C0)){
-        //free_matrix(C0);
+        free_matrix(reduced_matrix);
+        free_matrix(C0);
         return 0;
     }
 
     matrix_t *C1 = co_factor(reduced_matrix, binate_var, '1');
     if (!check_tautology(C1)){
-        //free_matrix(C1);
+        free_matrix(reduced_matrix);
+        free_matrix(C1);
         return 0;
     }
 
-    //free_matrix(reduced_matrix);
-    //free_matrix(matrix);
+    free_matrix(C0);
+    free_matrix(C1);
+    free_matrix(reduced_matrix);
 
     return 1;
 }
@@ -256,29 +263,37 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    matrix_t matrix;
+    matrix_t *matrix = (matrix_t *)malloc(sizeof(matrix_t));
 
-    fscanf(fp, "%d", &matrix.cols);
-    fscanf(fp, "%d", &matrix.rows);
+    fscanf(fp, "%d", &matrix->cols);
+    fscanf(fp, "%d", &matrix->rows);
 
-    printf("Found %d variables and %d cubes\n", matrix.cols, matrix.rows);
+    printf("Found %d variables and %d cubes\n", matrix->cols, matrix->rows);
 
-    matrix.cubes = (char **)malloc(matrix.rows*sizeof(char*));
+    matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
 
-    for (int i=0; i<matrix.rows; i++) {
-        matrix.cubes[i] = (char *)malloc(matrix.cols);
+    matrix->alloc_rows = matrix->rows;
+
+    for (int i=0; i<matrix->rows; i++) {
+        matrix->cubes[i] = (char *)malloc(matrix->cols);
     }
 
-    for (int i=0; i<matrix.rows; i++) {
-        fscanf(fp, "%s", matrix.cubes[i]);
-        replace_under_with_dash(matrix.cubes[i], matrix.cols);
+    for (int i=0; i<matrix->rows; i++) {
+        fscanf(fp, "%s", matrix->cubes[i]);
+        replace_under_with_dash(matrix->cubes[i], matrix->cols);
     }
 
-    if (check_tautology(&matrix)) {
+    fclose(fp);
+
+    if (check_tautology(matrix)) {
         printf("Function is a tautololgy\n");
     } else {
         printf("Function is NOT a tautololgy\n");
     }
+
+    free_matrix(matrix);
+
+    //while (1) {}
 
     return 0;
 }
