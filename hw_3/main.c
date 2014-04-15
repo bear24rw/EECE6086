@@ -41,7 +41,7 @@ void *mem_log() {
     unsigned long start = 1000000*tv.tv_sec+tv.tv_usec;
 
     double last_mem = 0;
-    while (!done) {
+    do {
         double mem = mem_usage();
         if (mem != last_mem) {
             gettimeofday(&tv, NULL);
@@ -49,7 +49,7 @@ void *mem_log() {
             fprintf(fp, "%ld %f\n", microseconds-start, mem);
             last_mem = mem;
         }
-    }
+    } while (!done);
 
     fclose(fp);
 

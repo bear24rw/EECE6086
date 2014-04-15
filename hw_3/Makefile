@@ -29,9 +29,15 @@ clean:
 #
 
 BENCHMARKS = $(wildcard benchmarks/*.txt)
-BENCHMARKS_LOG = $(patsubst %, %.log, $(BENCHMARKS))
+BENCHMARKS_LOG = $(patsubst %.txt, %.log, $(BENCHMARKS))
+BENCHMARKS_PNG = $(patsubst %.txt, %.png, $(BENCHMARKS))
 
 benchmarks: $(BENCHMARKS_LOG)
 
-benchmarks/%.log: benchmarks/% $(BINARY)
+benchmarks/%.log: benchmarks/%.txt $(BINARY)
 	./main $< > $@.tmp && mv $@.tmp $@ && mv /tmp/mem_log.txt $@.mem
+
+pngs: $(BENCHMARKS_PNG)
+
+benchmarks/%.png: benchmarks/%.log
+	gnuplot -e "filename='$<.mem'" -e "outfilename='$@'" plot.gpi
