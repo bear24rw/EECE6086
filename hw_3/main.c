@@ -4,6 +4,10 @@
 #include <sys/time.h>
 #include <getopt.h>
 #include <limits.h>
+#include <unistd.h>
+#include <pthread.h>
+
+char done = 0;
 
 typedef struct {
     char **cubes;
@@ -12,6 +16,45 @@ typedef struct {
     int alloc_cols;
     int alloc_rows;
 } matrix_t;
+
+double mem_usage(void) {
+    int tSize = 0, resident = 0, share = 0;
+
+    FILE *fp = fopen("/proc/self/statm", "r");
+    fscanf(fp, "%d %d %d", &tSize, &resident, &share);
+    fclose(fp);
+
+    long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
+    double rss = resident * page_size_kb;
+    double shared_mem = share * page_size_kb;
+
+    //printf("Memory used: %f kB\n", rss-shared_mem);
+
+    return rss-shared_mem;
+}
+
+void *mem_log() {
+    FILE *fp = fopen("/tmp/mem_log.txt", "w");
+    struct timeval tv;
+
+    gettimeofday(&tv, NULL);
+    unsigned long start = 1000000*tv.tv_sec+tv.tv_usec;
+
+    double last_mem = 0;
+    while (!done) {
+        double mem = mem_usage();
+        if (mem != last_mem) {
+            gettimeofday(&tv, NULL);
+            unsigned long microseconds = 1000000*tv.tv_sec+tv.tv_usec;
+            fprintf(fp, "%ld %f\n", microseconds-start, mem);
+            last_mem = mem;
+        }
+    }
+
+    fclose(fp);
+
+    return NULL;
+}
 
 void free_matrix(matrix_t *matrix) {
     for (int i=0; i < matrix->alloc_rows; i++)
@@ -263,6 +306,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    pthread_t log_thread;
+    pthread_create(&log_thread, NULL, &mem_log, NULL);
+
     matrix_t *matrix = (matrix_t *)malloc(sizeof(matrix_t));
 
     fscanf(fp, "%d", &matrix->cols);
@@ -293,7 +339,9 @@ int main(int argc, char *argv[])
 
     free_matrix(matrix);
 
-    //while (1) {}
+    done = 1;
+
+    pthread_join(log_thread, NULL);
 
     return 0;
 }
