@@ -32,9 +32,14 @@ BENCHMARKS = $(wildcard benchmarks/*.txt)
 BENCHMARKS_LOG = $(patsubst %.txt, %.log, $(BENCHMARKS))
 BENCHMARKS_PNG = $(patsubst %.txt, %.png, $(BENCHMARKS))
 
-benchmarks: $(BENCHMARKS_LOG)
+BENCHMARKS_BIG = $(wildcard benchmarks/big/*.txt)
+BENCHMARKS_BIG_LOG = $(patsubst %.txt, %.log, $(BENCHMARKS_BIG))
+BENCHMARKS_BIG_PNG = $(patsubst %.txt, %.png, $(BENCHMARKS_BIG))
 
-benchmarks/%.log: benchmarks/%.txt $(BINARY)
+benchmarks: $(BENCHMARKS_LOG)
+benchmarks_big: $(BENCHMARKS_BIG)
+
+benchmarks/%.log: benchmarks/%.txt
 	./main $< > $@.tmp && mv $@.tmp $@ && mv /tmp/mem_log.txt $@.mem
 
 pngs: $(BENCHMARKS_PNG)

@@ -165,7 +165,7 @@ matrix_t *unate_reduction(matrix_t *matrix)
     // Find the unate columns
     //
 
-    char unate_columns[matrix->cols];
+    char *unate_columns = malloc(matrix->cols);
 
     int comp_form = 0;
     int true_form = 0;
@@ -193,7 +193,7 @@ matrix_t *unate_reduction(matrix_t *matrix)
     // Figure out what rows to keep
     //
 
-    char keep_rows[matrix->rows];
+    char *keep_rows = malloc(matrix->rows);
 
     for (int i=0; i<matrix->rows; i++) {
 
@@ -234,6 +234,9 @@ matrix_t *unate_reduction(matrix_t *matrix)
 
     temp_matrix->rows = row;
     temp_matrix->cols = col;
+
+    free(keep_rows);
+    free(unate_columns);
 
     return temp_matrix;
 }
@@ -324,10 +327,14 @@ int main(int argc, char *argv[])
         matrix->cubes[i] = (char *)malloc(matrix->cols);
     }
 
+    printf("Done allocating cubes\n");
+
     for (int i=0; i<matrix->rows; i++) {
         fscanf(fp, "%s", matrix->cubes[i]);
         replace_under_with_dash(matrix->cubes[i], matrix->cols);
     }
+
+    printf("Done reading in file\n");
 
     fclose(fp);
 
