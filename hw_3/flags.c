@@ -13,11 +13,11 @@ unsigned int num_flags_set = 0;
 
 char *flags;
 
-inline void set_flag(unsigned int i) {
+void set_flag(unsigned int i) {
     flags[i>>3] |= (1 << (i&7));
 }
 
-inline char get_flag(unsigned int i) {
+char get_flag(unsigned int i) {
     return flags[i>>3] & (1 << (i&7));
 }
 
@@ -38,7 +38,7 @@ static void replace_under_with_dash(char *vector)
         if (vector[i] == '_') vector[i] = '-';
 }
 
-inline char all_dash(char *vector)
+char all_dash(char *vector)
 {
     for (int i=0; i<num_bits; i++) {
         if (vector[i] == '1') return 0;

@@ -28,7 +28,7 @@ static void replace_under_with_dash(char *cube, int num_cols)
         if (cube[i] == '_') cube[i] = '-';
 }
 
-inline char whole_row_of(matrix_t *matrix, char value)
+char whole_row_of(matrix_t *matrix, char value)
 {
     char has_whole_row = 0;
 

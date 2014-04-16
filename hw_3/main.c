@@ -60,12 +60,14 @@ int main(int argc, char *argv[])
 
     char do_flag = 0;
     char do_heur = 0;
+    char do_mem = 0;
 
     int c;
-    while ((c = getopt(argc, argv, "hf")) != -1) {
+    while ((c = getopt(argc, argv, "hfm")) != -1) {
         switch (c) {
             case 'f': do_flag = 1; break;
             case 'h': do_heur = 1; break;
+            case 'm': do_mem  = 1; break;
         }
     }
 
@@ -82,7 +84,7 @@ int main(int argc, char *argv[])
     pthread_t flag_thread;
     pthread_t heur_thread;
 
-    pthread_create(&log_thread, NULL, &mem_log, NULL);
+    if (do_mem) pthread_create(&log_thread, NULL, &mem_log, NULL);
     if (do_flag) pthread_create(&flag_thread, NULL, &flag, (void *)argv[optind]);
     if (do_heur) pthread_create(&heur_thread, NULL, &heur, (void *)argv[optind]);
 
@@ -93,7 +95,7 @@ int main(int argc, char *argv[])
 
     done = 1;
 
-    pthread_join(log_thread, NULL);
+    if (do_mem)  pthread_join(log_thread, NULL);
 
     if (do_flag) pthread_cancel(flag_thread);
     if (do_heur) pthread_cancel(heur_thread);
