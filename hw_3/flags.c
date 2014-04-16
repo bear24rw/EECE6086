@@ -3,6 +3,8 @@
 #include <string.h>
 #include <sys/time.h>
 #include <getopt.h>
+#include <pthread.h>
+#include "main.h"
 
 unsigned int num_bits = 0;
 unsigned int num_cubes = 0;
@@ -30,7 +32,7 @@ void print_binary(int number)
     printf("\n");
 }
 
-void replace_under_with_dash(char *vector)
+static void replace_under_with_dash(char *vector)
 {
     for (int i=0; i<num_bits; i++)
         if (vector[i] == '_') vector[i] = '-';
@@ -79,17 +81,17 @@ void do_vector(char *vector)
     free(local_vector);
 }
 
-int main(int argc, char **argv)
+void *flag(void *filename)
 {
-    struct timeval stop, start;
-    gettimeofday(&start, NULL);
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL);
 
-    char print_missing = getopt(argc, argv, "c") == 'c';
+    char print_missing = 0;
 
-    FILE *fp = fopen(argv[1], "r");
+    FILE *fp = fopen((const char *)filename, "r");
     if (fp == NULL) {
         printf("Could not open file!\n");
-        return 1;
+        pthread_cond_signal(&done_signal);
+        return NULL;
     }
 
     fscanf(fp, "%d", &num_bits);
@@ -106,7 +108,8 @@ int main(int argc, char **argv)
         replace_under_with_dash(vector);
         if (all_dash(vector)) {
             printf("All cases covered\n");
-            return 0;
+            pthread_cond_signal(&done_signal);
+            return NULL;
         }
         do_vector(vector);
     }
@@ -120,8 +123,8 @@ int main(int argc, char **argv)
     }
     printf("Number of missing covers: %d\n", num_missing);
 
-    gettimeofday(&stop, NULL);
-    printf("Took %ldus\n", stop.tv_usec - start.tv_usec);
+    printf("Flags found it\n");
+    pthread_cond_signal(&done_signal);
 
-    return 0;
+    return NULL;
 }
