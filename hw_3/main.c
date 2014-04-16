@@ -36,10 +36,15 @@ void *mem_log() {
         if (mem != last_mem) {
             gettimeofday(&tv, NULL);
             unsigned long microseconds = 1000000*tv.tv_sec+tv.tv_usec;
-            fprintf(fp, "%ld %f\n", microseconds-start, mem);
+            fprintf(fp, "%f %f\n", (double)(microseconds-start)/(double)1000000, mem);
             last_mem = mem;
         }
     } while (!done);
+
+    double mem = mem_usage();
+    gettimeofday(&tv, NULL);
+    unsigned long microseconds = 1000000*tv.tv_sec+tv.tv_usec;
+    fprintf(fp, "%f %f\n", (double)(microseconds-start)/(double)1000000, mem);
 
     fclose(fp);
 
@@ -88,12 +93,13 @@ int main(int argc, char *argv[])
 
     done = 1;
 
+    pthread_join(log_thread, NULL);
+
     if (do_flag) pthread_cancel(flag_thread);
     if (do_heur) pthread_cancel(heur_thread);
 
     if (do_flag) pthread_join(flag_thread, NULL);
     if (do_heur) pthread_join(heur_thread, NULL);
-    pthread_join(log_thread, NULL);
 
     return 0;
 }

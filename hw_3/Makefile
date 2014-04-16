@@ -39,10 +39,20 @@ BENCHMARKS_BIG_PNG = $(patsubst %.txt, %.png, $(BENCHMARKS_BIG))
 benchmarks: $(BENCHMARKS_LOG)
 benchmarks_big: $(BENCHMARKS_BIG)
 
-benchmarks/%.log: benchmarks/%.txt
+benchmarks/%.log: benchmarks/%.txt $(BINARY)
 	./main $< > $@.tmp && mv $@.tmp $@ && mv /tmp/mem_log.txt $@.mem
+	./main -h $< > $@.tmp && mv $@.tmp $@ && mv /tmp/mem_log.txt $@.heur.mem
+	./main -f $< > $@.tmp && mv $@.tmp $@ && mv /tmp/mem_log.txt $@.flag.mem
 
 pngs: $(BENCHMARKS_PNG)
 
 benchmarks/%.png: benchmarks/%.log
-	gnuplot -e "filename='$<.mem'" -e "outfilename='$@'" plot.gpi
+	gnuplot -e "filename='$<.mem'"      -e "titlename='Either'" -e "outfilename='benchmarks/$*.png'" plot.gpi
+	gnuplot -e "filename='$<.heur.mem'" -e "titlename='Heur'" 	-e "outfilename='benchmarks/$*.heur.png'" plot.gpi
+	gnuplot -e "filename='$<.flag.mem'" -e "titlename='Both'" 	-e "outfilename='benchmarks/$*.flag.png'" plot.gpi
+	gnuplot -e "either='$<.mem'" \
+			-e "heur='$<.heur.mem'" \
+			-e "flag='$<.flag.mem'" \
+			-e "titlename='All'" \
+			-e "outfilename='benchmarks/$*.all.png'" \
+			plot_all.gpi
