@@ -28,21 +28,20 @@ static void replace_under_with_dash(char *cube, int num_cols)
         if (cube[i] == '_') cube[i] = '-';
 }
 
-inline char all_dash(matrix_t *matrix)
+inline char whole_row_of(matrix_t *matrix, char value)
 {
-    char has_all_dash = 0;
+    char has_whole_row = 0;
 
     for (int i=0; i < matrix->rows; i++) {
 
-        has_all_dash = 1;
+        has_whole_row = 1;
         for (int j=0; j < matrix->cols; j++) {
-            if (matrix->cubes[i][j] == '1') has_all_dash = 0;
-            if (matrix->cubes[i][j] == '0') has_all_dash = 0;
+            if (matrix->cubes[i][j] != value) has_whole_row = 0;
         }
-        if (has_all_dash) break;
+        if (has_whole_row) break;
     }
 
-    return has_all_dash;
+    return has_whole_row;
 }
 
 int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
@@ -63,8 +62,19 @@ int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
             if (matrix->cubes[i][j] == '0') comp_form++;
         }
 
+        // if num 1s and num 0s are same there is nothing better
+        if (matrix->rows & 1) {
+            if (abs(true_form - comp_form) <= 1) return j;
+        } else {
+            if (true_form == comp_form) return j;
+        }
+
         if (true_form == 0 || comp_form == 0)
             continue;
+
+        // special case means its not a tautology
+        if (true_form == matrix->rows || comp_form == matrix->rows)
+            return -1;
 
         int difference = abs(true_form - comp_form);
         if (difference < min_difference) {
@@ -126,27 +136,55 @@ matrix_t *unate_reduction(matrix_t *matrix)
     //
 
     char *unate_columns = malloc(matrix->cols);
-
-    int comp_form = 0;
-    int true_form = 0;
+    char found_unate = 0;
 
     for (int j=0; j<matrix->cols; j++) {
 
-        true_form = 0;
-        comp_form = 0;
+        // assume this column is unate
+        unate_columns[j] = 1;
 
-        // total up the number of 1s and 0s in this column
+        char all_dashes = 1;
+        char has_one = 0;
+        char has_zero = 0;
+
         for (int i=0; i<matrix->rows; i++) {
-            if (matrix->cubes[i][j] == '1') true_form++;
-            if (matrix->cubes[i][j] == '0') comp_form++;
+
+            if (matrix->cubes[i][j] != '-')
+                all_dashes = 0;
+
+            if (matrix->cubes[i][j] == '1') has_one = 1;
+            if (matrix->cubes[i][j] == '0') has_zero = 1;
+
+            // if there are different values in this column exit
+            if (has_one && has_zero) {
+                unate_columns[j] = 0;
+                break;
+            }
         }
 
-        if ((true_form == 0 && comp_form >= 0) ||
-            (comp_form == 0 && true_form >= 0)) {
-            unate_columns[j] = 1;
-        } else {
-            unate_columns[j] = 0;
+        // if whole column is dashes we dont mark it as unate
+        if (all_dashes) unate_columns[j] = 0;
+
+        if (unate_columns[j]) found_unate = 1;
+    }
+
+    /*
+    printf(">>> In unate reduction\n");
+    for (int i=0; i<matrix->rows; i++) {
+        for (int j=0; j<matrix->cols; j++) {
+            printf("%c", matrix->cubes[i][j]);
         }
+        printf("\n");
+    }
+    */
+
+    // if we didn't find any unate columns we are done
+    if (!found_unate) {
+        for (int i=0; i<matrix->rows; i++) {
+            memcpy(temp_matrix->cubes[i], matrix->cubes[i], matrix->cols);
+        }
+        free(unate_columns);
+        return temp_matrix;
     }
 
     //
@@ -163,18 +201,17 @@ matrix_t *unate_reduction(matrix_t *matrix)
         // check that all unate columns in this row are '-'
         for (int j=0; j<matrix->cols; j++) {
             if (!unate_columns[j]) continue;
-            if (matrix->cubes[i][j] != '-')
+            if (matrix->cubes[i][j] != '-') {
                 all_dash = 0;
+                break;
+            }
         }
 
-        if (all_dash)
-            keep_rows[i] = 1;
-        else
-            keep_rows[i] = 0;
+        keep_rows[i] = all_dash;
     }
 
     //
-    //
+    // Move the submatrix in the bottom right to the top left of its own matrix
     //
 
     int row = 0;
@@ -192,6 +229,7 @@ matrix_t *unate_reduction(matrix_t *matrix)
         row++;
     }
 
+    printf("reducted %d %d to %d %d\n", temp_matrix->rows, temp_matrix->cols, row, col);
     temp_matrix->rows = row;
     temp_matrix->cols = col;
 
@@ -219,18 +257,19 @@ int check_tautology(matrix_t *matrix)
     // check to see if we have run out of cubes
     if (matrix->rows == 0) return 0;
 
-    // check to see if cube consists of all dashes, if so then we have a
-    // tautology
-    if (all_dash(matrix)) return 1;
-
-    if (matrix->rows == 1 && !all_dash(matrix))
+    if (matrix->rows == 1 && !whole_row_of(matrix, '-'))
         return 0;
 
     matrix_t *reduced_matrix = unate_reduction(matrix);
 
+    // check for special case
+    if (whole_row_of(matrix, '-')) { free(reduced_matrix); return 1; }
+
     // pick most binate variable to check for tautology
-    int more_ones_than_zeros = 0;
+    char more_ones_than_zeros = 0;
     int binate_var = find_most_binate(reduced_matrix, &more_ones_than_zeros);
+
+    if (binate_var == -1) return 0;
 
     matrix_t *C0 = co_factor(reduced_matrix, binate_var, more_ones_than_zeros ? '0' : '1');
     if (!check_tautology(C0)){
