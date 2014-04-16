@@ -19,7 +19,7 @@ debug:
 	$(CXX) $(CXXFLAGS) -o $(BINARY) $(SOURCES) $(LIBS) -DDEBUG
 
 clang:
-	clang++ $(CXXFLAGS) -o $(BINARY) $(SOURCES) $(LIBS)
+	clang $(CXXFLAGS) -o $(BINARY) $(SOURCES) $(LIBS)
 
 clean:
 	rm -fr $(OBJS) $(BINARY) benchmarks/*.{log,tmp,png,jpg}
