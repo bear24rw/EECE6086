@@ -62,15 +62,15 @@ int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
             if (matrix->cubes[i][j] == '0') comp_form++;
         }
 
+        if (true_form == 0 || comp_form == 0)
+            continue;
+
         // if num 1s and num 0s are same there is nothing better
         if (matrix->rows & 1) {
             if (abs(true_form - comp_form) <= 1) return j;
         } else {
             if (true_form == comp_form) return j;
         }
-
-        if (true_form == 0 || comp_form == 0)
-            continue;
 
         // special case means its not a tautology
         if (true_form == matrix->rows || comp_form == matrix->rows)
@@ -263,7 +263,10 @@ int check_tautology(matrix_t *matrix)
     matrix_t *reduced_matrix = unate_reduction(matrix);
 
     // check for special case
-    if (whole_row_of(matrix, '-')) { free(reduced_matrix); return 1; }
+    if (whole_row_of(reduced_matrix, '-')) {
+        free(reduced_matrix);
+        return 1;
+    }
 
     // pick most binate variable to check for tautology
     char more_ones_than_zeros = 0;
