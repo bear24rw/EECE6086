@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     pthread_mutex_t done_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_wait(&done_signal, &done_mutex);
 
-    printf("--- Waiting for threads to join ---\n");
+    printf("Waiting for threads to join\n");
 
     done = 1;
 

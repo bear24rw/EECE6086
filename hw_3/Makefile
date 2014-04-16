@@ -40,9 +40,9 @@ benchmarks: $(BENCHMARKS_LOG)
 benchmarks_big: $(BENCHMARKS_BIG)
 
 benchmarks/%.log: benchmarks/%.txt $(BINARY)
-	./main $< > $@.tmp && mv $@.tmp $@ && mv /tmp/mem_log.txt $@.mem
-	./main -h $< > $@.tmp && mv $@.tmp $@ && mv /tmp/mem_log.txt $@.heur.mem
-	./main -f $< > $@.tmp && mv $@.tmp $@ && mv /tmp/mem_log.txt $@.flag.mem
+	(time -v ./main $<) &> $@.tmp && mv $@.tmp $@ && mv /tmp/mem_log.txt $@.mem
+	#(time -v ./main -h $<) &> $@.tmp && mv $@.tmp $@.heur && mv /tmp/mem_log.txt $@.heur.mem
+	#(time -v ./main -f $<) &> $@.tmp && mv $@.tmp $@.flag && mv /tmp/mem_log.txt $@.flag.mem
 
 pngs: $(BENCHMARKS_PNG)
 

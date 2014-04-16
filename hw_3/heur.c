@@ -45,7 +45,7 @@ inline char all_dash(matrix_t *matrix)
     return has_all_dash;
 }
 
-int find_most_binate(matrix_t *matrix)
+int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
 {
     int comp_form = 0;
     int true_form = 0;
@@ -70,6 +70,7 @@ int find_most_binate(matrix_t *matrix)
         if (difference < min_difference) {
             min_difference = difference;
             min_column = j;
+            *more_ones_than_zeros = true_form > comp_form;
         }
     }
 
@@ -228,16 +229,17 @@ int check_tautology(matrix_t *matrix)
     matrix_t *reduced_matrix = unate_reduction(matrix);
 
     // pick most binate variable to check for tautology
-    int binate_var = find_most_binate(reduced_matrix);
+    int more_ones_than_zeros = 0;
+    int binate_var = find_most_binate(reduced_matrix, &more_ones_than_zeros);
 
-    matrix_t *C0 = co_factor(reduced_matrix, binate_var, '0');
+    matrix_t *C0 = co_factor(reduced_matrix, binate_var, more_ones_than_zeros ? '0' : '1');
     if (!check_tautology(C0)){
         free_matrix(reduced_matrix);
         free_matrix(C0);
         return 0;
     }
 
-    matrix_t *C1 = co_factor(reduced_matrix, binate_var, '1');
+    matrix_t *C1 = co_factor(reduced_matrix, binate_var, more_ones_than_zeros ? '1' : '0');
     if (!check_tautology(C1)){
         free_matrix(reduced_matrix);
         free_matrix(C1);
@@ -267,8 +269,6 @@ void *heur(void *filename)
     fscanf(fp, "%d", &matrix->cols);
     fscanf(fp, "%d", &matrix->rows);
 
-    printf("Found %d variables and %d cubes\n", matrix->cols, matrix->rows);
-
     matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
 
     matrix->alloc_rows = matrix->rows;
@@ -277,14 +277,10 @@ void *heur(void *filename)
         matrix->cubes[i] = (char *)malloc(matrix->cols);
     }
 
-    printf("Done allocating cubes\n");
-
     for (int i=0; i<matrix->rows; i++) {
         fscanf(fp, "%s", matrix->cubes[i]);
         replace_under_with_dash(matrix->cubes[i], matrix->cols);
     }
-
-    printf("Done reading in file\n");
 
     fclose(fp);
 

@@ -52,6 +52,41 @@ void do_vector(char *vector)
 {
     if (num_flags_set == num_flags) return;
 
+    int num_dashes = 0;
+    for (int bit = 0; bit < num_bits; bit++) {
+        if (num_dashes > 0 && vector[bit] != '-') {
+            num_dashes = 0;
+            break;
+        }
+
+        if (vector[bit] == '-') num_dashes++;
+    }
+
+    if (num_dashes > 0) {
+        unsigned int start_flag = 0;
+        unsigned int end_flag = 0;
+
+        for (int bit = 0; bit < num_bits; bit++) {
+            if (vector[bit] == '1') {
+                start_flag |= (1 << (num_bits - bit - 1));
+                end_flag   |= (1 << (num_bits - bit - 1));
+            }
+        }
+
+        start_flag &= (~0) << num_dashes;
+        end_flag   |= ~((~0) << num_dashes);
+
+        for (int i=start_flag; i<=end_flag; i++) {
+            if (get_flag(i) == 0) {
+                set_flag(i);
+                num_flags_set++;
+                if (num_flags_set == num_flags) return;
+            }
+        }
+
+        return;
+    }
+
     char *local_vector = (char *)malloc(num_bits);
     memcpy(local_vector, vector, num_bits);
 
@@ -114,14 +149,22 @@ void *flag(void *filename)
         do_vector(vector);
     }
 
-    int num_missing = 0;
-    for (unsigned int i = 0; i < num_flags; i++) {
-        if (get_flag(i) == 0) {
-            if (print_missing) print_binary(i);
-            num_missing++;
-        }
+    if (num_flags_set >= num_flags) {
+        printf("It is a tautology\n");
+    } else {
+        printf("It is NOT a tautology\n");
     }
-    printf("Number of missing covers: %d\n", num_missing);
+
+    if (print_missing) {
+        int num_missing = 0;
+        for (unsigned int i = 0; i < num_flags; i++) {
+            if (get_flag(i) == 0) {
+                print_binary(i);
+                num_missing++;
+            }
+        }
+        printf("Number of missing covers: %d\n", num_missing);
+    }
 
     printf("Flags found it\n");
     pthread_cond_signal(&done_signal);
