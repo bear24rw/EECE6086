@@ -120,8 +120,6 @@ void *flag(void *filename)
 {
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL);
 
-    char print_missing = 0;
-
     FILE *fp = fopen((const char *)filename, "r");
     if (fp == NULL) {
         printf("Could not open file!\n");

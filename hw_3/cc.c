@@ -3,6 +3,10 @@
 #include <string.h>
 #include <limits.h>
 
+#define POS_UNATE 1
+#define NEG_UNATE 2
+#define BINATE 3
+
 int max(int a, int b) {
     if (a > b) return a;
     return b;
@@ -124,12 +128,13 @@ matrix_t *concat(matrix_t *a, matrix_t *b)
     return m;
 }
 
+
 int find_binate_column(matrix_t *matrix)
 {
     int comp_form = 0;
     int true_form = 0;
 
-    int min_column = 0;
+    int min_column = -1;
     int min_difference = INT_MAX;
     int min_num_comps = 0;
     int min_num_trues = 0;
@@ -145,7 +150,7 @@ int find_binate_column(matrix_t *matrix)
             if (matrix->cubes[i][j] == '0') comp_form++;
         }
 
-        if (true_form == 0 && comp_form == 0)
+        if (true_form == 0 || comp_form == 0)
             continue;
 
         int difference = abs(true_form - comp_form);
@@ -196,10 +201,20 @@ matrix_t *check_complement(matrix_t *matrix)
 {
     matrix_t *return_matrix  = (matrix_t*)malloc(sizeof(matrix_t));
 
-    if (whole_row_of(matrix, '-') || matrix->rows == 0) {
+    if (whole_row_of(matrix, '-')) {
         return_matrix->rows = 0;
-        return_matrix->cols = 0;
+        return_matrix->cols = matrix->cols;
         return_matrix->alloc_rows = 0;
+        return return_matrix;
+    }
+
+    if (matrix->rows == 0) {
+        return_matrix->rows = 1;
+        return_matrix->alloc_rows = 1;
+        return_matrix->cols = matrix->cols;
+        return_matrix->cubes = (char **)malloc(sizeof(char*));
+        return_matrix->cubes[0] = (char *)malloc(matrix->cols);
+        memset(return_matrix->cubes[0], '-', matrix->cols);
         return return_matrix;
     }
 
@@ -232,13 +247,25 @@ matrix_t *check_complement(matrix_t *matrix)
         return return_matrix;
     }
 
-    int binate_col = find_binate_column(matrix);
+    int col_type = BINATE;
+    int column = find_binate_column(matrix);
 
-    matrix_t *pos = check_complement(co_factor(matrix, binate_col, '1'));
-    matrix_t *neg = check_complement(co_factor(matrix, binate_col, '0'));
+    if (column == -1) {
+        column = find_unate_column(matrix);
+        if (matrix->cubes[0][column] == '1') col_type = POS_UNATE;
+        if (matrix->cubes[0][column] == '0') col_type = NEG_UNATE;
+    }
 
-    and(pos, binate_col, '1');
-    and(neg, binate_col, '0');
+    matrix_t *pos = check_complement(co_factor(matrix, column, '1'));
+    matrix_t *neg = check_complement(co_factor(matrix, column, '0'));
+
+    // positive unate
+    if (col_type == POS_UNATE) and(neg, column, '0');
+    if (col_type == NEG_UNATE) and(pos, column, '1');
+    if (col_type == BINATE) {
+        and(pos, column, '1');
+        and(neg, column, '0');
+    }
 
     return_matrix = concat(pos, neg);
 
