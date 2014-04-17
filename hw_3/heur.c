@@ -6,14 +6,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "main.h"
-
-typedef struct {
-    char **cubes;
-    int cols;
-    int rows;
-    int alloc_cols;
-    int alloc_rows;
-} matrix_t;
+#include "shared.h"
 
 matrix_t *matrix_alloc(int rows, int cols) {
     matrix_t *m = (matrix_t*)malloc(sizeof(matrix_t));
@@ -25,36 +18,6 @@ matrix_t *matrix_alloc(int rows, int cols) {
         m->cubes[i] = (char *)malloc(cols);
     }
     return m;
-}
-
-void free_matrix(matrix_t *matrix) {
-    for (int i=0; i < matrix->alloc_rows; i++)
-        free(matrix->cubes[i]);
-    free(matrix->cubes);
-    free(matrix);
-    matrix = NULL;
-}
-
-static void replace_under_with_dash(char *cube, int num_cols)
-{
-    for (int i=0; i<num_cols; i++)
-        if (cube[i] == '_') cube[i] = '-';
-}
-
-char whole_row_of(matrix_t *matrix, char value)
-{
-    char has_whole_row = 0;
-
-    for (int i=0; i < matrix->rows; i++) {
-
-        has_whole_row = 1;
-        for (int j=0; j < matrix->cols; j++) {
-            if (matrix->cubes[i][j] != value) has_whole_row = 0;
-        }
-        if (has_whole_row) break;
-    }
-
-    return has_whole_row;
 }
 
 int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
@@ -97,37 +60,6 @@ int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
     }
 
     return min_column;
-}
-
-matrix_t *co_factor(matrix_t *matrix, int column, char pc)
-{
-    matrix_t *temp_matrix = (matrix_t *)malloc(sizeof(matrix_t));
-
-    temp_matrix->rows = matrix->rows;
-    temp_matrix->cols = matrix->cols;
-    temp_matrix->alloc_rows = matrix->rows;
-    temp_matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
-
-    for (int i=0; i<matrix->rows; i++) {
-        temp_matrix->cubes[i] = (char *)malloc(matrix->cols);
-    }
-
-    int row = 0;
-
-    for (int i=0; i<matrix->rows; i++) {
-
-        if (matrix->cubes[i][column] != pc && matrix->cubes[i][column] != '-') continue;
-
-        memcpy(temp_matrix->cubes[row], matrix->cubes[i], matrix->cols);
-
-        temp_matrix->cubes[row][column] = '-';
-
-        row++;
-    }
-
-    temp_matrix->rows = row;
-
-    return temp_matrix;
 }
 
 void unate_reduction(matrix_t *matrix)
@@ -249,16 +181,6 @@ void unate_reduction(matrix_t *matrix)
 
     matrix = temp_matrix;
 
-    /*
-    printf(">>> reduced matrix to this\n");
-    for (int i=0; i<matrix->rows; i++) {
-        for (int j=0; j<matrix->cols; j++) {
-            printf("%c", matrix->cubes[i][j]);
-        }
-        printf("\n");
-    }
-    */
-
     return;
 }
 
@@ -320,7 +242,7 @@ void *heur(void *filename)
 
     FILE *fp = fopen((const char *)filename, "r");
     if (fp == NULL) {
-        printf("Could not open file!\n");
+        fprintf(stderr, "Could not open file!\n");
         pthread_cond_signal(&done_signal);
         return NULL;
     }
@@ -345,15 +267,11 @@ void *heur(void *filename)
 
     fclose(fp);
 
-    if (check_tautology(matrix)) {
-        printf("Function is a tautololgy\n");
-    } else {
-        printf("Function is NOT a tautololgy\n");
-    }
+    is_tautology = check_tautology(matrix);
 
     free_matrix(matrix);
 
-    printf("Heur found it\n");
+    fprintf(stderr, "Heur found it\n");
     pthread_cond_signal(&done_signal);
 
     return NULL;

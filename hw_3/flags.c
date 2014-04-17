@@ -5,6 +5,7 @@
 #include <getopt.h>
 #include <pthread.h>
 #include "main.h"
+#include "shared.h"
 
 unsigned int num_bits = 0;
 unsigned int num_cubes = 0;
@@ -30,12 +31,6 @@ void print_binary(int number)
             printf("0");
     }
     printf("\n");
-}
-
-static void replace_under_with_dash(char *vector)
-{
-    for (int i=0; i<num_bits; i++)
-        if (vector[i] == '_') vector[i] = '-';
 }
 
 char all_dash(char *vector)
@@ -138,19 +133,13 @@ void *flag(void *filename)
 
     for (unsigned int cube = 0; cube < num_cubes; cube++) {
         fscanf(fp, "%s", vector);
-        replace_under_with_dash(vector);
+        replace_under_with_dash(vector, num_bits);
         if (all_dash(vector)) {
             printf("All cases covered\n");
             pthread_cond_signal(&done_signal);
             return NULL;
         }
         do_vector(vector);
-    }
-
-    if (num_flags_set >= num_flags) {
-        printf("It is a tautology\n");
-    } else {
-        printf("It is NOT a tautology\n");
     }
 
     if (print_missing) {
@@ -164,8 +153,11 @@ void *flag(void *filename)
         printf("Number of missing covers: %d\n", num_missing);
     }
 
-    printf("Flags found it\n");
+    fprintf(stderr, "Flags found it\n");
     pthread_cond_signal(&done_signal);
+
+    if (num_flags_set >= num_flags)
+        is_tautology = 1;
 
     return NULL;
 }

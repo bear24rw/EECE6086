@@ -2,62 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include "shared.h"
 
 #define POS_UNATE 1
 #define NEG_UNATE 2
 #define BINATE 3
-
-int max(int a, int b) {
-    if (a > b) return a;
-    return b;
-}
-
-typedef struct {
-    char **cubes;
-    int cols;
-    int rows;
-    int alloc_cols;
-    int alloc_rows;
-} matrix_t;
-
-void print_matrix(matrix_t *matrix) {
-    for (int y=0; y<matrix->rows; y++) {
-        for (int x=0; x<matrix->cols; x++) {
-            printf("%c", matrix->cubes[y][x]);
-        }
-        printf("\n");
-    }
-}
-
-void free_matrix(matrix_t *matrix) {
-    for (int i=0; i < matrix->alloc_rows; i++)
-        free(matrix->cubes[i]);
-    free(matrix->cubes);
-    free(matrix);
-    matrix = NULL;
-}
-
-static void replace_under_with_dash(char *cube, int num_cols)
-{
-    for (int i=0; i<num_cols; i++)
-        if (cube[i] == '_') cube[i] = '-';
-}
-
-char whole_row_of(matrix_t *matrix, char value)
-{
-    char has_whole_row = 0;
-
-    for (int i=0; i < matrix->rows; i++) {
-
-        has_whole_row = 1;
-        for (int j=0; j < matrix->cols; j++) {
-            if (matrix->cubes[i][j] != value) has_whole_row = 0;
-        }
-        if (has_whole_row) break;
-    }
-
-    return has_whole_row;
-}
 
 int find_unate_column(matrix_t *matrix)
 {
@@ -166,36 +115,6 @@ int find_binate_column(matrix_t *matrix)
     return min_column;
 }
 
-matrix_t *co_factor(matrix_t *matrix, int column, char pc)
-{
-    matrix_t *temp_matrix = (matrix_t *)malloc(sizeof(matrix_t));
-
-    temp_matrix->cols = matrix->cols;
-    temp_matrix->rows = matrix->rows;
-    temp_matrix->alloc_rows = matrix->rows;
-    temp_matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
-
-    for (int i=0; i<matrix->rows; i++) {
-        temp_matrix->cubes[i] = (char *)malloc(matrix->cols);
-    }
-
-    int row = 0;
-
-    for (int i=0; i<matrix->rows; i++) {
-
-        if (matrix->cubes[i][column] != pc && matrix->cubes[i][column] != '-') continue;
-
-        memcpy(temp_matrix->cubes[row], matrix->cubes[i], matrix->cols);
-
-        temp_matrix->cubes[row][column] = '-';
-
-        row++;
-    }
-
-    temp_matrix->rows = row;
-
-    return temp_matrix;
-}
 
 matrix_t *check_complement(matrix_t *matrix)
 {
@@ -205,6 +124,7 @@ matrix_t *check_complement(matrix_t *matrix)
         return_matrix->rows = 0;
         return_matrix->cols = matrix->cols;
         return_matrix->alloc_rows = 0;
+        free_matrix(matrix);
         return return_matrix;
     }
 
@@ -215,6 +135,7 @@ matrix_t *check_complement(matrix_t *matrix)
         return_matrix->cubes = (char **)malloc(sizeof(char*));
         return_matrix->cubes[0] = (char *)malloc(matrix->cols);
         memset(return_matrix->cubes[0], '-', matrix->cols);
+        free_matrix(matrix);
         return return_matrix;
     }
 
@@ -244,6 +165,7 @@ matrix_t *check_complement(matrix_t *matrix)
             row++;
         }
 
+        free_matrix(matrix);
         return return_matrix;
     }
 
@@ -269,22 +191,19 @@ matrix_t *check_complement(matrix_t *matrix)
 
     return_matrix = concat(pos, neg);
 
-    //free_matrix(pos);
-    //free_matrix(neg);
-
     return return_matrix;
 }
 
 int main(int argc, char *argv[])
 {
     if (argc < 2) {
-        printf("Usage: ./main inputfile\n");
+        fprintf(stderr, "Usage: ./main inputfile\n");
         return 1;
     }
 
     FILE *fp = fopen((const char *)argv[1], "r");
     if (fp == NULL) {
-        printf("Could not open file!\n");
+        fprintf(stderr, "Could not open file!\n");
         return 0;
     }
 
@@ -310,8 +229,11 @@ int main(int argc, char *argv[])
 
     matrix_t *complements = check_complement(matrix);
 
-    print_matrix(complements);
+    if (complements->rows  == 0) {
+        fprintf(stderr, "Already a tautology\n");
+        return 1;
+    }
 
-    //free_matrix(matrix);
-    //free_matrix(complements);
+    print_matrix(complements);
+    return 0;
 }

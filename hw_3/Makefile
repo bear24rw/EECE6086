@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99 -Wall -g -pg -Ofast
+CFLAGS = -std=c99 -Wall -g -pg -Ofast -Wno-unused-result
 LIBS = -lm -lpthread
 
 BINARY := main
@@ -8,10 +8,10 @@ HEADERS := $(wildcard *.h)
 
 all: tc cc
 
-tc: tc.o heur.o flags.o
+tc: tc.o heur.o flags.o shared.o
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
-cc: cc.o
+cc: cc.o shared.o
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
 %.o: %.c $(HEADERS)
@@ -52,3 +52,4 @@ benchmarks/%.png: benchmarks/%.log
 			-e "titlename='All'" \
 			-e "outfilename='benchmarks/$*.all.png'" \
 			plot_all.gpi
+
