@@ -5,7 +5,6 @@ LIBS = -lm -lpthread
 BINARY := main
 SOURCES := $(wildcard *.c)
 HEADERS := $(wildcard *.h)
-OBJS := ${SOURCES:.c=.o}
 
 all: tc cc
 
@@ -19,7 +18,7 @@ cc: cc.o
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -fr $(OBJS) tc cc benchmarks/*.{log,tmp,png,jpg}
+	rm -fr *.o tc cc benchmarks/*.{log,tmp,png,jpg}
 
 #
 # BENCHMARKS
