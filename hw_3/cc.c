@@ -3,6 +3,11 @@
 #include <string.h>
 #include <limits.h>
 
+int max(int a, int b) {
+    if (a > b) return a;
+    return b;
+}
+
 typedef struct {
     char **cubes;
     int cols;
@@ -97,7 +102,7 @@ matrix_t *concat(matrix_t *a, matrix_t *b)
 {
     matrix_t *m = (matrix_t *)malloc(sizeof(matrix_t));
 
-    m->cols = a->cols;
+    m->cols = max(a->cols, b->cols);
     m->rows = a->rows + b->rows;
     m->alloc_rows = m->rows;
     m->cubes = (char **)malloc(m->rows*sizeof(char*));
@@ -160,8 +165,8 @@ matrix_t *co_factor(matrix_t *matrix, int column, char pc)
 {
     matrix_t *temp_matrix = (matrix_t *)malloc(sizeof(matrix_t));
 
-    temp_matrix->rows = matrix->rows;
     temp_matrix->cols = matrix->cols;
+    temp_matrix->rows = matrix->rows;
     temp_matrix->alloc_rows = matrix->rows;
     temp_matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
 
@@ -171,9 +176,6 @@ matrix_t *co_factor(matrix_t *matrix, int column, char pc)
 
     int row = 0;
 
-    printf("in cofactor rows: %d col: %d pos/neg: %c\n", matrix->rows, column, pc);
-    printf("cofactoring matrix:\n");
-    print_matrix(matrix);
     for (int i=0; i<matrix->rows; i++) {
 
         if (matrix->cubes[i][column] != pc && matrix->cubes[i][column] != '-') continue;
@@ -185,7 +187,6 @@ matrix_t *co_factor(matrix_t *matrix, int column, char pc)
         row++;
     }
 
-    printf("new cofactor rows: %d\n", row);
     temp_matrix->rows = row;
 
     return temp_matrix;
@@ -233,7 +234,6 @@ matrix_t *check_complement(matrix_t *matrix)
 
     int binate_col = find_binate_column(matrix);
 
-    printf("calling co_factor with matrix with rows: %d\n", matrix->rows);
     matrix_t *pos = check_complement(co_factor(matrix, binate_col, '1'));
     matrix_t *neg = check_complement(co_factor(matrix, binate_col, '0'));
 

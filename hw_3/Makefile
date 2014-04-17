@@ -1,5 +1,5 @@
-CXX = gcc
-CXXFLAGS = -std=c99 -Wall -g -pg -Ofast
+CC = gcc
+CFLAGS = -std=c99 -Wall -g -pg -Ofast
 LIBS = -lm -lpthread
 
 BINARY := main
@@ -7,22 +7,19 @@ SOURCES := $(wildcard *.c)
 HEADERS := $(wildcard *.h)
 OBJS := ${SOURCES:.c=.o}
 
-all: $(BINARY)
+all: tc cc
 
-$(BINARY): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+tc: tc.o heur.o flags.o
+	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
+
+cc: cc.o
+	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
 %.o: %.c $(HEADERS)
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-debug:
-	$(CXX) $(CXXFLAGS) -o $(BINARY) $(SOURCES) $(LIBS) -DDEBUG
-
-clang:
-	clang $(CXXFLAGS) -o $(BINARY) $(SOURCES) $(LIBS)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -fr $(OBJS) $(BINARY) benchmarks/*.{log,tmp,png,jpg}
+	rm -fr $(OBJS) tc cc benchmarks/*.{log,tmp,png,jpg}
 
 #
 # BENCHMARKS

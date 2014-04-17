@@ -15,6 +15,18 @@ typedef struct {
     int alloc_rows;
 } matrix_t;
 
+matrix_t *matrix_alloc(int rows, int cols) {
+    matrix_t *m = (matrix_t*)malloc(sizeof(matrix_t));
+    m->rows = rows;
+    m->cols = cols;
+    m->alloc_rows = rows;
+    m->cubes = (char **)malloc(rows*sizeof(char*));
+    for (int i=0; i<rows; i++) {
+        m->cubes[i] = (char *)malloc(cols);
+    }
+    return m;
+}
+
 void free_matrix(matrix_t *matrix) {
     for (int i=0; i < matrix->alloc_rows; i++)
         free(matrix->cubes[i]);
@@ -68,17 +80,6 @@ int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
 
         if (true_form == 0 && comp_form == 0)
             continue;
-
-        // if num 1s and num 0s are same there is nothing better
-        /*
-        if (matrix->rows & 1) {
-            if (true_form > 0 && abs(true_form - comp_form) <= 1) return j;
-            if (comp_form > 0 && abs(true_form - comp_form) <= 1) return j;
-        } else {
-            if (true_form > 0 && true_form == comp_form) return j;
-            if (comp_form > 0 && true_form == comp_form) return j;
-        }
-        */
 
         // special case means its not a tautology
         if (true_form == matrix->rows || comp_form == matrix->rows)
