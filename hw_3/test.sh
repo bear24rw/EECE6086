@@ -20,7 +20,7 @@ do
     else
         echo -e $GRAY"NOT a tuatology, finding complement..."
         ./cc $cover > /tmp/cc.txt
-        echo -e $GRAY"Found " `wc -l /tmp/cc.txt` " complements"
+        echo -e $GRAY"Found " `wc -l /tmp/cc.txt | uniq` " complements"
         echo -e $GRAY"Adding complement to original cover..."
         head -n1 $cover > /tmp/new_cover.txt
         num_cubes=`cat $cover /tmp/cc.txt | wc -l`
