@@ -1,20 +1,24 @@
 reset
-set terminal pngcairo enhanced font "Vera,20" size 1024, 768
+set terminal pngcairo noenhanced font "Vera,20" size 1024, 768
 set output outfilename
 
+#set title name
 set xlabel "Time (s)"
 set ylabel "Memory Usage (KB)"
 set y2label "Recursion Depth"
 set yrange [0:*]
-set y2range [*:*]
+#set y2range [*:*]
 set y2tics 2
 set tics out
+
+unset x2tics
+
 #unset key
-set key top left
-set autoscale y
-set autoscale y2
+set key top left horizontal outside
+#set autoscale y
+#set autoscale y2
 
 set xtics rotate 90 auto
 set format x "%.6f"
 
-plot depthfile u 1:2 w steps axes x1y2 title "Depth", memfile u 1:2 w steps title "Memory"
+plot depthfile u 1:2 w steps axes x1y2 title "Depth", memfile u 1:2 w steps axes x1y1 title "Memory"

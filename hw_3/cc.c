@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 
     fprintf(stderr, "Waiting for threads to join\n");
 
-    stop_mem_log = 1;
+    stop_log_thread = 1;
 
     if (do_mem) pthread_join(log_thread, NULL);
 

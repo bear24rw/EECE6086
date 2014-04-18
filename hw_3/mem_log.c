@@ -3,49 +3,66 @@
 #include <stdio.h>
 #include "mem_log.h"
 
-char stop_mem_log = 0;
+char stop_log_thread = 0;
 
-double mem_usage(void)
+FILE *fp_mem;
+FILE *fp_dep;
+
+long heap_size = 0;
+int recursion_depth = 0;
+
+unsigned long start_time = -1;
+
+void open_log(void)
 {
-    int tSize = 0, resident = 0, share = 0;
+    fp_mem = fopen("/tmp/mem.log", "w");
+    fp_dep = fopen("/tmp/dep.log", "w");
 
-    FILE *fp = fopen("/proc/self/statm", "r");
-    fscanf(fp, "%d %d %d", &tSize, &resident, &share);
-    fclose(fp);
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    start_time = 1000000 * tv.tv_sec + tv.tv_usec;
+}
 
-    long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024;
-    double rss = resident * page_size_kb;
-    double shared_mem = share * page_size_kb;
+void close_log(void)
+{
+    fclose(fp_mem);
+    fclose(fp_dep);
+}
 
-    //return rss - shared_mem;
-    return rss;
+double elapsed_time(void)
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    unsigned long microseconds = 1000000 * tv.tv_sec + tv.tv_usec;
+    return (double)(microseconds - start_time) / (double)1000000;
+}
+
+void write_log(void) {
+    static long last_heap_size = -1;
+    static int last_depth = -1;
+
+    if (recursion_depth != last_depth) {
+        last_depth = recursion_depth;
+        fprintf(fp_dep, "%f %d\n", elapsed_time(), recursion_depth);
+    }
+
+    if (heap_size != last_heap_size) {
+        last_heap_size = heap_size;
+        fprintf(fp_mem, "%f %f\n", elapsed_time(), (double)heap_size/(double)1024);
+    }
 }
 
 void *mem_log()
 {
-    FILE *fp = fopen("/tmp/mem_log.txt", "w");
-    struct timeval tv;
+    open_log();
 
-    gettimeofday(&tv, NULL);
-    unsigned long start = 1000000 * tv.tv_sec + tv.tv_usec;
-
-    double last_mem = 0;
     do {
-        double mem = mem_usage();
-        if (mem != last_mem) {
-            gettimeofday(&tv, NULL);
-            unsigned long microseconds = 1000000 * tv.tv_sec + tv.tv_usec;
-            fprintf(fp, "%f %f\n", (double)(microseconds - start) / (double)1000000, mem);
-            last_mem = mem;
-        }
-    } while (!stop_mem_log);
+        write_log();
+    } while (!stop_log_thread);
 
-    double mem = mem_usage();
-    gettimeofday(&tv, NULL);
-    unsigned long microseconds = 1000000 * tv.tv_sec + tv.tv_usec;
-    fprintf(fp, "%f %f\n", (double)(microseconds - start) / (double)1000000, mem);
+    write_log();
 
-    fclose(fp);
+    close_log();
 
     return NULL;
 }

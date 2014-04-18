@@ -3,10 +3,9 @@
 #include <string.h>
 #include <pthread.h>
 #include "shared.h"
+#include "mem_log.h"
 
 char is_tautology = 0;
-
-long heap_size = 0;
 
 pthread_mutex_t print_mutex = PTHREAD_MUTEX_INITIALIZER;
 

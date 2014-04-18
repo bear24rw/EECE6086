@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include "shared.h"
 #include "cc_heur.h"
+#include "mem_log.h"
 
 #define POS_UNATE 1
 #define NEG_UNATE 2
@@ -54,23 +55,16 @@ void and(matrix_t *matrix, int col, char value)
 
 matrix_t *concat(matrix_t *a, matrix_t *b)
 {
-    matrix_t *m = (matrix_t *)malloc(sizeof(matrix_t));
-
-    m->cols = max(a->cols, b->cols);
-    m->rows = a->rows + b->rows;
-    m->alloc_rows = m->rows;
-    m->cubes = (char **)malloc(m->rows * sizeof(char *));
+    matrix_t *m = alloc_matrix(a->rows + b->rows, a->cols);
 
     int row = 0;
 
     for (int i = 0; i < a->rows; i++) {
-        m->cubes[row] = (char *)malloc(a->cols);
         memcpy(m->cubes[row], a->cubes[i], a->cols);
         row++;
     }
 
     for (int i = 0; i < b->rows; i++) {
-        m->cubes[row] = (char *)malloc(b->cols);
         memcpy(m->cubes[row], b->cubes[i], b->cols);
         row++;
     }
@@ -115,27 +109,21 @@ int find_binate_column(matrix_t *matrix)
     return min_column;
 }
 
-matrix_t *check_complement(matrix_t *matrix)
+matrix_t *check_complement(matrix_t *matrix, int depth)
 {
-    matrix_t *return_matrix = (matrix_t *)malloc(sizeof(matrix_t));
+    recursion_depth = depth;
 
     if (whole_row_of(matrix, '-')) {
-        return_matrix->rows = 0;
-        return_matrix->cols = matrix->cols;
-        return_matrix->alloc_rows = 0;
+        matrix_t *m = alloc_matrix(0, matrix->cols);
         free_matrix(matrix);
-        return return_matrix;
+        return m;
     }
 
     if (matrix->rows == 0) {
-        return_matrix->rows = 1;
-        return_matrix->alloc_rows = 1;
-        return_matrix->cols = matrix->cols;
-        return_matrix->cubes = (char **)malloc(sizeof(char *));
-        return_matrix->cubes[0] = (char *)malloc(matrix->cols);
-        memset(return_matrix->cubes[0], '-', matrix->cols);
+        matrix_t *m = alloc_matrix(1, matrix->cols);
+        memset(m->cubes[0], '-', matrix->cols);
         free_matrix(matrix);
-        return return_matrix;
+        return m;
     }
 
     if (matrix->rows == 1) {
@@ -146,26 +134,22 @@ matrix_t *check_complement(matrix_t *matrix)
             if (matrix->cubes[0][i] == '1') num_of_none_dashes++;
         }
 
-        return_matrix->cols = matrix->cols;
-        return_matrix->rows = num_of_none_dashes;
-        return_matrix->alloc_rows = num_of_none_dashes;
-        return_matrix->cubes = (char **)malloc(sizeof(char *));
+        matrix_t *m = alloc_matrix(num_of_none_dashes, matrix->cols);
 
         int row = 0;
         for (int i = 0; i < matrix->cols; i++) {
             if (matrix->cubes[0][i] == '-') continue;
 
-            return_matrix->cubes[row] = (char *)malloc(matrix->cols);
-            memset(return_matrix->cubes[row], '-', matrix->cols);
+            memset(m->cubes[row], '-', matrix->cols);
 
-            if (matrix->cubes[0][i] == '0') return_matrix->cubes[row][i] = '1';
-            if (matrix->cubes[0][i] == '1') return_matrix->cubes[row][i] = '0';
+            if (matrix->cubes[0][i] == '0') m->cubes[row][i] = '1';
+            if (matrix->cubes[0][i] == '1') m->cubes[row][i] = '0';
 
             row++;
         }
 
         free_matrix(matrix);
-        return return_matrix;
+        return m;
     }
 
     int col_type = BINATE;
@@ -177,8 +161,8 @@ matrix_t *check_complement(matrix_t *matrix)
         if (matrix->cubes[0][column] == '0') col_type = NEG_UNATE;
     }
 
-    matrix_t *pos = check_complement(co_factor(matrix, column, '1'));
-    matrix_t *neg = check_complement(co_factor(matrix, column, '0'));
+    matrix_t *pos = check_complement(co_factor(matrix, column, '1'), depth+1); recursion_depth = depth;
+    matrix_t *neg = check_complement(co_factor(matrix, column, '0'), depth+1); recursion_depth = depth;
 
     // positive unate
     if (col_type == POS_UNATE) and(neg, column, '0');
@@ -188,9 +172,13 @@ matrix_t *check_complement(matrix_t *matrix)
         and(neg, column, '0');
     }
 
-    return_matrix = concat(pos, neg);
+    matrix_t *m = concat(pos, neg);
 
-    return return_matrix;
+    free_matrix(pos);
+    free_matrix(neg);
+    free_matrix(matrix);
+
+    return m;
 }
 
 void *heur(void *filename)
@@ -204,18 +192,13 @@ void *heur(void *filename)
         return 0;
     }
 
-    matrix_t *matrix = (matrix_t *)malloc(sizeof(matrix_t));
 
-    fscanf(fp, "%d", &matrix->cols);
-    fscanf(fp, "%d", &matrix->rows);
+    int cols, rows;
 
-    matrix->cubes = (char **)malloc(matrix->rows * sizeof(char *));
+    fscanf(fp, "%d", &cols);
+    fscanf(fp, "%d", &rows);
 
-    matrix->alloc_rows = matrix->rows;
-
-    for (int i = 0; i < matrix->rows; i++) {
-        matrix->cubes[i] = (char *)malloc(matrix->cols);
-    }
+    matrix_t *matrix = alloc_matrix(rows, cols);
 
     for (int i = 0; i < matrix->rows; i++) {
         fscanf(fp, "%s", matrix->cubes[i]);
@@ -224,13 +207,15 @@ void *heur(void *filename)
 
     fclose(fp);
 
-    matrix_t *complements = check_complement(matrix);
+    matrix_t *complements = check_complement(matrix, 0);
 
     pthread_mutex_lock(&print_mutex);
 
     fprintf(stderr, "Heur is printing complements\n");
 
     print_matrix(complements);
+
+    free_matrix(matrix);
 
     pthread_cond_signal(&done_signal);
 
