@@ -42,10 +42,12 @@ int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
             if (matrix->cubes[i][j] == '0') comp_form++;
         }
 
-        if (true_form == 0 && comp_form == 0) continue;
+        if (true_form == 0 && comp_form == 0)
+            continue;
 
         // special case means its not a tautology
-        if (true_form == matrix->rows || comp_form == matrix->rows) return -1;
+        if (true_form == matrix->rows || comp_form == matrix->rows)
+            return -1;
 
         int difference = abs(true_form - comp_form);
         if ((difference < min_difference) ||
