@@ -17,7 +17,7 @@ cc: cc.o cc_heur.o flags.o shared.o mem_log.o
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -fr *.o tc cc benchmarks/*.{log,tmp,png,jpg,mem,dep,heur}
+	rm -fr *.o tc cc benchmarks/*.{log,tmp,png,jpg,mem,dep,heur,tc,cc}
 
 #
 # BENCHMARKS
@@ -37,13 +37,13 @@ benchmarks_big: $(BENCHMARKS_BIG)
 benchmarks/%.log: benchmarks/%.txt tc cc
 	@touch $@
 	@echo "TC: "$<
-	@-(time -v ./tc    -m $<) &> $@.tc      ; mv /tmp/mem.log $@.tc.mem      && mv /tmp/dep.log $@.tc.dep
-	@#-(time -v ./tc -h -m $<) &> $@.tc.heur ; mv /tmp/mem.log $@.tc.heur.mem && mv /tmp/dep.log $@.tc.heur.dep
-	@#-(time -v ./tc -f -m $<) &> $@.tc.flag ; mv /tmp/mem.log $@.tc.flag.mem && mv /tmp/dep.log $@.tc.flag.dep
+	-(/usr/bin/time -v ./tc    -m $<) &> $@.tc      ; mv /tmp/mem.log $@.tc.mem      && mv /tmp/dep.log $@.tc.dep
+	@#-(/usr/bin/time -v ./tc -h -m $<) &> $@.tc.heur ; mv /tmp/mem.log $@.tc.heur.mem && mv /tmp/dep.log $@.tc.heur.dep
+	@#-(/usr/bin/time -v ./tc -f -m $<) &> $@.tc.flag ; mv /tmp/mem.log $@.tc.flag.mem && mv /tmp/dep.log $@.tc.flag.dep
 	@echo "CC: "$<
-	@-(time -v ./cc    -m $<) &> $@.tmp     ; mv /tmp/mem.log $@.cc.mem       && mv /tmp/dep.log $@.cc.dep
-	@#-(time -v ./cc -h -m $<) &> $@.cc.heur ; mv /tmp/mem.log $@.cc.heur.mem  && mv /tmp/dep.log $@.cc.heur.dep
-	@#-(time -v ./cc -f -m $<) &> $@.cc.flag ; mv /tmp/mem.log $@.cc.flag.mem  && mv /tmp/dep.log $@.cc.flag.dep
+	-(/usr/bin/time -v ./cc    -m $<) &> $@.cc      ; mv /tmp/mem.log $@.cc.mem       && mv /tmp/dep.log $@.cc.dep
+	@#-(/usr/bin/time -v ./cc -h -m $<) &> $@.cc.heur ; mv /tmp/mem.log $@.cc.heur.mem  && mv /tmp/dep.log $@.cc.heur.dep
+	@#-(/usr/bin/time -v ./cc -f -m $<) &> $@.cc.flag ; mv /tmp/mem.log $@.cc.flag.mem  && mv /tmp/dep.log $@.cc.flag.dep
 
 pngs: $(BENCHMARKS_PNG)
 
