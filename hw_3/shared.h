@@ -11,6 +11,7 @@ typedef struct {
     int alloc_rows;
 } matrix_t;
 
+extern long heap_size;
 extern char is_tautology;
 extern pthread_mutex_t print_mutex;
 extern pthread_cond_t done_signal;

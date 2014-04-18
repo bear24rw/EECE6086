@@ -17,7 +17,8 @@ double mem_usage(void)
     double rss = resident * page_size_kb;
     double shared_mem = share * page_size_kb;
 
-    return rss - shared_mem;
+    //return rss - shared_mem;
+    return rss;
 }
 
 void *mem_log()

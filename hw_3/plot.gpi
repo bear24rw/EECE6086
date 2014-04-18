@@ -4,10 +4,17 @@ set output outfilename
 
 set xlabel "Time (s)"
 set ylabel "Memory Usage (KB)"
+set y2label "Recursion Depth"
 set yrange [0:*]
-unset key
+set y2range [*:*]
+set y2tics 2
+set tics out
+#unset key
+set key top left
+set autoscale y
+set autoscale y2
 
 set xtics rotate 90 auto
 set format x "%.6f"
 
-plot filename u 1:2 w steps
+plot depthfile u 1:2 w steps axes x1y2 title "Depth", memfile u 1:2 w steps title "Memory"

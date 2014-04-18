@@ -6,22 +6,29 @@
 
 char is_tautology = 0;
 
+long heap_size = 0;
+
 pthread_mutex_t print_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void free_matrix(matrix_t *matrix)
 {
-    if (matrix == NULL) return;
-    if (matrix->cubes == NULL) return;
+    heap_size -= matrix->cols * matrix->alloc_rows;
+    heap_size -= matrix->alloc_rows * sizeof(char*);
+    heap_size -= sizeof(matrix_t);
+
     for (int i = 0; i < matrix->alloc_rows; i++) {
-        if (matrix->cubes[i] == NULL) printf("WTF rows: %d alloc_rows: %d\n", matrix->rows, matrix->alloc_rows);
         free(matrix->cubes[i]);
     }
     free(matrix->cubes);
-    matrix->cubes = NULL;
+    free(matrix);
 }
 
 matrix_t *alloc_matrix(int rows, int cols)
 {
+    heap_size += sizeof(matrix_t);
+    heap_size += rows * sizeof(char*);
+    heap_size += rows * cols;
+
     matrix_t *m = (matrix_t *)malloc(sizeof(matrix_t));
     m->rows = rows;
     m->cols = cols;

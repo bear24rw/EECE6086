@@ -14,7 +14,7 @@ do
     name=`echo $cover | sed 's/benchmarks\///' | sed 's/\.txt//'`
     echo -e $BOLD$(python -c "print '$name'.center(70).replace(' ','=')+' [$i/$num_tests]'") $WHITE
 
-    ./tc $cover 2> /dev/null
+    ./tc -h $cover 2> /dev/null
     if [[ $? == 0 ]] ; then
         echo -e $GREEN"Is tautology" $WHITE
     else

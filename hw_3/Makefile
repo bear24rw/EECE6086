@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99 -Wall -g -pg -Ofast -Wno-unused-result
+CFLAGS = -std=c99 -Wall -Wextra -g -pg -Ofast -Wno-unused-result
 LIBS = -lm -lpthread
 
 SOURCES := $(wildcard *.c)
@@ -35,20 +35,23 @@ benchmarks: $(BENCHMARKS_LOG)
 benchmarks_big: $(BENCHMARKS_BIG)
 
 benchmarks/%.log: benchmarks/%.txt tc
-	-(time -v ./tc -h $<) &> $@.tmp && mv $@.tmp $@ #&& mv /tmp/mem_log.txt $@.mem
-	#(time -v ./tc -h $<) &> $@.tmp && mv $@.tmp $@.heur && mv /tmp/mem_log.txt $@.heur.mem
-	#(time -v ./tc -f $<) &> $@.tmp && mv $@.tmp $@.flag && mv /tmp/mem_log.txt $@.flag.mem
+	-(time -v ./tc -h $<) &> $@.tmp
+	mv $@.tmp $@
+	mv /tmp/mem_log.txt $@.mem
+	mv /tmp/depth_log.txt $@.depth
+	#(time -v ./tc -h $<) &> $@.tmp; mv $@.tmp $@.heur && mv /tmp/mem_log.txt $@.heur.mem
+	#(time -v ./tc -f $<) &> $@.tmp; mv $@.tmp $@.flag && mv /tmp/mem_log.txt $@.flag.mem
 
 pngs: $(BENCHMARKS_PNG)
 
 benchmarks/%.png: benchmarks/%.log
-	gnuplot -e "filename='$<.mem'"      -e "titlename='Either'" -e "outfilename='benchmarks/$*.png'" plot.gpi
-	gnuplot -e "filename='$<.heur.mem'" -e "titlename='Heur'" 	-e "outfilename='benchmarks/$*.heur.png'" plot.gpi
-	gnuplot -e "filename='$<.flag.mem'" -e "titlename='Both'" 	-e "outfilename='benchmarks/$*.flag.png'" plot.gpi
-	gnuplot -e "either='$<.mem'" \
-			-e "heur='$<.heur.mem'" \
-			-e "flag='$<.flag.mem'" \
-			-e "titlename='All'" \
-			-e "outfilename='benchmarks/$*.all.png'" \
-			plot_all.gpi
+	gnuplot -e "memfile='$<.mem'" -e "depthfile='$<.depth"     -e "titlename='Either'" -e "outfilename='benchmarks/$*.png'" plot.gpi
+	#gnuplot -e "filename='$<.heur.mem'" -e "titlename='Heur'" 	-e "outfilename='benchmarks/$*.heur.png'" plot.gpi
+	#gnuplot -e "filename='$<.flag.mem'" -e "titlename='Both'" 	-e "outfilename='benchmarks/$*.flag.png'" plot.gpi
+	#gnuplot -e "either='$<.mem'" \
+#			-e "heur='$<.heur.mem'" \
+#			-e "flag='$<.flag.mem'" \
+#			-e "titlename='All'" \
+#			-e "outfilename='benchmarks/$*.all.png'" \
+#			plot_all.gpi
 

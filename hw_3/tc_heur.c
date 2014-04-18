@@ -5,8 +5,29 @@
 #include <limits.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <unistd.h>
+#include <sys/time.h>
 #include "shared.h"
 #include "tc_heur.h"
+#include "mem_log.h"
+
+FILE *depth_fp;
+FILE *mem_fp;
+unsigned long depth_start_time;
+
+void write_depth(int depth) {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    unsigned long microseconds = 1000000 * tv.tv_sec + tv.tv_usec;
+    fprintf(depth_fp, "%f %d\n", (double)(microseconds - depth_start_time) / (double)1000000, depth);
+}
+
+void write_mem() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    unsigned long microseconds = 1000000 * tv.tv_sec + tv.tv_usec;
+    fprintf(mem_fp, "%f %f\n", (double)(microseconds - depth_start_time) / (double)1000000, (double)heap_size/(double)1024);
+}
 
 int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
 {
@@ -167,26 +188,32 @@ matrix_t *unate_reduction(matrix_t *matrix)
 
     free(keep_rows);
     free(unate_columns);
-    free_matrix(matrix);
 
     return temp_matrix;
 }
 
 // http://cc.ee.ntu.edu.tw/~jhjiang/instruction/courses/fall10-lsv/lec03-2_2p.pdf
-int check_tautology(matrix_t *matrix)
+int check_tautology(matrix_t *matrix, int depth)
 {
+    write_depth(depth);
+    write_mem();
+
     //printf("checking matrix:\n");
-    //print_matrix(matrix);
+    //print_matrix(matix);
 
     // check to see if we have run out of cubes
     if (matrix->rows == 0) return 0;
 
     if (matrix->rows == 1 && !whole_row_of(matrix, '-')) return 0;
 
+    matrix_t *oldmat = matrix;
     matrix = unate_reduction(matrix);
 
     // check for special case
     if (whole_row_of(matrix, '-')) {
+        if (oldmat != matrix) free_matrix(matrix);
+        write_depth(depth);
+        write_mem();
         return 1;
     }
 
@@ -194,22 +221,37 @@ int check_tautology(matrix_t *matrix)
     char more_ones_than_zeros = 0;
     int binate_var = find_most_binate(matrix, &more_ones_than_zeros);
 
-    if (binate_var == -1) return 0;
-
-    matrix_t *C0 = co_factor(matrix, binate_var, more_ones_than_zeros ? '0' : '1');
-    if (!check_tautology(C0)) {
-        free_matrix(C0);
+    if (binate_var == -1) {
+        if (oldmat != matrix) free_matrix(matrix);
+        write_depth(depth);
+        write_mem();
         return 0;
     }
 
-    matrix_t *C1 = co_factor(matrix, binate_var, more_ones_than_zeros ? '1' : '0');
-    if (!check_tautology(C1)) {
+    matrix_t *C0 = co_factor(matrix, binate_var, more_ones_than_zeros ? '1' : '0');
+    if (!check_tautology(C0, depth+1)) {
+        if (oldmat != matrix) free_matrix(matrix);
+        free_matrix(C0);
+        write_depth(depth);
+        write_mem();
+        return 0;
+    }
+
+    matrix_t *C1 = co_factor(matrix, binate_var, more_ones_than_zeros ? '0' : '1');
+    if (!check_tautology(C1, depth+1)) {
+        if (oldmat != matrix) free_matrix(matrix);
+        free_matrix(C0);
         free_matrix(C1);
+        write_depth(depth);
+        write_mem();
         return 0;
     }
 
     free_matrix(C0);
     free_matrix(C1);
+    if (oldmat != matrix) free_matrix(matrix);
+    write_depth(depth);
+    write_mem();
 
     return 1;
 }
@@ -217,6 +259,13 @@ int check_tautology(matrix_t *matrix)
 void *heur(void *filename)
 {
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    depth_start_time = 1000000 * tv.tv_sec + tv.tv_usec;
+
+    depth_fp = fopen("/tmp/depth_log.txt", "w");
+    mem_fp = fopen("/tmp/mem_log.txt", "w");
 
     FILE *fp = fopen((const char *)filename, "r");
     if (fp == NULL) {
@@ -231,7 +280,11 @@ void *heur(void *filename)
     fscanf(fp, "%d", &cols);
     fscanf(fp, "%d", &rows);
 
+    write_mem();
+
     matrix_t *matrix = alloc_matrix(rows, cols);
+
+    write_mem();
 
     for (int i = 0; i < matrix->rows; i++) {
         fscanf(fp, "%s", matrix->cubes[i]);
@@ -240,7 +293,14 @@ void *heur(void *filename)
 
     fclose(fp);
 
-    is_tautology = check_tautology(matrix);
+    is_tautology = check_tautology(matrix, 0);
+
+    free_matrix(matrix);
+
+    write_mem();
+
+    fclose(depth_fp);
+    fclose(mem_fp);
 
     fprintf(stderr, "Heur found it\n");
     pthread_cond_signal(&done_signal);
