@@ -8,10 +8,10 @@ HEADERS := $(wildcard *.h)
 
 all: tc cc
 
-tc: tc.o heur.o flags.o shared.o
+tc: tc.o tc_heur.o flags.o shared.o mem_log.o
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
-cc: cc.o shared.o
+cc: cc.o cc_heur.o flags.o shared.o mem_log.o
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
 %.o: %.c $(HEADERS)

@@ -1,6 +1,8 @@
 #ifndef __SHARED_H__
 #define __SHARED_H__
 
+#include <pthread.h>
+
 typedef struct {
     char **cubes;
     int cols;
@@ -10,6 +12,8 @@ typedef struct {
 } matrix_t;
 
 extern char is_tautology;
+extern pthread_mutex_t print_mutex;
+extern pthread_cond_t done_signal;
 
 char whole_row_of(matrix_t *matrix, char value);
 int max(int a, int b);

@@ -4,24 +4,26 @@
 #include <sys/time.h>
 #include <getopt.h>
 #include <pthread.h>
-#include "main.h"
 #include "shared.h"
+#include "flags.h"
+
+char flags_print_missing = 0;
 
 unsigned int num_bits = 0;
 unsigned int num_cubes = 0;
 unsigned int num_flags = 0;
 unsigned int num_flags_set = 0;
 
-char *flags;
+char *flag_bits;
 
 void set_flag(unsigned int i)
 {
-    flags[i >> 3] |= (1 << (i & 7));
+    flag_bits[i >> 3] |= (1 << (i & 7));
 }
 
 char get_flag(unsigned int i)
 {
-    return flags[i >> 3] & (1 << (i & 7));
+    return flag_bits[i >> 3] & (1 << (i & 7));
 }
 
 void print_binary(int number)
@@ -113,13 +115,13 @@ void do_vector(char *vector)
     free(local_vector);
 }
 
-void *flag(void *filename)
+void *flags(void *filename)
 {
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
     FILE *fp = fopen((const char *)filename, "r");
     if (fp == NULL) {
-        printf("Could not open file!\n");
+        fprintf(stderr, "Could not open file!\n");
         pthread_cond_signal(&done_signal);
         return NULL;
     }
@@ -128,8 +130,8 @@ void *flag(void *filename)
     fscanf(fp, "%d", &num_cubes);
 
     num_flags = 2 << (num_bits - 1);
-    flags = (char *)malloc(num_flags >> 3);
-    memset(flags, 0, num_flags >> 3);
+    flag_bits = (char *)malloc(num_flags >> 3);
+    memset(flag_bits, 0, num_flags >> 3);
 
     char *vector = (char *)malloc(num_bits);
 
@@ -137,14 +139,16 @@ void *flag(void *filename)
         fscanf(fp, "%s", vector);
         replace_under_with_dash(vector, num_bits);
         if (all_dash(vector)) {
-            printf("All cases covered\n");
-            pthread_cond_signal(&done_signal);
-            return NULL;
+            pthread_mutex_lock(&print_mutex);
+            is_tautology = 1;
+            break;
         }
         do_vector(vector);
     }
 
-    if (print_missing) {
+    if (flags_print_missing) {
+        pthread_mutex_lock(&print_mutex);
+        fprintf(stderr, "Flags is printing complements\n");
         int num_missing = 0;
         for (unsigned int i = 0; i < num_flags; i++) {
             if (get_flag(i) == 0) {
@@ -152,13 +156,13 @@ void *flag(void *filename)
                 num_missing++;
             }
         }
-        printf("Number of missing covers: %d\n", num_missing);
+        fprintf(stderr, "Number of missing covers: %d\n", num_missing);
     }
+
+    if (num_flags_set >= num_flags) is_tautology = 1;
 
     fprintf(stderr, "Flags found it\n");
     pthread_cond_signal(&done_signal);
-
-    if (num_flags_set >= num_flags) is_tautology = 1;
 
     return NULL;
 }

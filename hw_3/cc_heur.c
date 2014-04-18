@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <pthread.h>
 #include "shared.h"
+#include "cc_heur.h"
 
 #define POS_UNATE 1
 #define NEG_UNATE 2
@@ -191,16 +193,14 @@ matrix_t *check_complement(matrix_t *matrix)
     return return_matrix;
 }
 
-int main(int argc, char *argv[])
+void *heur(void *filename)
 {
-    if (argc < 2) {
-        fprintf(stderr, "Usage: ./main inputfile\n");
-        return 1;
-    }
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
-    FILE *fp = fopen((const char *)argv[1], "r");
+    FILE *fp = fopen((const char *)filename, "r");
     if (fp == NULL) {
         fprintf(stderr, "Could not open file!\n");
+        pthread_cond_signal(&done_signal);
         return 0;
     }
 
@@ -226,11 +226,13 @@ int main(int argc, char *argv[])
 
     matrix_t *complements = check_complement(matrix);
 
-    if (complements->rows == 0) {
-        fprintf(stderr, "Already a tautology\n");
-        return 1;
-    }
+    pthread_mutex_lock(&print_mutex);
+
+    fprintf(stderr, "Heur is printing complements\n");
 
     print_matrix(complements);
-    return 0;
+
+    pthread_cond_signal(&done_signal);
+
+    return NULL;
 }

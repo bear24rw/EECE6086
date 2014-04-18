@@ -5,8 +5,8 @@
 #include <limits.h>
 #include <unistd.h>
 #include <pthread.h>
-#include "main.h"
 #include "shared.h"
+#include "tc_heur.h"
 
 matrix_t *matrix_alloc(int rows, int cols)
 {

@@ -1,9 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
 #include "shared.h"
 
 char is_tautology = 0;
+
+pthread_mutex_t print_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void free_matrix(matrix_t *matrix)
 {
