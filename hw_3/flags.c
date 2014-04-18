@@ -39,7 +39,7 @@ void print_binary(int number)
 
 char all_dash(char *vector)
 {
-    for (int i = 0; i < num_bits; i++) {
+    for (unsigned int i = 0; i < num_bits; i++) {
         if (vector[i] == '1') return 0;
         if (vector[i] == '0') return 0;
     }
@@ -52,7 +52,7 @@ void do_vector(char *vector)
     if (num_flags_set == num_flags) return;
 
     int num_dashes = 0;
-    for (int bit = 0; bit < num_bits; bit++) {
+    for (unsigned int bit = 0; bit < num_bits; bit++) {
         if (num_dashes > 0 && vector[bit] != '-') {
             num_dashes = 0;
             break;
@@ -65,7 +65,7 @@ void do_vector(char *vector)
         unsigned int start_flag = 0;
         unsigned int end_flag = 0;
 
-        for (int bit = 0; bit < num_bits; bit++) {
+        for (unsigned int bit = 0; bit < num_bits; bit++) {
             if (vector[bit] == '1') {
                 start_flag |= (1 << (num_bits - bit - 1));
                 end_flag |= (1 << (num_bits - bit - 1));
@@ -75,7 +75,7 @@ void do_vector(char *vector)
         start_flag &= (~0) << num_dashes;
         end_flag |= ~((~0) << num_dashes);
 
-        for (int i = start_flag; i <= end_flag; i++) {
+        for (unsigned int i = start_flag; i <= end_flag; i++) {
             if (get_flag(i) == 0) {
                 set_flag(i);
                 num_flags_set++;
@@ -90,7 +90,7 @@ void do_vector(char *vector)
     memcpy(local_vector, vector, num_bits);
 
     char has_dash = 0;
-    for (int bit = 0; bit < num_bits; bit++) {
+    for (unsigned int bit = 0; bit < num_bits; bit++) {
         if (vector[bit] == '-') {
             local_vector[bit] = '0';
             do_vector(local_vector);
@@ -103,7 +103,7 @@ void do_vector(char *vector)
 
     if (!has_dash) {
         unsigned int flag_pos = 0;
-        for (int bit = 0; bit < num_bits; bit++)
+        for (unsigned int bit = 0; bit < num_bits; bit++)
             if (local_vector[bit] == '1')
                 flag_pos |= (1 << (num_bits - bit - 1));
         if (get_flag(flag_pos) == 0) {
