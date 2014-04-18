@@ -12,7 +12,7 @@ for cover in `ls benchmarks/*.txt | sort -V`
 do
     i=$((i+1))
     name=`echo $cover | sed 's/benchmarks\///' | sed 's/\.txt//'`
-    echo -e $BOLD$(python -c "print '[$i/$num_tests]'+'$name'.center(70).replace(' ','=')") $WHITE
+    echo -e $BOLD$(python -c "print '$name'.center(70).replace(' ','=')+' [$i/$num_tests]'") $WHITE
 
     ./tc $cover 2> /dev/null
     if [[ $? == 0 ]] ; then
@@ -34,7 +34,6 @@ do
             echo -e $GREEN"Complement is correct!" $WHITE
         else
             echo -e $RED"ERROR complement is wrong" $WHITE
-            break
         fi
     fi
 done
