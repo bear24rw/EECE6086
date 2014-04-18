@@ -14,12 +14,14 @@ unsigned int num_flags_set = 0;
 
 char *flags;
 
-void set_flag(unsigned int i) {
-    flags[i>>3] |= (1 << (i&7));
+void set_flag(unsigned int i)
+{
+    flags[i >> 3] |= (1 << (i & 7));
 }
 
-char get_flag(unsigned int i) {
-    return flags[i>>3] & (1 << (i&7));
+char get_flag(unsigned int i)
+{
+    return flags[i >> 3] & (1 << (i & 7));
 }
 
 void print_binary(int number)
@@ -35,7 +37,7 @@ void print_binary(int number)
 
 char all_dash(char *vector)
 {
-    for (int i=0; i<num_bits; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (vector[i] == '1') return 0;
         if (vector[i] == '0') return 0;
     }
@@ -64,14 +66,14 @@ void do_vector(char *vector)
         for (int bit = 0; bit < num_bits; bit++) {
             if (vector[bit] == '1') {
                 start_flag |= (1 << (num_bits - bit - 1));
-                end_flag   |= (1 << (num_bits - bit - 1));
+                end_flag |= (1 << (num_bits - bit - 1));
             }
         }
 
         start_flag &= (~0) << num_dashes;
-        end_flag   |= ~((~0) << num_dashes);
+        end_flag |= ~((~0) << num_dashes);
 
-        for (int i=start_flag; i<=end_flag; i++) {
+        for (int i = start_flag; i <= end_flag; i++) {
             if (get_flag(i) == 0) {
                 set_flag(i);
                 num_flags_set++;
@@ -113,7 +115,7 @@ void do_vector(char *vector)
 
 void *flag(void *filename)
 {
-    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL);
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
     FILE *fp = fopen((const char *)filename, "r");
     if (fp == NULL) {
@@ -126,8 +128,8 @@ void *flag(void *filename)
     fscanf(fp, "%d", &num_cubes);
 
     num_flags = 2 << (num_bits - 1);
-    flags = (char *)malloc(num_flags>>3);
-    memset(flags, 0, num_flags>>3);
+    flags = (char *)malloc(num_flags >> 3);
+    memset(flags, 0, num_flags >> 3);
 
     char *vector = (char *)malloc(num_bits);
 
@@ -156,8 +158,7 @@ void *flag(void *filename)
     fprintf(stderr, "Flags found it\n");
     pthread_cond_signal(&done_signal);
 
-    if (num_flags_set >= num_flags)
-        is_tautology = 1;
+    if (num_flags_set >= num_flags) is_tautology = 1;
 
     return NULL;
 }

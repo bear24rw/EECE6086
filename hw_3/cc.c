@@ -14,13 +14,13 @@ int find_unate_column(matrix_t *matrix)
 
     int unate_column = -1;
 
-    for (int j=0; j<matrix->cols; j++) {
+    for (int j = 0; j < matrix->cols; j++) {
 
         char has_dash = 0;
         char has_one = 0;
         char has_zero = 0;
 
-        for (int i=0; i<matrix->rows; i++) {
+        for (int i = 0; i < matrix->rows; i++) {
 
             if (matrix->cubes[i][j] == '-') has_dash = 1;
             if (matrix->cubes[i][j] == '1') has_one = 1;
@@ -45,9 +45,8 @@ int find_unate_column(matrix_t *matrix)
 
 void and(matrix_t *matrix, int col, char value)
 {
-    for (int y=0; y<matrix->rows; y++) {
-        if (matrix->cubes[y][col] == '-')
-            matrix->cubes[y][col] = value;
+    for (int y = 0; y < matrix->rows; y++) {
+        if (matrix->cubes[y][col] == '-') matrix->cubes[y][col] = value;
     }
 }
 
@@ -58,17 +57,17 @@ matrix_t *concat(matrix_t *a, matrix_t *b)
     m->cols = max(a->cols, b->cols);
     m->rows = a->rows + b->rows;
     m->alloc_rows = m->rows;
-    m->cubes = (char **)malloc(m->rows*sizeof(char*));
+    m->cubes = (char **)malloc(m->rows * sizeof(char *));
 
     int row = 0;
 
-    for (int i=0; i<a->rows; i++) {
+    for (int i = 0; i < a->rows; i++) {
         m->cubes[row] = (char *)malloc(a->cols);
         memcpy(m->cubes[row], a->cubes[i], a->cols);
         row++;
     }
 
-    for (int i=0; i<b->rows; i++) {
+    for (int i = 0; i < b->rows; i++) {
         m->cubes[row] = (char *)malloc(b->cols);
         memcpy(m->cubes[row], b->cubes[i], b->cols);
         row++;
@@ -76,7 +75,6 @@ matrix_t *concat(matrix_t *a, matrix_t *b)
 
     return m;
 }
-
 
 int find_binate_column(matrix_t *matrix)
 {
@@ -88,23 +86,23 @@ int find_binate_column(matrix_t *matrix)
     int min_num_comps = 0;
     int min_num_trues = 0;
 
-    for (int j=0; j<matrix->cols; j++) {
+    for (int j = 0; j < matrix->cols; j++) {
 
         true_form = 0;
         comp_form = 0;
 
         // total up the number of 1s and 0s in this column
-        for (int i=0; i<matrix->rows; i++) {
+        for (int i = 0; i < matrix->rows; i++) {
             if (matrix->cubes[i][j] == '1') true_form++;
             if (matrix->cubes[i][j] == '0') comp_form++;
         }
 
-        if (true_form == 0 || comp_form == 0)
-            continue;
+        if (true_form == 0 || comp_form == 0) continue;
 
         int difference = abs(true_form - comp_form);
         if ((difference < min_difference) ||
-            (difference == min_difference && (comp_form > min_num_comps || true_form > min_num_trues))) {
+            (difference == min_difference &&
+             (comp_form > min_num_comps || true_form > min_num_trues))) {
             min_difference = difference;
             min_column = j;
             min_num_comps = comp_form;
@@ -115,10 +113,9 @@ int find_binate_column(matrix_t *matrix)
     return min_column;
 }
 
-
 matrix_t *check_complement(matrix_t *matrix)
 {
-    matrix_t *return_matrix  = (matrix_t*)malloc(sizeof(matrix_t));
+    matrix_t *return_matrix = (matrix_t *)malloc(sizeof(matrix_t));
 
     if (whole_row_of(matrix, '-')) {
         return_matrix->rows = 0;
@@ -132,7 +129,7 @@ matrix_t *check_complement(matrix_t *matrix)
         return_matrix->rows = 1;
         return_matrix->alloc_rows = 1;
         return_matrix->cols = matrix->cols;
-        return_matrix->cubes = (char **)malloc(sizeof(char*));
+        return_matrix->cubes = (char **)malloc(sizeof(char *));
         return_matrix->cubes[0] = (char *)malloc(matrix->cols);
         memset(return_matrix->cubes[0], '-', matrix->cols);
         free_matrix(matrix);
@@ -142,7 +139,7 @@ matrix_t *check_complement(matrix_t *matrix)
     if (matrix->rows == 1) {
 
         int num_of_none_dashes = 0;
-        for (int i=0; i<matrix->cols; i++) {
+        for (int i = 0; i < matrix->cols; i++) {
             if (matrix->cubes[0][i] == '0') num_of_none_dashes++;
             if (matrix->cubes[0][i] == '1') num_of_none_dashes++;
         }
@@ -150,10 +147,10 @@ matrix_t *check_complement(matrix_t *matrix)
         return_matrix->cols = matrix->cols;
         return_matrix->rows = num_of_none_dashes;
         return_matrix->alloc_rows = num_of_none_dashes;
-        return_matrix->cubes = (char **)malloc(sizeof(char*));
+        return_matrix->cubes = (char **)malloc(sizeof(char *));
 
         int row = 0;
-        for (int i=0; i<matrix->cols; i++) {
+        for (int i = 0; i < matrix->cols; i++) {
             if (matrix->cubes[0][i] == '-') continue;
 
             return_matrix->cubes[row] = (char *)malloc(matrix->cols);
@@ -212,15 +209,15 @@ int main(int argc, char *argv[])
     fscanf(fp, "%d", &matrix->cols);
     fscanf(fp, "%d", &matrix->rows);
 
-    matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
+    matrix->cubes = (char **)malloc(matrix->rows * sizeof(char *));
 
     matrix->alloc_rows = matrix->rows;
 
-    for (int i=0; i<matrix->rows; i++) {
+    for (int i = 0; i < matrix->rows; i++) {
         matrix->cubes[i] = (char *)malloc(matrix->cols);
     }
 
-    for (int i=0; i<matrix->rows; i++) {
+    for (int i = 0; i < matrix->rows; i++) {
         fscanf(fp, "%s", matrix->cubes[i]);
         replace_under_with_dash(matrix->cubes[i], matrix->cols);
     }
@@ -229,7 +226,7 @@ int main(int argc, char *argv[])
 
     matrix_t *complements = check_complement(matrix);
 
-    if (complements->rows  == 0) {
+    if (complements->rows == 0) {
         fprintf(stderr, "Already a tautology\n");
         return 1;
     }

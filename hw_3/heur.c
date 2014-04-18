@@ -8,13 +8,14 @@
 #include "main.h"
 #include "shared.h"
 
-matrix_t *matrix_alloc(int rows, int cols) {
-    matrix_t *m = (matrix_t*)malloc(sizeof(matrix_t));
+matrix_t *matrix_alloc(int rows, int cols)
+{
+    matrix_t *m = (matrix_t *)malloc(sizeof(matrix_t));
     m->rows = rows;
     m->cols = cols;
     m->alloc_rows = rows;
-    m->cubes = (char **)malloc(rows*sizeof(char*));
-    for (int i=0; i<rows; i++) {
+    m->cubes = (char **)malloc(rows * sizeof(char *));
+    for (int i = 0; i < rows; i++) {
         m->cubes[i] = (char *)malloc(cols);
     }
     return m;
@@ -30,27 +31,26 @@ int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
     int min_num_comps = 0;
     int min_num_trues = 0;
 
-    for (int j=0; j<matrix->cols; j++) {
+    for (int j = 0; j < matrix->cols; j++) {
 
         true_form = 0;
         comp_form = 0;
 
         // total up the number of 1s and 0s in this column
-        for (int i=0; i<matrix->rows; i++) {
+        for (int i = 0; i < matrix->rows; i++) {
             if (matrix->cubes[i][j] == '1') true_form++;
             if (matrix->cubes[i][j] == '0') comp_form++;
         }
 
-        if (true_form == 0 && comp_form == 0)
-            continue;
+        if (true_form == 0 && comp_form == 0) continue;
 
         // special case means its not a tautology
-        if (true_form == matrix->rows || comp_form == matrix->rows)
-            return -1;
+        if (true_form == matrix->rows || comp_form == matrix->rows) return -1;
 
         int difference = abs(true_form - comp_form);
         if ((difference < min_difference) ||
-            (difference == min_difference && (comp_form > min_num_comps || true_form > min_num_trues))) {
+            (difference == min_difference &&
+             (comp_form > min_num_comps || true_form > min_num_trues))) {
             min_difference = difference;
             min_column = j;
             min_num_comps = comp_form;
@@ -72,7 +72,7 @@ void unate_reduction(matrix_t *matrix)
     char *unate_columns = malloc(matrix->cols);
     int num_unate_cols = 0;
 
-    for (int j=0; j<matrix->cols; j++) {
+    for (int j = 0; j < matrix->cols; j++) {
 
         // assume this column is unate
         unate_columns[j] = 1;
@@ -81,10 +81,9 @@ void unate_reduction(matrix_t *matrix)
         char has_one = 0;
         char has_zero = 0;
 
-        for (int i=0; i<matrix->rows; i++) {
+        for (int i = 0; i < matrix->rows; i++) {
 
-            if (matrix->cubes[i][j] != '-')
-                all_dashes = 0;
+            if (matrix->cubes[i][j] != '-') all_dashes = 0;
 
             if (matrix->cubes[i][j] == '1') has_one = 1;
             if (matrix->cubes[i][j] == '0') has_zero = 1;
@@ -99,7 +98,7 @@ void unate_reduction(matrix_t *matrix)
         // if whole column is dashes we dont mark it as unate
         if (all_dashes) unate_columns[j] = 0;
 
-        if (unate_columns[j])  {
+        if (unate_columns[j]) {
             num_unate_cols++;
         }
     }
@@ -117,7 +116,7 @@ void unate_reduction(matrix_t *matrix)
     char *keep_rows = malloc(matrix->rows);
     int num_rows = 0;
 
-    for (int i=0; i<matrix->rows; i++) {
+    for (int i = 0; i < matrix->rows; i++) {
 
         // assume all unate columns have dash unless proven otherwise
         char all_dash = 1;
@@ -126,7 +125,7 @@ void unate_reduction(matrix_t *matrix)
         keep_rows[i] = 0;
 
         // check that all unate columns in this row are '-'
-        for (int j=0; j<matrix->cols; j++) {
+        for (int j = 0; j < matrix->cols; j++) {
             if (!unate_columns[j]) continue;
             if (matrix->cubes[i][j] != '-') {
                 all_dash = 0;
@@ -155,26 +154,24 @@ void unate_reduction(matrix_t *matrix)
     temp_matrix->rows = num_rows;
     temp_matrix->cols = matrix->cols - num_unate_cols;
     temp_matrix->alloc_rows = num_rows;
-    temp_matrix->cubes = (char **)malloc(num_rows*sizeof(char*));
+    temp_matrix->cubes = (char **)malloc(num_rows * sizeof(char *));
 
-    for (int i=0; i<num_rows; i++) {
+    for (int i = 0; i < num_rows; i++) {
         temp_matrix->cubes[i] = (char *)malloc(matrix->cols - num_unate_cols);
     }
 
-
     int row = 0;
     int col = 0;
-    for (int i=0; i<matrix->rows; i++) {
+    for (int i = 0; i < matrix->rows; i++) {
         if (!keep_rows[i]) continue;
         col = 0;
-        for (int j=0; j<matrix->cols; j++) {
+        for (int j = 0; j < matrix->cols; j++) {
             if (unate_columns[j]) continue;
             temp_matrix->cubes[row][col] = matrix->cubes[i][j];
             col++;
         }
         row++;
     }
-
 
     free(keep_rows);
     free(unate_columns);
@@ -184,7 +181,7 @@ void unate_reduction(matrix_t *matrix)
     return;
 }
 
-//http://cc.ee.ntu.edu.tw/~jhjiang/instruction/courses/fall10-lsv/lec03-2_2p.pdf
+// http://cc.ee.ntu.edu.tw/~jhjiang/instruction/courses/fall10-lsv/lec03-2_2p.pdf
 int check_tautology(matrix_t *matrix)
 {
     /*
@@ -202,8 +199,7 @@ int check_tautology(matrix_t *matrix)
     // check to see if we have run out of cubes
     if (matrix->rows == 0) return 0;
 
-    if (matrix->rows == 1 && !whole_row_of(matrix, '-'))
-        return 0;
+    if (matrix->rows == 1 && !whole_row_of(matrix, '-')) return 0;
 
     unate_reduction(matrix);
 
@@ -218,14 +214,16 @@ int check_tautology(matrix_t *matrix)
 
     if (binate_var == -1) return 0;
 
-    matrix_t *C0 = co_factor(matrix, binate_var, more_ones_than_zeros ? '0' : '1');
-    if (!check_tautology(C0)){
+    matrix_t *C0 =
+        co_factor(matrix, binate_var, more_ones_than_zeros ? '0' : '1');
+    if (!check_tautology(C0)) {
         free_matrix(C0);
         return 0;
     }
 
-    matrix_t *C1 = co_factor(matrix, binate_var, more_ones_than_zeros ? '1' : '0');
-    if (!check_tautology(C1)){
+    matrix_t *C1 =
+        co_factor(matrix, binate_var, more_ones_than_zeros ? '1' : '0');
+    if (!check_tautology(C1)) {
         free_matrix(C1);
         return 0;
     }
@@ -238,7 +236,7 @@ int check_tautology(matrix_t *matrix)
 
 void *heur(void *filename)
 {
-    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL);
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
     FILE *fp = fopen((const char *)filename, "r");
     if (fp == NULL) {
@@ -252,15 +250,15 @@ void *heur(void *filename)
     fscanf(fp, "%d", &matrix->cols);
     fscanf(fp, "%d", &matrix->rows);
 
-    matrix->cubes = (char **)malloc(matrix->rows*sizeof(char*));
+    matrix->cubes = (char **)malloc(matrix->rows * sizeof(char *));
 
     matrix->alloc_rows = matrix->rows;
 
-    for (int i=0; i<matrix->rows; i++) {
+    for (int i = 0; i < matrix->rows; i++) {
         matrix->cubes[i] = (char *)malloc(matrix->cols);
     }
 
-    for (int i=0; i<matrix->rows; i++) {
+    for (int i = 0; i < matrix->rows; i++) {
         fscanf(fp, "%s", matrix->cubes[i]);
         replace_under_with_dash(matrix->cubes[i], matrix->cols);
     }
