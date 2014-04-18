@@ -11,16 +11,13 @@ pthread_mutex_t print_mutex = PTHREAD_MUTEX_INITIALIZER;
 void free_matrix(matrix_t *matrix)
 {
     if (matrix == NULL) return;
-    printf("freeing matrix: %d %d (alloced rows: %d) (ptr: %p)\n", matrix->rows, matrix->cols, matrix->alloc_rows, matrix);
+    if (matrix->cubes == NULL) return;
     for (int i = 0; i < matrix->alloc_rows; i++) {
         if (matrix->cubes[i] == NULL) printf("WTF rows: %d alloc_rows: %d\n", matrix->rows, matrix->alloc_rows);
-        printf("freeing: %d\n", i);
         free(matrix->cubes[i]);
     }
-    printf("freeing cube double pointer\n");
     free(matrix->cubes);
-    printf("freeing matrix\n");
-    free(matrix);
+    matrix->cubes = NULL;
 }
 
 matrix_t *alloc_matrix(int rows, int cols)
@@ -33,7 +30,6 @@ matrix_t *alloc_matrix(int rows, int cols)
     for (int i = 0; i < rows; i++) {
         m->cubes[i] = (char *)malloc(cols);
     }
-    printf("alloced matrix %d %d (ptr: %p)\n", rows, cols, m);
     return m;
 }
 

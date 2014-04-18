@@ -58,6 +58,9 @@ matrix_t *unate_reduction(matrix_t *matrix)
     // Find the unate columns
     //
 
+    //printf("reducing:\n");
+    //print_matrix(matrix);
+
     char *unate_columns = malloc(matrix->cols);
     int num_unate_cols = 0;
 
@@ -85,7 +88,7 @@ matrix_t *unate_reduction(matrix_t *matrix)
         }
 
         // if whole column is dashes we dont mark it as unate
-        if (all_dashes) unate_columns[j] = 0;
+        if (all_dashes) unate_columns[j] = 1;
 
         if (unate_columns[j]) {
             num_unate_cols++;
@@ -153,7 +156,14 @@ matrix_t *unate_reduction(matrix_t *matrix)
         row++;
     }
 
-    if (row != num_rows) printf("ERERERR: row %d num_rows %d\n", row, num_rows);
+    /*
+    printf("Reduced %d %d (ptr: %p) to %d %d (ptr: %p)\n",
+            matrix->rows, matrix->cols, matrix,
+            temp_matrix->rows, temp_matrix->cols, temp_matrix);
+
+    printf("new matrix:\n");
+    print_matrix(temp_matrix);
+    */
 
     free(keep_rows);
     free(unate_columns);
@@ -165,6 +175,9 @@ matrix_t *unate_reduction(matrix_t *matrix)
 // http://cc.ee.ntu.edu.tw/~jhjiang/instruction/courses/fall10-lsv/lec03-2_2p.pdf
 int check_tautology(matrix_t *matrix)
 {
+    //printf("checking matrix:\n");
+    //print_matrix(matrix);
+
     // check to see if we have run out of cubes
     if (matrix->rows == 0) return 0;
 
@@ -185,21 +198,16 @@ int check_tautology(matrix_t *matrix)
 
     matrix_t *C0 = co_factor(matrix, binate_var, more_ones_than_zeros ? '0' : '1');
     if (!check_tautology(C0)) {
-        //free_matrix(matrix);
-        printf("freeing not taut C0 (%p)\n", C0);
         free_matrix(C0);
         return 0;
     }
 
     matrix_t *C1 = co_factor(matrix, binate_var, more_ones_than_zeros ? '1' : '0');
     if (!check_tautology(C1)) {
-        //free_matrix(matrix);
-        printf("freeing not taut C1 (%p)\n", C1);
         free_matrix(C1);
         return 0;
     }
 
-    printf("freeing C0 C1 (%p)(%p)\n", C0, C1);
     free_matrix(C0);
     free_matrix(C1);
 

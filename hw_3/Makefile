@@ -1,8 +1,7 @@
 CC = gcc
-CFLAGS = -std=c99 -Wall -g -pg -Wno-unused-result
+CFLAGS = -std=c99 -Wall -g -pg -Ofast -Wno-unused-result
 LIBS = -lm -lpthread
 
-BINARY := main
 SOURCES := $(wildcard *.c)
 HEADERS := $(wildcard *.h)
 
@@ -18,7 +17,7 @@ cc: cc.o cc_heur.o flags.o shared.o mem_log.o
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -fr *.o tc cc benchmarks/*.{log,tmp,png,jpg}
+	rm -fr *.o tc cc benchmarks/*.{log,tmp,png,jpg,mem}
 
 #
 # BENCHMARKS
@@ -35,10 +34,10 @@ BENCHMARKS_BIG_PNG = $(patsubst %.txt, %.png, $(BENCHMARKS_BIG))
 benchmarks: $(BENCHMARKS_LOG)
 benchmarks_big: $(BENCHMARKS_BIG)
 
-benchmarks/%.log: benchmarks/%.txt $(BINARY)
-	(time -v ./main $<) &> $@.tmp && mv $@.tmp $@ #&& mv /tmp/mem_log.txt $@.mem
-	#(time -v ./main -h $<) &> $@.tmp && mv $@.tmp $@.heur && mv /tmp/mem_log.txt $@.heur.mem
-	#(time -v ./main -f $<) &> $@.tmp && mv $@.tmp $@.flag && mv /tmp/mem_log.txt $@.flag.mem
+benchmarks/%.log: benchmarks/%.txt tc
+	-(time -v ./tc -h $<) &> $@.tmp && mv $@.tmp $@ #&& mv /tmp/mem_log.txt $@.mem
+	#(time -v ./tc -h $<) &> $@.tmp && mv $@.tmp $@.heur && mv /tmp/mem_log.txt $@.heur.mem
+	#(time -v ./tc -f $<) &> $@.tmp && mv $@.tmp $@.flag && mv /tmp/mem_log.txt $@.flag.mem
 
 pngs: $(BENCHMARKS_PNG)
 
