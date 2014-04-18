@@ -5,7 +5,7 @@
 #include <getopt.h>
 #include "mem_log.h"
 #include "shared.h"
-#include "flag.h"
+#include "flags.h"
 #include "tc_heur.h"
 
 pthread_cond_t done_signal = PTHREAD_COND_INITIALIZER;
