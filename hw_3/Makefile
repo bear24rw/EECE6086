@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99 -Wall -g -pg -Ofast -Wno-unused-result
+CFLAGS = -std=c99 -Wall -g -pg -Wno-unused-result
 LIBS = -lm -lpthread
 
 BINARY := main

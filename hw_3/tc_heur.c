@@ -8,19 +8,6 @@
 #include "shared.h"
 #include "tc_heur.h"
 
-matrix_t *matrix_alloc(int rows, int cols)
-{
-    matrix_t *m = (matrix_t *)malloc(sizeof(matrix_t));
-    m->rows = rows;
-    m->cols = cols;
-    m->alloc_rows = rows;
-    m->cubes = (char **)malloc(rows * sizeof(char *));
-    for (int i = 0; i < rows; i++) {
-        m->cubes[i] = (char *)malloc(cols);
-    }
-    return m;
-}
-
 int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
 {
     int comp_form = 0;
@@ -64,7 +51,7 @@ int find_most_binate(matrix_t *matrix, char *more_ones_than_zeros)
     return min_column;
 }
 
-void unate_reduction(matrix_t *matrix)
+matrix_t *unate_reduction(matrix_t *matrix)
 {
 
     //
@@ -108,7 +95,7 @@ void unate_reduction(matrix_t *matrix)
     // if we didn't find any unate columns we are done
     if (num_unate_cols == 0) {
         free(unate_columns);
-        return;
+        return matrix;
     }
 
     //
@@ -144,23 +131,14 @@ void unate_reduction(matrix_t *matrix)
     if (num_rows == 0) {
         free(unate_columns);
         free(keep_rows);
-        return;
+        return matrix;
     }
 
     //
     // Move the submatrix in the bottom right to the top left of its own matrix
     //
 
-    matrix_t *temp_matrix = (matrix_t *)malloc(sizeof(matrix_t));
-
-    temp_matrix->rows = num_rows;
-    temp_matrix->cols = matrix->cols - num_unate_cols;
-    temp_matrix->alloc_rows = num_rows;
-    temp_matrix->cubes = (char **)malloc(num_rows * sizeof(char *));
-
-    for (int i = 0; i < num_rows; i++) {
-        temp_matrix->cubes[i] = (char *)malloc(matrix->cols - num_unate_cols);
-    }
+    matrix_t *temp_matrix = alloc_matrix(num_rows, matrix->cols - num_unate_cols);
 
     int row = 0;
     int col = 0;
@@ -175,35 +153,24 @@ void unate_reduction(matrix_t *matrix)
         row++;
     }
 
+    if (row != num_rows) printf("ERERERR: row %d num_rows %d\n", row, num_rows);
+
     free(keep_rows);
     free(unate_columns);
+    free_matrix(matrix);
 
-    matrix = temp_matrix;
-
-    return;
+    return temp_matrix;
 }
 
 // http://cc.ee.ntu.edu.tw/~jhjiang/instruction/courses/fall10-lsv/lec03-2_2p.pdf
 int check_tautology(matrix_t *matrix)
 {
-    /*
-     positive cofactor (x = 1):
-     [..1..] => remove from minterm from cube
-     [..0..] => replace minterm with don't care (-)
-     [..-..] => leave cube alone
-
-     negative cofactor (x = 0):
-     [..0..] => remove from minterm from cube
-     [..1..] => replace minterm with don't care (-)
-     [..-..] => leave cube alone
-    */
-
     // check to see if we have run out of cubes
     if (matrix->rows == 0) return 0;
 
     if (matrix->rows == 1 && !whole_row_of(matrix, '-')) return 0;
 
-    unate_reduction(matrix);
+    matrix = unate_reduction(matrix);
 
     // check for special case
     if (whole_row_of(matrix, '-')) {
@@ -216,20 +183,23 @@ int check_tautology(matrix_t *matrix)
 
     if (binate_var == -1) return 0;
 
-    matrix_t *C0 =
-        co_factor(matrix, binate_var, more_ones_than_zeros ? '0' : '1');
+    matrix_t *C0 = co_factor(matrix, binate_var, more_ones_than_zeros ? '0' : '1');
     if (!check_tautology(C0)) {
+        //free_matrix(matrix);
+        printf("freeing not taut C0 (%p)\n", C0);
         free_matrix(C0);
         return 0;
     }
 
-    matrix_t *C1 =
-        co_factor(matrix, binate_var, more_ones_than_zeros ? '1' : '0');
+    matrix_t *C1 = co_factor(matrix, binate_var, more_ones_than_zeros ? '1' : '0');
     if (!check_tautology(C1)) {
+        //free_matrix(matrix);
+        printf("freeing not taut C1 (%p)\n", C1);
         free_matrix(C1);
         return 0;
     }
 
+    printf("freeing C0 C1 (%p)(%p)\n", C0, C1);
     free_matrix(C0);
     free_matrix(C1);
 
@@ -247,18 +217,13 @@ void *heur(void *filename)
         return NULL;
     }
 
-    matrix_t *matrix = (matrix_t *)malloc(sizeof(matrix_t));
+    int rows = 0;
+    int cols = 0;
 
-    fscanf(fp, "%d", &matrix->cols);
-    fscanf(fp, "%d", &matrix->rows);
+    fscanf(fp, "%d", &cols);
+    fscanf(fp, "%d", &rows);
 
-    matrix->cubes = (char **)malloc(matrix->rows * sizeof(char *));
-
-    matrix->alloc_rows = matrix->rows;
-
-    for (int i = 0; i < matrix->rows; i++) {
-        matrix->cubes[i] = (char *)malloc(matrix->cols);
-    }
+    matrix_t *matrix = alloc_matrix(rows, cols);
 
     for (int i = 0; i < matrix->rows; i++) {
         fscanf(fp, "%s", matrix->cubes[i]);
@@ -268,8 +233,6 @@ void *heur(void *filename)
     fclose(fp);
 
     is_tautology = check_tautology(matrix);
-
-    free_matrix(matrix);
 
     fprintf(stderr, "Heur found it\n");
     pthread_cond_signal(&done_signal);

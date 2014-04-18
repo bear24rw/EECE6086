@@ -21,5 +21,6 @@ void free_matrix(matrix_t *matrix);
 void print_matrix(matrix_t *matrix);
 void replace_under_with_dash(char *cube, int num_cols);
 matrix_t *co_factor(matrix_t *matrix, int column, char pc);
+matrix_t *alloc_matrix(int rows, int cols);
 
 #endif
