@@ -25,7 +25,12 @@
 \usepackage{amsmath}
 \usepackage[table]{xcolor}
 
-\rowcolors{2}{gray!25}{white}
+\rowcolors{1}{white}{gray!25}
+
+\usepackage{etoolbox}
+\makeatletter
+\preto\tabular{\global\rownum=\z@}
+\makeatother
 
 \parskip = 0.5\baselineskip
 \setlength{\belowcaptionskip}{-\baselineskip}
@@ -42,9 +47,9 @@
 \renewcommand\footrulewidth{0.4pt}
 
 % make verbatim text small
-\makeatletter
-\g@addto@macro\@verbatim\tiny
-\makeatother
+%\makeatletter
+%\g@addto@macro\@verbatim\tiny
+%\makeatother
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
@@ -83,6 +88,22 @@
 
 \newcommand{\specialcell}[2][c]{\textbf{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}}
 
+\newcommand{\putplot}[3]{
+    \begin{figure}
+        \centering
+        \begin{minipage}{.5\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{#2}
+            \captionof{figure}{TC: #1}
+        \end{minipage}%
+        \begin{minipage}{.5\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{#3}
+            \captionof{figure}{CC: #1}
+        \end{minipage}
+    \end{figure}
+}
+
 \title{
     \vspace{2in}
     \textmd{\textbf{EECE6086 - HW 3}}\\
@@ -99,26 +120,47 @@ The objective of this lab is to implement an algorithm based on the unate
 recursive paradigm (URP) which uses a heuristic called \texttt{BINATE\_SELECT}
 to choose a variable in the recursive Shannon expansion. Therefore, given a
 cover \texttt{F}, we must determine if the cover is a \texttt{tautology} or
-not. If cover, \texttt{F} is not found to be a \texttt{tautology} then we must
+not. If cover \texttt{F} is found to not be a \texttt{tautology} then we must
 perform an algorithm (the complement) to find the missing covers in order to
 make the cover a tautology.
 
 \section{Implementation Details}
 
     \subsection{Tautology Checking}
-        \subsubsection{Unate Reduction}
-        In order to check if the given cover is a tautology we check for a few
-        special cases:
+
+        We implemented two main algorithms to perform the tautology checking:
+        the standard heuristic unate reduction method, and a brute force
+        enumeration method which sets a flag for every unique cube that it
+        comes across in the input file. These algorithms are referred to in
+        this project as Heur (Heuristic) and Flags respectively.
+
+        We run these two algorithms in parallel using two seperate threads. The
+        main thread then waits for one of the two algorithms to complete after
+        which it terminates the losing algorithms thread. As we will see in the
+        results section the flags algorithm is usually faster in determining if
+        the cover is a tautology whereas the heuristic algorithm is faster at
+        determining that the cover is \textbf{not} a tautology.
+
+
+        \subsubsection{Unate Reduction (Heur)}
+
+        The algorithm starts off by reading the whole input cover file into a
+        matrix, which is implemented as an array of char arrays. The whole
+        matrix is then passed into the recursive
+        \texttt{check\_tautology(matrix)} function.
+
+        We then check for the following two cases
+
         \begin{itemize}
-            \item If a cube (minterm) in the given function (tautology) has all
-                  don't cares, it is found to be a tautology,
-            \item If a column is all unate, it is found to be not a tautology,
-            \item If the total number of minterms is less than $2^{n}$, then the
-                  cover is not a tautology.
+            \item If there are no rows in the matrix its \textbf{not} a tautology
+            \item If there is a row of all dashes in the matrix it is a tautology.
+            \item If there is only one row left and it is not all dashes its \textbf{not} a tautology
         \end{itemize}
-        If our tautology does not cover any of the special cases as described
-        above then we go ahead and perform unate reduction. During this process
-        we must rearrange the cover so that the input matrix is in this form:
+
+        If our cube list does not fit any of the special cases as described
+        above we then perform unate reduction. During this process we rearrange
+        the cover so that the input matrix is in this form:
+
         $$
         F =
         \rowcolors{2}{white}{white}
@@ -127,177 +169,303 @@ make the cover a tautology.
             D & F2
         \end{bmatrix}
         $$
+
         Where \texttt{U} are the unate columns and \texttt{D} is a matrix of
-        all don't cares. Once we have reduced all the unate columns (if there
-        were any) then we checked to see if we had any cubes with all don't
-        cares. We then try to find the most binate column. We do this because
-        we would like to find the variable that is most dependent, meaning that
-        all other variables depend heavily on this variable. This makes it
-        easier to eliminate cubes and terminate the program faster. After
-        selecting the most binate variable, we are now ready to cofactor
+        all don't cares. In reality we simply mark each column and row that
+        fits into the F2 quadrant and then allocate a new matrix that just has
+        those values it in.
+
+        Once we have reduced all the unate columns (if there were any) we again
+        check to see if there are any cubes with all don't cares which would
+        indicate a tautology.
+
+        We then try to find the most binate column which will tell us the
+        variable that is most dependent, meaning that all other variables
+        depend heavily on this variable. If it turns out there are no binate
+        columns this means this matrix is not a tautology so we can return
+        immediately.
+
+        After finding the most binate variable, we are now ready to cofactor
         (Shannon expansion). We do this by following this simple boolean
-        equation: $ F = x*F_{x} + \bar{x}*\bar{F}_{\bar{x}} $
+        equation: $ F = x*F_{x} + \bar{x}*\bar{F}_{\bar{x}} $. The two new
+        matrixes are then sent back into \texttt{check\_tautology(matrix)} and
+        the results checked to see if they are both tautologies. If they are
+        both tautologies we can say that the original input matrix is also a
+        tautology.
 
-    \subsection{Data Structures}
-        \subsubsection{Tautology}
-        \subsubsection{Complement}
+        All matrixes are stored in a single structure type called
+        \texttt{matrix\_t} which contains a dynamically allocated array of
+        arrays to hold the variables of each cube. We also store the number of
+        rows and columns so that we can loop through the matrix with known
+        bounds.
 
-\section{Work Division}
+        \subsubsection{Cube Enumeration (Flags)}
 
-        %\begin{figure}[H]
-        %    \centering
-        %    \includegraphics{./square_f.png}
-        %    \caption{Squareness Function}
-        %\end{figure}
+        Each cube in the cover file is converted into an index value into an
+        array of flags. For instance the input cube \texttt{1011} would set
+        flag number 11. If the cube has don't cares we recursively create the
+        other cubes. First instance the input cube \texttt{1--0} would first
+        generate \texttt{10-0} and \texttt{11-0} and then it would recurse
+        sending in those new cubes.  Once there are no don't cares in the cube
+        it computes the flag index by treating the cube as a binary number.
 
-        %\begin{figure}[H]
-        %    \centering
-        %    \includegraphics[width=\linewidth, height=2in, keepaspectratio]{../benchmarks/10_placement_0_start.jpg}
-        %    \caption{Original}
-        %\end{figure}
-        %\begin{figure}[H]
-        %    \centering
-        %    \includegraphics[width=\linewidth, height=2in, keepaspectratio]{../benchmarks/10_placement_1_force.jpg}
-        %    \caption{Force Directed}
-        %\end{figure}
+        We also check for the special case of cubes with don't cares only at
+        the end. For instance, with the cube \texttt{10---} we know this covers
+        all flags between \texttt{10000} and \texttt{10111} so we can skip the
+        recursion and just set that range of flags immediately.
 
+        If we find that we have set $ 2^n $ new flags, where \texttt{n} is the
+        number of variables in the cube, we know we have a tautology and we can
+        exit immediately. If we have checked all cubes in the cover file and
+        the number of flags set is less than $2^n$ we know that we do not have
+        a tautology.
+
+        The flags list is represented by a \texttt{char} array where each bit
+        represents a flag. This allows for a constant initial allocation of
+        $(2^n)/8$ bytes, where \texttt{n} is the number of variables in the
+        cube. While this allocation size scales exponentially, and will not
+        support increasingly large number of variables, for our covers, which
+        have at most 30 variables (resulting in a 134MB array) it is
+        acceptable.
+
+    \subsection{Complement}
+
+        Like the tautology checker, we use two competing algorithms in order to
+        more quickly find the complement of a given cover file, the standard
+        heuristic method and the enumerated cubes method.
+
+        \subsubsection{Heuristic}
+            The heuristic method is pretty similar to the heuristic method in the
+            tautology checker and starts by reading the whole input cover file into
+            a matrix. It then sends the matrix to the recursive
+            \texttt{check\_complement(matrix)} function which performs the following
+            initial checks:
+
+            \begin{itemize}
+                \item If there is a row of all dashes we return an empty matrix with zero rows
+                \item If there are no rows in the matrix we return a matrix with a single row of all dont cares.
+                \item If there is only one row left we create a new matrix that has the complement.
+            \end{itemize}
+
+            The complement is performed by assigning each value (other than don't
+            care) to its own row and with the opposite polarity.
+
+            \begin{verbatim}
+                            0------
+                            -1-----
+            10-11-0   =>    ---0---
+                            ----0--
+                            ------1
+            \end{verbatim}
+
+            If none of the above three conditions are satisfied we continue by
+            trying to find the most binate column.  If it turns out there are no
+            binate column we simply choose a unate column. We then positively and
+            negatively \texttt{co\_factor} our matrix and send it back into
+            \texttt{check\_complement(matrix)}. Once
+            \texttt{check\_complement(matrix)} returns we have two new positive and
+            negative matrices. We then need to restore the binate or unate column
+            we chose before. If we had chosen a positive unate column we set all
+            variables in that column of the negative matrix to 0. If we had chosen
+            a negative unate column we set all the variables in that column of the
+            positive matrix to 1. If we had chosen a binate column we do both.
+
+            We then concatentate the positive and negative matrices together and
+            return this new matrix.
+
+        \subsubsection{Flags}
+
+            The flags algorithm, described in the tautology checking section,
+            has the ability to immediately provide us with the missing cubes as
+            soon as it finishes processing each line of the cover file. As we
+            will see in the results section, the flags algorithm is always
+            faster than the heuristic algorithm at providing the full list of
+            missing cubes. The main disadvantage, however, is that is does not
+            coalesce adjacent cubes to form don't care variables. For instance
+            the heuristic algorithm might provide two missing cubes as
+            \texttt{0-10} where as the flags algorithm will provide each cube
+            separately, \texttt{0010} and \texttt{0100}. Choosing which
+            algorithm to use is a matter of time space trade off. The flags
+            algorithm will complete faster but return more cubes while the
+            heuristic algorithm will be slower but return much less cubes. If
+            you have the disk space to store the un coalesced cubes the flags
+            algorithm seems to be the way to go.
 
 \newpage
 \section{Usage}
 
-Building is accomplished via a \texttt{Makefile} which generates an executable
-names \texttt{main}. Additional build opions are shown below.
+Building is accomplished via a \texttt{Makefile} which generates two separate
+executables \texttt{tc} and \texttt{cc}. Additional build options are shown
+below.
 
 \begin{lstlisting}[language=bash]
-$ make              # regular build
-$ make clang        # builds using clang++ instead of g++
-$ make debug        # enable debug printfs
+$ make              # build both tautology checker (tc) and complement checker (cc)
+$ make tc           # only builds tc
+$ make cc           # only builds cc
 $ make clean        # removes all binaries, object files, and benchmark results
 $ make benchmarks   # runs all the benchmarks in the 'benchmark' directory
-$ make pngs         # converts all the benchmark .svg files to .png
-$ make jpgs         # converts all the .png files to reduced resolution .jpg files
+$ make pngs         # generate memory and recursion depth plots from the benchmark results
 \end{lstlisting}
 
-The program accepts a single argument which is a file containing the netlist
-formatted as specified in the assignment. All log and debug output is printed
-to \texttt{stdout} and the output .mag and .svg files are named the same as the
-input file.
+Both \texttt{tc} and \texttt{cc} accept 3 optional flags and as well as the
+input file name.  By default both algorithms (heuristic and flags) are run in
+competition mode and the program will exit as soon as one of them finishes. If
+you wish to run only the heuristic method or only the flags method you can
+specify \texttt{-h} or \texttt{-f} respectively. Additionally, there is a built
+in memory and recursion depth sampling profiler which will log to
+\texttt{/tmp/mem.log} and \texttt{/tmp/dep.log}.
 
+Optional flags and example usage of the tautology checker is shown below.
 \begin{lstlisting}[language=bash]
-$ ./main benchmark/1 > benchmark/1.log
-$ ls benchmark/1.*
-benchmarks/1.log  benchmarks/1.mag benchmarks/1.svg
+$ ./tc
+Usage: ./tc [flags] inputfile
+       -f  Only run flags algorithm
+       -h  Only run heuristic algorithm
+       -m  Log memory and recursion depth usage to /tmp/mem.log and /tmp/dep.log
+
+$ ./tc benchmarks/Cover3_8_250.txt
+Using algorithms:  flag heur
+Flags found it
+Waiting for threads to join
+Function is a tautololgy
+
+$ ./cc benchmarks/Cover2_8_100.txt
+Using algorithms:  flag heur
+Flags is printing complements
+00001011
+00011011
+00111011
+01011011
+01011111
+01101001
+01101101
+11000111
+Number of missing covers: 8
+Flags found it
+Waiting for threads to join
+
 \end{lstlisting}
 
-\section{Results}
+There is also a \texttt{test.sh} script that will run \texttt{tc} against all
+benchmarks in the \texttt{./benchmarks/} folder. If \texttt{tc} indicates they
+are not a tautology, \texttt{cc} is run to generate the missing covers. It then
+concats the orginal benchmark and the new covers into a new file, updates the
+number of rows, and re runs \texttt{tc} to ensure that we now have all the
+missing covers.
 
-    \subsubsection{Performance}
-    \begin{table}[H]
-        \centering
-        \begin{tabular}{l|c|c|c|l}
-            \toprule
-            %\textbf{Benchmark} & \textbf{Tautology} & \textbf{Execution Time (s)} & \textbf{Memory} & \textbf{Algorithm Used} \\
-            \specialcell{Benchmark} & \specialcell{Tautology} & \specialcell{Execution\\Time(s)} & \specialcell{Memory} & \specialcell{Algorithm\\Used} \\
-            \midrule
-            Cover1\_8\_10           & NO                      &                                  &                      & Heuristic Method \\
-            Cover2\_8\_100          & NO                      &                                  &                      & Flags Method     \\
-            Cover3\_8\_250          & YES                     &                                  &                      & Flags Method     \\
-            Cover4\_15\_1000        & NO                      &                                  &                      & Heuristic Method \\
-            Cover5\_15\_10000       & YES                     &                                  &                      & Flags Method     \\
-            Cover6\_15\_30000       & YES                     &                                  &                      & Flags Method     \\
-            Cover7\_20\_10000       & NO                      &                                  &                      & Heuristic Method \\
-            Cover8\_20\_100000      & YES                     &                                  &                      & Flags Method     \\
-            Cover9\_20\_1000000     & YES                     &                                  &                      & Flags Method     \\
-            Cover\_25\_100000       & NO                      &                                  &                      & Heuristic Method \\
-            Cover\_25\_1000000      & YES                     &                                  &                      & Flags Method     \\
-            Cover\_25\_10000000     & YES                     &                                  &                      & Flags Method     \\
-            Cover\_30\_1000000      & NO                      &                                  &                      & Heuristic Method \\
-            Cover\_30\_10000000     &                         &                                  &                      & \\
-            Cover\_30\_100000000    &                         &                                  &                      & \\
-            \bottomrule
-        \end{tabular}
-        \caption{Execution time and memory for each run of cc and tc}
-    \end{table}
-
-    %probably just change everything so that we run each cover with both
-    %programs because maybe it takes like 7 seconds to determine that
-    %the cover is a tautology, but then again why do we have to
-    %implement tc and cc if cc does both, i don't know...
-    \textit{Note: If the cover was found to be not a tautology, the
-        complement algorithm was run, therefore column two conveys whether
-        cc or tc was run. For example, in Row 1, we see that the cover is
-        not a tautology, therefore the execution time and memory used takes
-        in account for both cc and tc, whereas for \texttt{Cover3\_8\_250},
-        it was found to be a tautology so the data reflects only for the tc
-        program.}
-
-    %\begin{table}[H]
-    %    \centering
-    %    \begin{tabular}{ccccccccc}
-    %        \toprule
-    %        \textbf{Benchmark} &
-    %        \specialcell{Box X} & \specialcell{Box Y} & \specialcell{Box Area} &
-    %        \specialcell{\# FTs} & \specialcell{Wirelength} & \specialcell{\# Vias} &
-    %        \specialcell{Execution Time} & \specialcell{Memory Usage}\\
-    %        \midrule
-    %        \phantom{0}1 & \phantom{00}82 & \phantom{00}76 & \phantom{000}6232 & \phantom{00}17 & \phantom{00}1093 & \phantom{0}112 & 0.009873s & \phantom{0}296 kB \\
-    %        \phantom{0}2 & \phantom{0}127 & \phantom{0}129 & \phantom{00}16383 & \phantom{00}50 & \phantom{00}2547 & \phantom{0}270 & 0.021806s & \phantom{0}340 kB \\
-    %        \phantom{0}3 & \phantom{0}191 & \phantom{0}175 & \phantom{00}33425 & \phantom{0}112 & \phantom{00}6114 & \phantom{0}562 & 0.044696s & \phantom{0}424 kB \\
-    %        \phantom{0}4 & \phantom{0}317 & \phantom{0}252 & \phantom{00}79884 & \phantom{0}213 & \phantom{0}14108 & \phantom{}1126 & 0.111609s & \phantom{0}588 kB \\
-    %        \phantom{0}5 & \phantom{0}486 & \phantom{0}403 & \phantom{0}195858 & \phantom{0}464 & \phantom{0}41469 & \phantom{}2336 & 0.384445s & \phantom{0}916 kB \\
-    %        \phantom{0}6 & \phantom{0}602 & \phantom{0}513 & \phantom{0}308826 & \phantom{0}685 & \phantom{0}70536 & \phantom{}3322 & 0.670760s & \phantom{}1204 kB \\
-    %        \phantom{0}7 & \phantom{}1110 & \phantom{}1130 & \phantom{}1254300 & \phantom{}1738 & \phantom{}443767 & \phantom{}5448 & 1.581445s & \phantom{}1512 kB \\
-    %        \phantom{0}8 & \phantom{0}437 & \phantom{0}333 & \phantom{0}145521 & \phantom{0}297 & \phantom{0}22907 & \phantom{}1994 & 0.360278s & \phantom{0}912 kB \\
-    %        \phantom{0}9 & \phantom{0}328 & \phantom{0}229 & \phantom{00}75112 & \phantom{00}69 & \phantom{00}6097 & \phantom{0}842 & 0.206668s & \phantom{0}664 kB \\
-    %        \phantom{}10 & \phantom{0}258 & \phantom{0}202 & \phantom{00}52116 & \phantom{00}35 & \phantom{00}2881 & \phantom{0}404 & 0.157362s & \phantom{0}544 kB \\
-    %        \bottomrule
-    %    \end{tabular}
-    %    \caption{Result Summary}
-    %\end{table}
-
-%%\for%each \i in {1,...,10} {
-%    \newpage
-%    \subsection{Benchmark \i\thinspace - Placement Steps}
-%    \placementimage{../benchmarks/\i_placement_0_start.jpg}      {Benchmark \i\thinspace - Step 1/7 - Initial placement}
-%    \placementimage{../benchmarks/\i_placement_1_force.jpg}      {Benchmark \i\thinspace - Step 2/7 - Force directed placement}
-%    \placementimage{../benchmarks/\i_placement_2_flip.jpg}       {Benchmark \i\thinspace - Step 3/7 - Flip cells}
-%    \placementimage{../benchmarks/\i_placement_3_feed.jpg}       {Benchmark \i\thinspace - Step 4/7 - Add feed-throughs}
-%    \placementimage{../benchmarks/\i_placement_4_feed_even.jpg}  {Benchmark \i\thinspace - Step 5/7 - Even out the row length}
-%    \placementimage{../benchmarks/\i_placement_5_pull.jpg}       {Benchmark \i\thinspace - Step 6/7 - Pull cells in the rows closer together}
-%    \placementimage{../benchmarks/\i_placement_6_feed_moved.jpg} {Benchmark \i\thinspace - Step 7/7 - Move feed-throughs to optimal location}
-%
-%    \newpage
-%    \subsection{Benchmark \i\thinspace - Final Routing}
-%    \begin{figure}[H]
-%        \centering
-%        \includegraphics[width=\linewidth]{../benchmarks/\i.jpg}
-%        \caption{Benchmark \i\thinspace - Final routing}
-%    \end{figure}
-%
-%    \newpage
-%    \subsection{Benchmark \i\thinspace - Magic Screenshot}
-%    \begin{figure}[H]
-%        \centering
-%        \includegraphics[width=\linewidth]{./magic_\i.png}
-%        \caption{Benchmark \i\thinspace - Magic Screenshot}
-%    \end{figure}
-%
-%    \newpage
-%    \subsection{Benchmark \i\thinspace - Log file}
-%    \lstinputlisting[caption=Benchmark \i\thinspace - Log]{../benchmarks/\i.log}
-%}
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=1.6in]{./test.png}
+\end{figure}
 
 \newpage
+\section{Results}
+
+    The tables below summerize the results and performance of our tautology and
+    complement checkers for each of the given benchmarks. The `Flags Memory'
+    column shows the heap allocation for the flags array. This is computed
+    manually as it is static and based off the number of variables per cube.
+    The `Heuristic Memory' column shows the maximum size our algorithm
+    allocated from the heap at once.  This was obtained by using our built in
+    memory profiler, which wraps malloc and free and logs all allocations and
+    decallocations to a file. We then looked for time in our execution that our
+    memory was the highest. The `Reported RSS Memory' is the memory usage as
+    reported by the standard Linux tools like \texttt{time}, \texttt{ps}, or
+    \texttt{top}. The RSS memory is actually slightly decieving as it also
+    includes shared memory. The `Faster Algorithm' column indicates which
+    algorithm found the answer and finished first.
+
+    \subsubsection{TC Performance}
+
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{l|c|r|r|r|r|c}
+            \toprule
+            \specialcell{Benchmark} &
+            \specialcell{Tautology} &
+            \specialcell{Execution\\Time(s)} &
+            \specialcell{Flags\\Memory} &
+            \specialcell{Heuristic\\Memory} &
+            \specialcell{Reported\\RSS Memory} &
+            \specialcell{Faster\\Algorithm} \\
+            \midrule
+            Cover1\_8\_10        & NO  & 0.00     & 32B   & -         & 3.360MB   & Heuristic \\
+            Cover2\_8\_100       & NO  & 0.00     & 32B   & 9KB       & 3.472MB   & Flags \\
+            Cover3\_8\_250       & YES & 0.02     & 32B   & 22KB      & 3.808MB   & Flags \\
+            Cover4\_15\_1000     & NO  & 0.00     & 4KB   & 124KB     & 4.704MB   & Heuristic\\
+            Cover5\_15\_10000    & YES & 0.24     & 4KB   & 1.449MB   & 14.928MB  & Flags \\
+            Cover6\_15\_30000    & YES & 0.01     & 4KB   & 4.084MB   & 34.080MB  & Flags \\
+            Cover7\_20\_10000    & NO  & 0.05     & 131KB & 1.513MB   & 10.816MB  & Heuristic\\
+            Cover8\_20\_100000   & YES & 21.69    & 131KB & 21.458MB  & 135.968MB & Flags\\
+            Cover9\_20\_1000000  & YES & 13.54    & 131KB & 164.462MB & 1.025GB   & Flags \\
+            Cover\_25\_100000    & NO  & 0.58     & 4MB   & 18.207MB  & 124.608MB & Heuristic \\
+            Cover\_25\_1000000   & YES & 449.00   & 4MB   & 226.092MB & 1.320GB   & Flags \\
+            Cover\_25\_10000000  & YES & 480.58   & 4MB   & 1.971GB   & 11.559GB  & Flags \\
+            Cover\_30\_1000000   & NO  & 9.38     & 134MB & 210.996MB & 1.805GB   & Heuristic \\
+            Cover\_30\_10000000  & YES & 17981.09 & 134MB & 2.636GB   & 16.566GB  & Flags\\
+            Cover\_30\_100000000 & YES & 18656.40 & 134MB & 14.552GB  & 125.263GB & Flags\\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \subsubsection{CC Performance}
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{l|r|r|r|r|c}
+            \toprule
+            \specialcell{Benchmark} &
+            \specialcell{Execution\\Time(s)} &
+            \specialcell{Flags\\Memory} &
+            \specialcell{Heuristic\\Memory} &
+            \specialcell{Reported\\RSS Memory} &
+            \specialcell{Faster\\Algorithm} \\
+            \midrule
+            Cover1\_8\_10        & 0.00     & 32B   & 1.656KB   & 3.680MB   & Flags \\
+            Cover2\_8\_100       & 0.00     & 32B   & 6.679KB   & 3.808MB   & Flags \\
+            Cover3\_8\_250       & 0.02     & 32B   & 15.789KB  & 3.504MB   & Flags \\
+            Cover4\_15\_1000     & 0.11     & 4KB   & 120.775KB & 4.640MB   & Flags \\
+            Cover5\_15\_10000    & 0.23     & 4KB   & 899.670KB & 9.904MB   & Flags \\
+            Cover6\_15\_30000    & 0.28     & 4KB   & 2.682MB   & 22.464MB  & Flags \\
+            Cover7\_20\_10000    & 4.08     & 131KB & 577.593KB & 13.536MB  & Flags \\
+            Cover8\_20\_100000   & 11.20    & 131KB & 10.938MB  & 66.592MB  & Flags \\
+            Cover9\_20\_1000000  & 13.66    & 131KB & 109.235MB & 626.864MB & Flags \\
+            Cover\_25\_100000    & 161.77   & 4MB   & 21.771MB  & 168.016MB & Flags \\
+            Cover\_25\_1000000   & 452.42   & 4MB   & 128.959MB & 895.152MB & Flags \\
+            Cover\_25\_10000000  & 480.53   & 4MB   & 1.288GB   & 8.765GB   & Flags \\
+            Cover\_30\_1000000   & 6269.12  & 134MB & 305.227MB & 2.324GB   & Flags \\
+            Cover\_30\_10000000  & 18074.69 & 134MB & 1.484GB   & 9.277GB   & Flags \\
+            Cover\_30\_100000000 & 19045.47 & 134MB & 6.454GB   & 88.025GB  & Flags \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \newpage
+    \putplot{Cover1\_8\_10}{../benchmarks/Cover1_8_10_log_tc.png}{../benchmarks/Cover1_8_10_log_cc.png}
+    \putplot{Cover2\_8\_100}{../benchmarks/Cover2_8_100_log_tc.png}{../benchmarks/Cover2_8_100_log_cc.png}
+    \putplot{Cover3\_8\_250}{../benchmarks/Cover3_8_250_log_tc.png}{./blank.png}
+    \putplot{Cover4\_15\_1000}{../benchmarks/Cover4_15_1000_log_tc.png}{../benchmarks/Cover4_15_1000_log_cc.png}
+    \putplot{Cover5\_15\_10000}{../benchmarks/Cover5_15_10000_log_tc.png}{../benchmarks/Cover5_15_10000_log_cc.png}
+    \putplot{Cover6\_15\_30000}{../benchmarks/Cover6_15_30000_log_tc.png}{../benchmarks/Cover6_15_30000_log_cc.png}
+    \putplot{Cover7\_20\_10000}{../benchmarks/Cover7_20_10000_log_tc.png}{../benchmarks/Cover7_20_10000_log_cc.png}
+    \putplot{Cover8\_20\_100000}{../benchmarks/Cover8_20_100000_log_tc.png}{../benchmarks/Cover8_20_100000_log_cc.png}
+    \putplot{Cover9\_20\_1000000}{../benchmarks/Cover9_20_1000000_log_tc.png}{../benchmarks/Cover9_20_1000000_log_cc.png}
+    \putplot{Cover\_25\_100000}{../benchmarks/Cover_25_100000_log_tc.png}{../benchmarks/Cover_25_100000_log_cc.png}
+    \putplot{Cover\_25\_1000000}{../benchmarks/Cover_25_1000000_log_tc.png}{../benchmarks/Cover_25_1000000_log_cc.png}
+    \putplot{Cover\_25\_10000000}{../benchmarks/Cover_25_10000000_log_tc.png}{../benchmarks/Cover_25_10000000_log_cc.png}
+    \putplot{Cover\_30\_1000000}{../benchmarks/Cover_30_1000000_log_tc.png}{../benchmarks/Cover_30_1000000_log_cc.png}
+    \putplot{Cover\_30\_10000000}{../benchmarks/Cover_30_10000000_log_tc.png}{../benchmarks/Cover_30_10000000_log_cc.png}
+    \putplot{Cover\_30\_100000000}{../benchmarks/Cover_30_100000000_log_tc.png}{../benchmarks/Cover_30_100000000_log_cc.png}
+
 %Include a retrospective describing what you think is the cause of the good/poor performance of your
 %tools and how might you be able to improve the performance if you had more time?
-\section{Retrospective}
 
-Overall, we are pretty satisfied with both the execution speed and quality of
+\section{Retrospective}
 our results. All of our execution times with the exception of benchmark 7 are
-under half a second. We also feel that our memory usage is minimal as we only
+Overall, we are pretty satisfied with both the execution speed and quality of
 store one vector of actual cell objects and all other data structures just
-contain pointers back to the original objects. We also make heavy use of pass
+under half a second. We also feel that our memory usage is minimal as we only
 by reference to avoid needlessly copying big data structures into functions.
+contain pointers back to the original objects. We also make heavy use of pass
 
 In terms of placement and routing quality there is always room for improvement.
 It's easy to visually look at almost any result and see ways that it could be
@@ -320,5 +488,7 @@ currently span multiple rows.
 
 \newpage
 \section{Appendix}
+
+\section{Work Division}
 
 \end{document}

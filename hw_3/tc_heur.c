@@ -182,8 +182,16 @@ int check_tautology(matrix_t *matrix, int depth)
     // check to see if we have run out of cubes
     if (matrix->rows == 0) return 0;
 
-    if (matrix->rows == 1 && !whole_row_of(matrix, '-')) return 0;
+    char all_dashes = whole_row_of(matrix, '-');
 
+    if (matrix->rows == 1 && !all_dashes) return 0;
+
+    if (all_dashes) return 1;
+
+    // undate_reduction may or may not return a new matrix we need to keep
+    // track of the original one so we can tell if we need to free it or not.
+    // if unate reduction returns a new matrix we need to free it before we
+    // leave.
     matrix_t *oldmat = matrix;
     matrix = unate_reduction(matrix);
 
