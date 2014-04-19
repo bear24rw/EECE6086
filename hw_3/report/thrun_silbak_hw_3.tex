@@ -149,7 +149,7 @@ make the cover a tautology.
         matrix is then passed into the recursive
         \texttt{check\_tautology(matrix)} function.
 
-        We then check for the following two cases
+        We then check for the following three cases
 
         \begin{itemize}
             \item If there are no rows in the matrix its \textbf{not} a tautology
@@ -201,13 +201,14 @@ make the cover a tautology.
 
         \subsubsection{Cube Enumeration (Flags)}
 
-        Each cube in the cover file is converted into an index value into an
-        array of flags. For instance the input cube \texttt{1011} would set
-        flag number 11. If the cube has don't cares we recursively create the
-        other cubes. First instance the input cube \texttt{1--0} would first
-        generate \texttt{10-0} and \texttt{11-0} and then it would recurse
-        sending in those new cubes.  Once there are no don't cares in the cube
-        it computes the flag index by treating the cube as a binary number.
+        Each cube in the cover file is converted into an integer value which is
+        used to index into an array of flags. For instance, the input cube
+        \texttt{1011} would set flag number 11. If the cube has don't cares we
+        recursively create the other cubes. For instance, the input cube
+        \texttt{1--0} would first generate \texttt{10-0} and \texttt{11-0} and
+        then it would recurse sending in those new cubes.  Once there are no
+        don't cares in the cube it computes the flag index by treating the cube
+        as a binary number.
 
         We also check for the special case of cubes with don't cares only at
         the end. For instance, with the cube \texttt{10---} we know this covers
@@ -260,7 +261,7 @@ make the cover a tautology.
 
             If none of the above three conditions are satisfied we continue by
             trying to find the most binate column.  If it turns out there are no
-            binate column we simply choose a unate column. We then positively and
+            binate columns we simply choose a unate column. We then positively and
             negatively \texttt{co\_factor} our matrix and send it back into
             \texttt{check\_complement(matrix)}. Once
             \texttt{check\_complement(matrix)} returns we have two new positive and
@@ -278,7 +279,7 @@ make the cover a tautology.
 
             The flags algorithm, described in the tautology checking section,
             has the ability to immediately provide us with the missing cubes as
-            soon as it finishes processing each line of the cover file. As we
+            soon as it finishes processing all the lines in the cover file. As we
             will see in the results section, the flags algorithm is always
             faster than the heuristic algorithm at providing the full list of
             missing cubes. The main disadvantage, however, is that is does not
@@ -369,7 +370,7 @@ missing covers.
     The `Heuristic Memory' column shows the maximum size our algorithm
     allocated from the heap at once.  This was obtained by using our built in
     memory profiler, which wraps malloc and free and logs all allocations and
-    decallocations to a file. We then looked for time in our execution that our
+    decallocations to a file. We then looked for time in our execution where our
     memory was the highest. The `Reported RSS Memory' is the memory usage as
     reported by the standard Linux tools like \texttt{time}, \texttt{ps}, or
     \texttt{top}. The RSS memory is actually slightly decieving as it also
@@ -499,7 +500,7 @@ re-searching.
 In the end we were able to successfully run all the provided benchmarks and our
 \texttt{test.sh} script proves that we can take a non tautology cover, find the
 complements, put those complements back into the original cover, and then prove
-its a now a tautology. Given this fact we are confident in saying our
+that it is now a tautology. Given this fact we are confident in saying our
 implementation was successful.
 
 
