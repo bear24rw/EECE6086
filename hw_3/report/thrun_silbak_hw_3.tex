@@ -1,7 +1,7 @@
 \documentclass[10pt]{article}
 
 \usepackage{fancyhdr}
-\usepackage[includeheadfoot,left=1in, right=0.5in, top=0.5in, bottom=0.5in]{geometry}
+\usepackage[includeheadfoot,left=0.5in, right=0.5in, top=0.5in, bottom=0.5in]{geometry}
 \usepackage{lastpage}
 \usepackage{extramarks}
 \usepackage[usenames,dvipsnames]{color}
@@ -89,14 +89,14 @@
 \newcommand{\specialcell}[2][c]{\textbf{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}}
 
 \newcommand{\putplot}[3]{
-    \begin{figure}
+    \begin{figure}[H]
         \centering
-        \begin{minipage}{.5\textwidth}
+        \begin{minipage}{.45\textwidth}
             \centering
             \includegraphics[width=\linewidth]{#2}
             \captionof{figure}{TC: #1}
         \end{minipage}%
-        \begin{minipage}{.5\textwidth}
+        \begin{minipage}{.45\textwidth}
             \centering
             \includegraphics[width=\linewidth]{#3}
             \captionof{figure}{CC: #1}
@@ -273,6 +273,7 @@ make the cover a tautology.
             We then concatentate the positive and negative matrices together and
             return this new matrix.
 
+            \newpage
         \subsubsection{Flags}
 
             The flags algorithm, described in the tautology checking section,
@@ -377,6 +378,14 @@ missing covers.
 
     \subsubsection{TC Performance}
 
+    We can see from the table below that the flags algorithm seems to always be
+    faster at identifying covers that are tautologies, with the exception of
+    the really smaller cover files where the difference in time between the two
+    algorithms is negligable. We can also see that our memory usage seems to
+    climb pretty high for our heuristic algorithm. Looking at the profile plots
+    on the following pages we can see that for some covers (like Cover 5 and 8) there
+    appears to be a memory leak. Unfortunately we were unable to identifiy it.
+
     \begin{table}[H]
         \centering
         \begin{tabular}{l|c|r|r|r|r|c}
@@ -409,6 +418,13 @@ missing covers.
     \end{table}
 
     \subsubsection{CC Performance}
+
+    From the table below we can see that the flags algorithm dominates when it
+    comes to finding the missing covers fast. Like our \texttt{tc} program
+    there appears to be a memory leak that manifiests in some covers like Cover
+    4. Other covers, such as Cover 5 do not seem to cause leaks. We were unable
+    to pinpoint where we were losing this memory.
+
     \begin{table}[H]
         \centering
         \begin{tabular}{l|r|r|r|r|c}
@@ -459,6 +475,7 @@ missing covers.
 %Include a retrospective describing what you think is the cause of the good/poor performance of your
 %tools and how might you be able to improve the performance if you had more time?
 
+\newpage
 \section{Retrospective}
 our results. All of our execution times with the exception of benchmark 7 are
 Overall, we are pretty satisfied with both the execution speed and quality of
