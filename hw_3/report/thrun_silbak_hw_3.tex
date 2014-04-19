@@ -477,35 +477,31 @@ missing covers.
 
 \newpage
 \section{Retrospective}
-our results. All of our execution times with the exception of benchmark 7 are
-Overall, we are pretty satisfied with both the execution speed and quality of
-store one vector of actual cell objects and all other data structures just
-under half a second. We also feel that our memory usage is minimal as we only
-by reference to avoid needlessly copying big data structures into functions.
-contain pointers back to the original objects. We also make heavy use of pass
+Overall we feel that our results are acceptable. We can run all but the two
+biggest \texttt{Cover\_30} in acceptable time and system requirements. Having
+the flags algorithm run in parallel provided a really nice speed boost and the
+simplicity of it (only 170 lines!) makes it a no brainer to implement. We think
+it would be interesting to extend the idea of parallelism into the heuristic
+algorithm since in both \texttt{tc} and \texttt{cc} we pretty much split the
+matrix in two right away.
 
-In terms of placement and routing quality there is always room for improvement.
-It's easy to visually look at almost any result and see ways that it could be
-improved but how to translate these improvements into algorithms is not always
-so obvious. We believe, however, that we were are able to handle a lot of
-specific cases (like moving the feed-throughs to the other side of the cell)
-which in the end resulted in superior layouts.  For the force directed
-placement algorithm it is hard to tell if the results you get are truly the
-best, especially when the circuit is so large you cannot visually comprehend
-it. We feel like we did our best analyzing it empirically and tuned is to best
-suit our benchmark files. One of the main problems with the force directed
-algorithm is that it tends to pull all the cells into the center of the layout.
-We tried to fix this by redistributing the unconnected cells evenly through the
-layout and then re-force directing the rows but it is still not always ideal.
-One interesting method to pursue would be using a combination of min-cut /
-quadratic placement and then force directing the sub divisions (or vice versa).
-If we were to min-cut horizontally we might be able to reduce some nets that
-currently span multiple rows.
+There are definitely improvements to be made in our implementation. For one,
+there seems to still be some memory leaks in both our programs. We were able to
+use \texttt{valgrind} to find and fix a lot of leaks but there are still a few
+that remain. Looking at the profile plots in the above section you can clearly
+see an upward trend in memory even though the recursion depth is not
+increasing, CC Cover 7 is a good illustration of this. Additionally, we spend a
+lot of CPU cycles re-finding the most unate and binate columns. A better
+strategy would be to only search for them once at the beginning and then just
+recalculate where the they are every time we modify the matrix instead of
+re-searching.
+
+In the end we were able to successfully run all the provided benchmarks and our
+\texttt{test.sh} script proves that we can take a non tautology cover, find the
+complements, put those complements back into the original cover, and then prove
+its a now a tautology. Given this fact we are confident in saying our
+implementation was successful.
 
 
-\newpage
-\section{Appendix}
-
-\section{Work Division}
 
 \end{document}
